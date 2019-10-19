@@ -45,6 +45,19 @@ const lisaaRavintola = (request, response) => {
 
 }
 
+const haeListat = (request, response) => {
+    var paiva = request.params.paiva;
+
+    pool.query('SELECT * FROM ruokalistat where paiva = ' + paiva, (error, results) => {
+        if (error) {
+            throw error
+        }
+        response.status(200).json(results.rows)
+
+    })
+
+}
+
 
 app
     .route('/ravintolat')
@@ -53,9 +66,39 @@ app
     // POST endpoint
     .post(lisaaRavintola)
 
-// app
-//     .route('/listat')
-//     .get(haeListat)
+app
+    .get('/listat', (request, response) => {
+        var kaikkiPaivat = 0
+        var kaikkiRavintolat = 0
+
+        var paiva = 0
+        if (!request.query.paiva) {
+            paiva = 0;
+            kaikkiPaivat = 1;
+        } else {
+            paiva = request.query.paiva;
+        }
+        if (!request.query.ravintolaid) {
+            ravintolaid = 0;
+            kaikkiRavintolat = 1;
+        } else {
+            ravintolaid = request.query.ravintolaid;
+        }
+
+
+        console.log(paiva);
+
+        pool.query('SELECT * FROM ruokalistat where (paiva = ' + paiva +
+            'OR 1 = ' + kaikkiPaivat + ') AND (ravintolaid = ' +
+            ravintolaid + ' OR 1 = ' + kaikkiRavintolat + ')', (error, results) => {
+                if (error) {
+                    throw error
+                }
+                response.status(200).json(results.rows)
+
+            })
+
+    })
 
 
 
