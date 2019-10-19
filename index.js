@@ -60,14 +60,14 @@ const haeListat = (request, response) => {
 
 
 app
-    .route('/ravintolat')
+    .route('/api/ravintolat')
     // GET endpoint
     .get(haeRavintolat)
     // POST endpoint
     .post(lisaaRavintola)
 
 app
-    .get('/listat', (request, response) => {
+    .get('/api/listat', (request, response) => {
         var kaikkiPaivat = 0
         var kaikkiRavintolat = 0
 
@@ -84,9 +84,6 @@ app
         } else {
             ravintolaid = request.query.ravintolaid;
         }
-
-
-        console.log(paiva);
 
         pool.query('SELECT * FROM ruokalistat where (paiva = ' + paiva +
             'OR 1 = ' + kaikkiPaivat + ') AND (ravintolaid = ' +
