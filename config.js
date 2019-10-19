@@ -1,15 +1,15 @@
 const {
-    Client
+    Pool
 } = require('pg');
 
 console.log(process.env.DATABASE_URL);
 
-const client = new Client({
+const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: true
 })
 
 module.exports = {
-    client
+    pool
 
 }
