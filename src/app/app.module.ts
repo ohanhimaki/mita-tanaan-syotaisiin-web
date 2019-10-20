@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { LunchDetailsComponent } from './lunch-list/lunch-details/lunch-details.component';
 import { LunchListComponent } from './lunch-list/lunch-list/lunch-list.component';
 import { HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -18,7 +19,8 @@ import { HttpModule } from '@angular/http';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpModule
+    HttpModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
