@@ -1,3 +1,8 @@
-<p>
-  lunch-list works!
-</p>
+<div>
+  <div *ngFor="let lunchlist of lunchListsByRestaurants">
+    <app-lunch-details [lunchList]="lunchlist">
+
+    </app-lunch-details>
+    <br><br>
+  </div>
+</div>

@@ -1,3 +1,6 @@
-<p>
-  lunch-details works!
-</p>
+<div *ngIf="lunchList">
+  <strong>{{lunchList[0]?.nimi}}</strong> <br>
+
+  <strong>{{lunchList[0]?.paiva }}</strong> <br>
+  <span *ngFor="let row of lunchList">{{row.teksti}} <br></span>
+</div>

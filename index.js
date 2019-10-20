@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
 dotenv.config();
 const {
-    pool
+  pool
 } = require('./config')
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -10,96 +10,99 @@ const app = express()
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
-    extended: true
+  extended: true
 }))
 app.use(cors())
 
+var distDir = __dirname + "/dist/";
+app.use(express.static(distDir));
+
 const haeRavintolat = (request, response) => {
 
-    pool.query('SELECT * FROM ravintolat;', (error, results) => {
-        if (error) {
-            throw error
-        }
-        response.status(200).json(results.rows)
+  pool.query('SELECT * FROM ravintolat;', (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
 
-    })
+  })
 
 }
 
 const lisaaRavintola = (request, response) => {
-    const {
-        apiid,
-        nimi
-    } = request.body
+  const {
+    apiid,
+    nimi
+  } = request.body
 
-    pool.query('INSERT INTO ravintolat (apiid, nimi) VALUES ($1, $2);', [apiid, nimi], error => {
-        if (error) {
-            throw error
-        }
-        response.status(201).json({
-            status: 'success',
-            message: 'Ravintola added.'
-        })
-
+  pool.query('INSERT INTO ravintolat (apiid, nimi) VALUES ($1, $2);', [apiid, nimi], error => {
+    if (error) {
+      throw error
+    }
+    response.status(201).json({
+      status: 'success',
+      message: 'Ravintola added.'
     })
+
+  })
 
 }
 
 const haeListat = (request, response) => {
-    var paiva = request.params.paiva;
+  var paiva = request.params.paiva;
 
-    pool.query('SELECT * FROM ruokalistat where paiva = ' + paiva, (error, results) => {
-        if (error) {
-            throw error
-        }
-        response.status(200).json(results.rows)
+  pool.query('SELECT * FROM ruokalistat where paiva = ' + paiva, (error, results) => {
+    if (error) {
+      throw error
+    }
+    response.status(200).json(results.rows)
 
-    })
+  })
 
 }
 
 
 app
-    .route('/api/ravintolat')
-    // GET endpoint
-    .get(haeRavintolat)
-    // POST endpoint
-    .post(lisaaRavintola)
+  .route('/api/ravintolat')
+  // GET endpoint
+  .get(haeRavintolat)
+  // POST endpoint
+  .post(lisaaRavintola)
 
 app
-    .get('/api/listat', (request, response) => {
-        var kaikkiPaivat = 0
-        var kaikkiRavintolat = 0
+  .get('/api/listat', (request, response) => {
+    var kaikkiPaivat = 0
+    var kaikkiRavintolat = 0
 
-        var paiva = 0
-        if (!request.query.paiva) {
-            paiva = 0;
-            kaikkiPaivat = 1;
-        } else {
-            paiva = request.query.paiva;
+    var paiva = 0
+    if (!request.query.paiva) {
+      paiva = 0;
+      kaikkiPaivat = 1;
+    } else {
+      paiva = request.query.paiva;
+    }
+    if (!request.query.ravintolaid) {
+      ravintolaid = 0;
+      kaikkiRavintolat = 1;
+    } else {
+      ravintolaid = request.query.ravintolaid;
+    }
+
+    pool.query('SELECT r.*, ra.nimi FROM ruokalistat r left join ravintolat ra on r.ravintolaid = ra.apiid where (paiva = ' + paiva +
+      'OR 1 = ' + kaikkiPaivat + ') AND (r.ravintolaid = ' +
+      ravintolaid + ' OR 1 = ' + kaikkiRavintolat + ')', (error, results) => {
+        if (error) {
+          throw error
         }
-        if (!request.query.ravintolaid) {
-            ravintolaid = 0;
-            kaikkiRavintolat = 1;
-        } else {
-            ravintolaid = request.query.ravintolaid;
-        }
+        response.status(200).json(results.rows)
 
-        pool.query('SELECT * FROM ruokalistat where (paiva = ' + paiva +
-            'OR 1 = ' + kaikkiPaivat + ') AND (ravintolaid = ' +
-            ravintolaid + ' OR 1 = ' + kaikkiRavintolat + ')', (error, results) => {
-                if (error) {
-                    throw error
-                }
-                response.status(200).json(results.rows)
+      })
 
-            })
-
-    })
+  })
 
 
 
 // Start server
 app.listen(process.env.PORT || 3002, () => {
-    console.log(`Server listening`)
+  console.log(`Server listening`)
 })

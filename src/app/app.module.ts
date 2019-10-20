@@ -5,6 +5,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LunchDetailsComponent } from './lunch-list/lunch-details/lunch-details.component';
 import { LunchListComponent } from './lunch-list/lunch-list/lunch-list.component';
+import { HttpModule } from '@angular/http';
+
+
 
 @NgModule({
   declarations: [
@@ -14,7 +17,8 @@ import { LunchListComponent } from './lunch-list/lunch-list/lunch-list.component
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpModule
   ],
   providers: [],
   bootstrap: [AppComponent]
