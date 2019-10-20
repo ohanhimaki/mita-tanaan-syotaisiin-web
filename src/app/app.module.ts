@@ -7,8 +7,8 @@ import { LunchDetailsComponent } from './lunch-list/lunch-details/lunch-details.
 import { LunchListComponent } from './lunch-list/lunch-list/lunch-list.component';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-
+import { MaterialModule } from './material.module';
+// Pitää vissiin importtiin lisätä
 
 @NgModule({
   declarations: [
@@ -20,7 +20,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserModule,
     AppRoutingModule,
     HttpModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MaterialModule
   ],
   providers: [],
   bootstrap: [AppComponent]
