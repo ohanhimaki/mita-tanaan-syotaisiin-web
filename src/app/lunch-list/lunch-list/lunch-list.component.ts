@@ -10,7 +10,7 @@ import { LunchListService } from '../lunch-list.service';
 export class LunchListComponent implements OnInit {
 
   lunchListRows: Listrow[] = [];
-  lunchListsByRestaurants: Listrow[][] = [[]];
+  lunchListsByRestaurants: Listrow[][] = new Array<Array<Listrow>>();
   uniqueRestaurantIDs: number[];
 
 

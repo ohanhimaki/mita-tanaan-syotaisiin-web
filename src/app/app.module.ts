@@ -8,8 +8,7 @@ import { LunchListComponent } from './lunch-list/lunch-list/lunch-list.component
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
-// Pitää vissiin importtiin lisätä
-
+import { FlexLayoutModule } from '@angular/flex-layout';
 @NgModule({
   declarations: [
     AppComponent,
@@ -21,7 +20,8 @@ import { MaterialModule } from './material.module';
     AppRoutingModule,
     HttpModule,
     BrowserAnimationsModule,
-    MaterialModule
+    MaterialModule,
+    FlexLayoutModule
   ],
   providers: [],
   bootstrap: [AppComponent]

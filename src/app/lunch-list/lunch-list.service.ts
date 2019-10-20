@@ -6,7 +6,7 @@ import { Http, Response } from '@angular/http';
   providedIn: 'root'
 })
 export class LunchListService {
-  private lunchListUrl = 'http://localhost:3002/api/listat?paiva=20191021';
+  private lunchListUrl = '/api/listat?paiva=20191014';
 
   constructor(private http: Http) { }
 

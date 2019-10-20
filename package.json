@@ -5,13 +5,11 @@
     "ng": "ng",
     "start": "node index.js",
     "start:dev": "concurrently \"ng serve\"  \"nodemon index.js\"",
-    "ajeleppa": "concurrently \"ng serve\"  \"nodemon index.js\"",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "ng build --output-path dist"
-
   },
   "private": true,
   "dependencies": {
@@ -23,6 +21,7 @@
     "@angular/compiler": "~8.2.11",
     "@angular/compiler-cli": "^8.2.11",
     "@angular/core": "~8.2.11",
+    "@angular/flex-layout": "^8.0.0-beta.27",
     "@angular/forms": "~8.2.11",
     "@angular/http": "~7.2.15",
     "@angular/material": "^8.2.3",
