@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Listrow } from '../listrow';
 import { LunchListService } from '../lunch-list.service';
 import { DatePipe } from '@angular/common';
+import { Params, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-lunch-list',
@@ -10,12 +11,22 @@ import { DatePipe } from '@angular/common';
 })
 export class LunchListComponent implements OnInit {
 
+  routeParams: Params;
+
   lunchListRows: Listrow[] = [];
   lunchListsByRestaurants: Listrow[][] = new Array<Array<Listrow>>();
   uniqueRestaurantIDs: number[];
+  lunchlistparams = {
+    paiva: null,
+    ravintola: null,
+    kaikkipaivat: null,
+    kaikkiravintolat: null
+  }
 
 
-  constructor(private lunchListService: LunchListService, private datePipe: DatePipe) { }
+  constructor(private lunchListService: LunchListService, private datePipe: DatePipe, private activatedRoute: ActivatedRoute) {
+
+  }
 
   ngOnInit() {
     this.lunchListService
@@ -45,6 +56,12 @@ export class LunchListComponent implements OnInit {
   getDateToday() {
     let date = new Date();
     return this.datePipe.transform(date, 'yyyyMMdd');
+  }
+
+  getRouteParams() {
+    this.activatedRoute.params.subscribe(params => {
+      this.routeParams = params;
+    })
   }
 
 
