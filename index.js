@@ -51,7 +51,7 @@ const lisaaRavintola = (request, response) => {
 const haeListat = (request, response) => {
   var paiva = request.params.paiva;
 
-  pool.query('SELECT * FROM ruokalistat where paiva = ' + paiva, (error, results) => {
+  pool.query('SELECT * FROM ruokalistat where paiva = $1', [paiva], (error, results) => {
     if (error) {
       throw error
     }
@@ -88,15 +88,13 @@ app
       ravintolaid = request.query.ravintolaid;
     }
 
-    pool.query('SELECT r.*, ra.nimi FROM ruokalistat r left join ravintolat ra on r.ravintolaid = ra.apiid where (paiva = ' + paiva +
-      'OR 1 = ' + kaikkiPaivat + ') AND (r.ravintolaid = ' +
-      ravintolaid + ' OR 1 = ' + kaikkiRavintolat + ')', (error, results) => {
-        if (error) {
-          throw error
-        }
-        response.status(200).json(results.rows)
+    pool.query('SELECT r.*, ra.nimi FROM ruokalistat r left join ravintolat ra on r.ravintolaid = ra.apiid where (paiva = $1 OR 1 = $2) AND (r.ravintolaid = $3  OR 1 = $4)', [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat], (error, results) => {
+      if (error) {
+        throw error
+      }
+      response.status(200).json(results.rows)
 
-      })
+    })
 
   })
 
