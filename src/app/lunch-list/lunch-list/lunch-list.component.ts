@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Listrow } from '../listrow';
 import { LunchListService } from '../lunch-list.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-lunch-list',
@@ -14,11 +15,11 @@ export class LunchListComponent implements OnInit {
   uniqueRestaurantIDs: number[];
 
 
-  constructor(private lunchListService: LunchListService) { }
+  constructor(private lunchListService: LunchListService, private datePipe: DatePipe) { }
 
   ngOnInit() {
     this.lunchListService
-      .getLunchListRows()
+      .getLunchListRows(this.getDateToday())
       .then((lunchListRows: Listrow[]) => {
         this.lunchListRows = lunchListRows
       }).then(x => {
@@ -39,6 +40,11 @@ export class LunchListComponent implements OnInit {
     let tulos = self.indexOf(value) === index;
 
     return self.indexOf(value) === index;
+  }
+
+  getDateToday() {
+    let date = new Date();
+    return this.datePipe.transform(date, 'yyyyMMdd');
   }
 
 

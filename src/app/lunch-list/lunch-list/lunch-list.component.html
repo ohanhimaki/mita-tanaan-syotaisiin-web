@@ -10,8 +10,8 @@
 </div> -->
 
 <div class="container">
-  <div fxLayout="row wrap" fxLayoutAlign="space-evenly stretch" fxLayoutGap="wrap">
-    <div fxFlex="30%" *ngFor="let lunchlist of lunchListsByRestaurants" class="cardContainer-size">
+  <div fxLayout="row wrap" fxLayoutAlign="start stretch" fxLayoutGap="wrap" class="cards">
+    <div fxFlex="30%" *ngFor="let lunchlist of lunchListsByRestaurants" class="cardContainer-size" class="card">
       <app-lunch-details [lunchList]="lunchlist">
 
       </app-lunch-details>

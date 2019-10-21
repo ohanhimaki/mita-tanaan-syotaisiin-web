@@ -1,17 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Listrow } from './listrow';
 import { Http, Response } from '@angular/http';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
+
+
+
 export class LunchListService {
-  private lunchListUrl = '/api/listat?paiva=20191014';
+
+
+  private lunchListUrl = environment.apiurl + '/api/listat?paiva=';
 
   constructor(private http: Http) { }
 
-  getLunchListRows() {
-    return this.http.get(this.lunchListUrl)
+  getLunchListRows(paiva = '20191014') {
+    return this.http.get(this.lunchListUrl + paiva.toString())
       .toPromise()
       .then(response => response.json() as Listrow[])
       .catch(this.handleError);
