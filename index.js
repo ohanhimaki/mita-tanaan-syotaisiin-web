@@ -7,6 +7,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const app = express()
+const dw = require('./dw/')
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
@@ -98,6 +99,20 @@ app
     })
 
   })
+
+app
+  .get('/api/admin/salamoi', async (request, response) => {
+    if (!request.header('apiKey') || request.header('apiKey') !== process.env.API_KEY) {
+      return response.status(401).json({
+        status: 'error',
+        message: 'Unauthorized.'
+      })
+    }
+
+    await dw.suoritaDatanLataus();
+
+    response.status(200).json(results.rows)
+  });
 
 
 

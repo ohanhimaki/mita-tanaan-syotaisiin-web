@@ -1,55 +1,55 @@
+const dotenv = require('dotenv');
+dotenv.config();
+const {
+  pool
+} = require('./config')
 const https = require("https");
 const $ = require("cheerio");
-const {
-  Client
-} = require("pg");
 const format = require("pg-format");
-const {
-  pgUrl
-} = require("./config");
 
 const helpers = require("./helpers");
 
-const client = new Client({
-  connectionString: pgUrl,
-  ssl: true
-});
 
 let thisWeekMonday = new Date(helpers.date.getPreviousMonday());
 let ravintolat = [];
 let rowsToInsert = [];
 
-client.connect();
+exports.suoritaDatanLataus = async function () {
+  rowsToInsert = [];
+  ravintolat = [];
 
-client.query("SELECT RavintolaID, apiid, Nimi FROM Ravintolat;", (err, res) => {
-  if (err) throw err;
-  for (let row of res.rows) {
-    ravintolat.push(row);
-  }
-  client.end().then(poistaTamaViikko());
-});
+  pool.query("SELECT RavintolaID, apiid, Nimi FROM Ravintolat;", async (err, res) => {
+    if (err) throw err;
+    for (let row of res.rows) {
+      ravintolat.push(row);
+    }
+    //onko async?
+    done = await poistaTamaViikko();
 
-function poistaTamaViikko() {
-  const delRowsClient = new Client({
-    connectionString: pgUrl,
-    ssl: true
   });
+  return await done;
+}
+
+
+
+async function poistaTamaViikko() {
   console.log(helpers.date.formatDate(thisWeekMonday));
 
-  delRowsClient.connect();
-  delRowsClient.query(
+  pool.query(
     "DELETE FROM ruokalistat WHERE paiva >= " +
     helpers.date.formatDate(thisWeekMonday) +
     ";",
-    (err, res) => {
+    async (err, res) => {
       if (err) throw err;
       console.log("Poistetaan rivit joissa paiva >= taman viikon maanantai");
-      delRowsClient.end().then(haeDatat());
+      //onko async?
+      done = await haeDatat();
     }
   );
+  return done;
 }
 
-function haeDatat() {
+async function haeDatat() {
   let ravintolatProsessoitu = 0;
   ravintolat.forEach((ravintola, i, array) => {
     ravintolatProsessoitu++;
@@ -82,17 +82,13 @@ function haeDatat() {
 
     if (ravintolatProsessoitu === array.length) {}
   });
-  setTimeout(function () {
-    insertIntoRuokalistat(rowsToInsert);
+  setTimeout(async function () {
+    done = await insertIntoRuokalistat(rowsToInsert);
   }, 10000);
+  return done;
 }
 
-function insertIntoRuokalistat(rivit) {
-  const clientInsert = new Client({
-    connectionString: pgUrl,
-    ssl: true
-  });
-  clientInsert.connect();
+async function insertIntoRuokalistat(rivit) {
 
   nestedArray = [];
   rivit.forEach(x => {
@@ -104,14 +100,16 @@ function insertIntoRuokalistat(rivit) {
     nestedArray
   );
 
-  clientInsert.query(tehtyKysely, (err, res) => {
+  pool.query(tehtyKysely, (err, res) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(res.rows[0]);
-      clientInsert.end();
+      console.log(res.rowCount + ' riviä tuotiin');
+      done = 'done';
+
     }
   });
+  return done;
 }
 
 function htmlToObject(html, ravintolaID) {
