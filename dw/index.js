@@ -1,8 +1,12 @@
 const https = require("https");
 const $ = require("cheerio");
-const { Client } = require("pg");
+const {
+  Client
+} = require("pg");
 const format = require("pg-format");
-const { pgUrl } = require("./config");
+const {
+  pgUrl
+} = require("./config");
 
 const helpers = require("./helpers");
 
@@ -35,8 +39,8 @@ function poistaTamaViikko() {
   delRowsClient.connect();
   delRowsClient.query(
     "DELETE FROM ruokalistat WHERE paiva >= " +
-      helpers.date.formatDate(thisWeekMonday) +
-      ";",
+    helpers.date.formatDate(thisWeekMonday) +
+    ";",
     (err, res) => {
       if (err) throw err;
       console.log("Poistetaan rivit joissa paiva >= taman viikon maanantai");
@@ -76,10 +80,9 @@ function haeDatat() {
         console.error("Error" + err.message);
       });
 
-    if (ravintolatProsessoitu === array.length) {
-    }
+    if (ravintolatProsessoitu === array.length) {}
   });
-  setTimeout(function() {
+  setTimeout(function () {
     insertIntoRuokalistat(rowsToInsert);
   }, 10000);
 }

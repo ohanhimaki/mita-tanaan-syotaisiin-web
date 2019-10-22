@@ -88,7 +88,8 @@ app
       ravintolaid = request.query.ravintolaid;
     }
 
-    pool.query('SELECT r.*, ra.nimi FROM ruokalistat r left join ravintolat ra on r.ravintolaid = ra.apiid where (paiva = $1 OR 1 = $2) AND (r.ravintolaid = $3  OR 1 = $4)', [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat], (error, results) => {
+    pool.query(`SELECT r.*, ra.nimi FROM ruokalistat r left join ravintolat ra on r.ravintolaid = ra.apiid where 
+    (paiva = $1 OR 1 = $2) AND (r.ravintolaid = $3  OR 1 = $4)`, [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat], (error, results) => {
       if (error) {
         throw error
       }
