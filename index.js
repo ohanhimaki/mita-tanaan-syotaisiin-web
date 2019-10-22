@@ -71,10 +71,10 @@ app
 
 app
   .get('/api/listat', (request, response) => {
-    var kaikkiPaivat = 0
-    var kaikkiRavintolat = 0
+    let kaikkiPaivat = 0
+    let kaikkiRavintolat = 0
 
-    var paiva = 0
+    let paiva = 0
     if (!request.query.paiva) {
       paiva = 0;
       kaikkiPaivat = 1;

@@ -34,8 +34,8 @@ export class LunchListService {
   }
 
   getApiUrl(parameters) {
-    if (parameters.ravintola) {
-      return '/api/listat?ravintola=' + parameters.ravintola;
+    if (parameters.ravintolaid) {
+      return '/api/listat?ravintolaid=' + parameters.ravintolaid;
     }
     else {
       let date = parameters.paiva ? parameters.paiva : 20191021;

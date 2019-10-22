@@ -18,7 +18,7 @@ export class LunchListComponent implements OnInit {
   uniqueRestaurantIDs: number[];
   lunchlistparams = {
     paiva: null,
-    ravintola: null
+    ravintolaid: null
   }
 
 
@@ -35,12 +35,12 @@ export class LunchListComponent implements OnInit {
 
       this.lunchlistparams = {
         paiva: paiva,
-        ravintola: ravid
+        ravintolaid: ravid
       };
     } else {
       this.lunchlistparams = {
         paiva: this.getDateToday(),
-        ravintola: null
+        ravintolaid: null
       };
 
     }
