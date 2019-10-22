@@ -12,12 +12,16 @@ import { environment } from '../../environments/environment';
 export class LunchListService {
 
 
-  private lunchListUrl = environment.apiurl + '/api/listat?paiva=';
+  private lunchListUrl = environment.apiurl;
 
   constructor(private http: Http) { }
 
-  getLunchListRows(paiva = '20191014') {
-    return this.http.get(this.lunchListUrl + paiva.toString())
+  getLunchListRows(parameters = { paiva: '20191014' }) {
+    console.log(parameters);
+    console.log(this.getApiUrl(parameters))
+    let apiurl = environment.apiurl + this.getApiUrl(parameters);
+    console.log(apiurl);
+    return this.http.get(apiurl)
       .toPromise()
       .then(response => response.json() as Listrow[])
       .catch(this.handleError);
@@ -27,5 +31,15 @@ export class LunchListService {
     let errMsg = (error.message) ? error.message :
       error.status ? `${error.status} - ${error.statusText}` : 'Server error';
     console.error(errMsg); // log to console instead
+  }
+
+  getApiUrl(parameters) {
+    if (parameters.ravintola) {
+      return '/api/listat?ravintola=' + parameters.ravintola;
+    }
+    else {
+      let date = parameters.paiva ? parameters.paiva : 20191021;
+      return '/api/listat?paiva=' + date;
+    }
   }
 }

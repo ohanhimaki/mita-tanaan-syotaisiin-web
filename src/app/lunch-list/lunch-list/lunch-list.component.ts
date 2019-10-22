@@ -18,19 +18,37 @@ export class LunchListComponent implements OnInit {
   uniqueRestaurantIDs: number[];
   lunchlistparams = {
     paiva: null,
-    ravintola: null,
-    kaikkipaivat: null,
-    kaikkiravintolat: null
+    ravintola: null
   }
 
 
   constructor(private lunchListService: LunchListService, private datePipe: DatePipe, private activatedRoute: ActivatedRoute) {
-
+    this.getRouteParams();
   }
 
   ngOnInit() {
+    console.log(!this.routeParams.ravid)
+    console.log(!this.routeParams.paiva)
+    if (this.routeParams.ravid || this.routeParams.paiva) {
+      let paiva = this.routeParams.paiva ? this.routeParams.paiva : null;
+      let ravid = this.routeParams.ravid ? this.routeParams.ravid : null;
+
+      this.lunchlistparams = {
+        paiva: paiva,
+        ravintola: ravid
+      };
+    } else {
+      this.lunchlistparams = {
+        paiva: this.getDateToday(),
+        ravintola: null
+      };
+
+    }
+
+
+
     this.lunchListService
-      .getLunchListRows(this.getDateToday())
+      .getLunchListRows(this.lunchlistparams)
       .then((lunchListRows: Listrow[]) => {
         this.lunchListRows = lunchListRows
       }).then(x => {

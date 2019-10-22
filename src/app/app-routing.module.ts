@@ -7,11 +7,11 @@ const routes: Routes = [
     path: '',
     component: LunchListComponent
   }, {
-    path: 'ravintola/:id',
+    path: 'ravintola/:ravid',
     component: LunchListComponent
   },
   {
-    path: 'paiva/:id',
+    path: 'paiva/:paiva',
     component: LunchListComponent
   },
   {
