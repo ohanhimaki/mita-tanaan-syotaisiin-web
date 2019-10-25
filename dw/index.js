@@ -1,44 +1,40 @@
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
-const {
-  pool
-} = require('./config')
+const { pool } = require("./config");
 const https = require("https");
 const $ = require("cheerio");
 const format = require("pg-format");
 
 const helpers = require("./helpers");
 
-
 let thisWeekMonday = new Date(helpers.date.getPreviousMonday());
 let ravintolat = [];
 let rowsToInsert = [];
 
-exports.suoritaDatanLataus = async function () {
+exports.suoritaDatanLataus = async function() {
   rowsToInsert = [];
   ravintolat = [];
 
-  pool.query("SELECT RavintolaID, apiid, Nimi FROM Ravintolat;", async (err, res) => {
-    if (err) throw err;
-    for (let row of res.rows) {
-      ravintolat.push(row);
+  pool.query(
+    "SELECT RavintolaID, apiid, Nimi FROM Ravintolat;",
+    async (err, res) => {
+      if (err) throw err;
+      for (let row of res.rows) {
+        ravintolat.push(row);
+      }
+      //onko async?
+      done = await poistaTamaViikko();
     }
-    //onko async?
-    done = await poistaTamaViikko();
-
-  });
+  );
   return await done;
-}
-
-
+};
 
 async function poistaTamaViikko() {
   console.log(helpers.date.formatDate(thisWeekMonday));
 
   pool.query(
-    "DELETE FROM ruokalistat WHERE paiva >= " +
-    helpers.date.formatDate(thisWeekMonday) +
-    ";",
+    "DELETE FROM ruokalistat WHERE paiva >= $1;",
+    helpers.date.formatDate(thisWeekMonday),
     async (err, res) => {
       if (err) throw err;
       console.log("Poistetaan rivit joissa paiva >= taman viikon maanantai");
@@ -80,16 +76,16 @@ async function haeDatat() {
         console.error("Error" + err.message);
       });
 
-    if (ravintolatProsessoitu === array.length) {}
+    if (ravintolatProsessoitu === array.length) {
+    }
   });
-  setTimeout(async function () {
+  setTimeout(async function() {
     done = await insertIntoRuokalistat(rowsToInsert);
   }, 10000);
   return done;
 }
 
 async function insertIntoRuokalistat(rivit) {
-
   nestedArray = [];
   rivit.forEach(x => {
     nestedArray.push([x.paiva, x.ravintolaID, x.rivi, x.teksti]);
@@ -104,9 +100,8 @@ async function insertIntoRuokalistat(rivit) {
     if (err) {
       console.log(err);
     } else {
-      console.log(res.rowCount + ' riviä tuotiin');
-      done = 'done';
-
+      console.log(res.rowCount + " riviä tuotiin");
+      done = "done";
     }
   });
   return done;

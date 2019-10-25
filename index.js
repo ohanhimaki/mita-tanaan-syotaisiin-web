@@ -1,6 +1,8 @@
 const dotenv = require("dotenv");
 dotenv.config();
-const { pool } = require("./config");
+const {
+  pool
+} = require("./config");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -28,7 +30,10 @@ const haeRavintolat = (request, response) => {
 };
 
 const lisaaRavintola = (request, response) => {
-  const { apiid, nimi } = request.body;
+  const {
+    apiid,
+    nimi
+  } = request.body;
 
   pool.query(
     "INSERT INTO ravintolat (apiid, nimi) VALUES ($1, $2);",
@@ -119,6 +124,6 @@ app.get("*", (request, response) => {
 });
 
 // Start server
-app.listen(process.env.PORT || 3002, () => {
+app.listen(process.env.PORT || 4200, () => {
   console.log(`Server listening`);
 });
