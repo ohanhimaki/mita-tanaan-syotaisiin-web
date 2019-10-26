@@ -10,13 +10,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { DatePipe } from '@angular/common';
+import { AdminComponent } from './admin/admin/admin.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     LunchDetailsComponent,
-    LunchListComponent
+    LunchListComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,
