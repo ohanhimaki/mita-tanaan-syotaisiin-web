@@ -7,7 +7,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
-const dw = require("./dw/");
+const dw = require("../dw");
+
 
 app.use(bodyParser.json());
 app.use(
@@ -17,7 +18,7 @@ app.use(
 );
 app.use(cors());
 
-var distDir = __dirname + "/dist/";
+var distDir = process.cwd() + "/dist/";
 app.use(express.static(distDir));
 
 const haeRavintolat = (request, response) => {
@@ -91,8 +92,8 @@ app.get("/api/listat", (request, response) => {
   }
 
   pool.query(
-    `SELECT r.*, ra.nimi FROM ruokalistat r left join ravintolat ra on r.ravintolaid = ra.apiid where 
-    (paiva = $1 OR 1 = $2) AND (r.ravintolaid = $3  OR 1 = $4)`,
+    `SELECT r.*, ra.nimi FROM ruokalistat r left join ravintolat ra on r.apiid = ra.apiid where 
+    (paiva = $1 OR 1 = $2) AND (r.apiid = $3  OR 1 = $4)`,
     [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat],
     (error, results) => {
       if (error) {
@@ -104,6 +105,7 @@ app.get("/api/listat", (request, response) => {
 });
 
 app.get("/api/admin/salamoi", async (request, response) => {
+  let apiresponse;
   if (
     !request.header("apiKey") ||
     request.header("apiKey") !== process.env.API_KEY
@@ -113,17 +115,23 @@ app.get("/api/admin/salamoi", async (request, response) => {
       message: "Unauthorized."
     });
   }
+  try {
+    apiresponse = await dw.suoritaDatanLataus();
+    console.log(apiresponse)
 
-  await dw.suoritaDatanLataus();
+  } catch (e) {
+    throw e;
+  }
 
-  response.status(200).json(results.rows);
+  return apiresponse;
+
 });
 
 app.get("*", (request, response) => {
-  response.sendFile(path.join(__dirname, "/dist/", "index.html"));
+  response.sendFile(path.join(__dirname, "//dist/", "index.html"));
 });
 
 // Start server
-app.listen(process.env.PORT || 4200, () => {
+app.listen(process.env.PORT || 3002, () => {
   console.log(`Server listening`);
 });

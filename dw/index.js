@@ -1,6 +1,8 @@
 const dotenv = require("dotenv");
 dotenv.config();
-const { pool } = require("./config");
+const {
+  pool
+} = require("./config");
 const https = require("https");
 const $ = require("cheerio");
 const format = require("pg-format");
@@ -11,7 +13,7 @@ let thisWeekMonday = new Date(helpers.date.getPreviousMonday());
 let ravintolat = [];
 let rowsToInsert = [];
 
-exports.suoritaDatanLataus = async function() {
+exports.suoritaDatanLataus = async function () {
   rowsToInsert = [];
   ravintolat = [];
 
@@ -34,7 +36,7 @@ async function poistaTamaViikko() {
 
   pool.query(
     "DELETE FROM ruokalistat WHERE paiva >= $1;",
-    helpers.date.formatDate(thisWeekMonday),
+    [helpers.date.formatDate(thisWeekMonday)],
     async (err, res) => {
       if (err) throw err;
       console.log("Poistetaan rivit joissa paiva >= taman viikon maanantai");
@@ -76,10 +78,9 @@ async function haeDatat() {
         console.error("Error" + err.message);
       });
 
-    if (ravintolatProsessoitu === array.length) {
-    }
+    if (ravintolatProsessoitu === array.length) {}
   });
-  setTimeout(async function() {
+  setTimeout(async function () {
     done = await insertIntoRuokalistat(rowsToInsert);
   }, 10000);
   return done;
@@ -92,7 +93,7 @@ async function insertIntoRuokalistat(rivit) {
   });
 
   tehtyKysely = format(
-    "INSERT INTO Ruokalistat (paiva, RavintolaID, rivi, teksti) VALUES %L ",
+    "INSERT INTO Ruokalistat (paiva, apiid, rivi, teksti) VALUES %L ",
     nestedArray
   );
 

@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node index.js",
-    "start:dev": "concurrently \"ng serve\"  \"nodemon index.js\"",
+    "start": "node api/index.js",
+    "start:dev": "concurrently \"ng serve\"  \"nodemon api/index.js\"",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -38,6 +38,7 @@
     "https": "^1.0.0",
     "pg": "^7.12.1",
     "pg-format": "^1.0.4",
+    "request": "^2.88.0",
     "rxjs": "~6.5.3",
     "zone.js": "~0.10.2"
   },
