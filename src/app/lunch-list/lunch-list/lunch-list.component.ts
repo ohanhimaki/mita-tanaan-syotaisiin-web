@@ -27,8 +27,6 @@ export class LunchListComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(!this.routeParams.ravid)
-    console.log(!this.routeParams.paiva)
     if (this.routeParams.ravid || this.routeParams.paiva) {
       let paiva = this.routeParams.paiva ? this.routeParams.paiva : null;
       let ravid = this.routeParams.ravid ? this.routeParams.ravid : null;
@@ -52,9 +50,7 @@ export class LunchListComponent implements OnInit {
       .then((lunchListRows: Listrow[]) => {
         this.lunchListRows = lunchListRows
       }).then(x => {
-        console.log(this.lunchListRows);
         this.uniqueRestaurantIDs = this.lunchListRows.map(x => x.apiid).filter(this.getDistinct);
-        console.log(this.uniqueRestaurantIDs);
 
         this.uniqueRestaurantIDs.forEach(x => {
           let tmpList = this.lunchListRows.filter(row => row.apiid === x);

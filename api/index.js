@@ -117,7 +117,6 @@ app.get("/api/admin/salamoi", async (request, response) => {
   }
   try {
     apiresponse = await dw.suoritaDatanLataus();
-    console.log(apiresponse)
 
   } catch (e) {
     throw e;

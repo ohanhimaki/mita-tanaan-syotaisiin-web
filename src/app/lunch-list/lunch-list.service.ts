@@ -17,10 +17,7 @@ export class LunchListService {
   constructor(private http: Http) { }
 
   getLunchListRows(parameters = { paiva: '20191014' }) {
-    console.log(parameters);
-    console.log(this.getApiUrl(parameters))
     let apiurl = environment.apiurl + this.getApiUrl(parameters);
-    console.log(apiurl);
     return this.http.get(apiurl)
       .toPromise()
       .then(response => response.json() as Listrow[])
@@ -30,7 +27,7 @@ export class LunchListService {
   private handleError(error: any) {
     let errMsg = (error.message) ? error.message :
       error.status ? `${error.status} - ${error.statusText}` : 'Server error';
-    console.error(errMsg); // log to console instead
+    console.error(errMsg);
   }
 
   getApiUrl(parameters) {
