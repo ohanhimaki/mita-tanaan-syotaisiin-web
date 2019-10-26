@@ -1,5 +1,5 @@
 export class Listrow {
-    ravintolaid: number;
+    apiid: number;
     nimi: string;
     paiva: number;
     rivi: number;
