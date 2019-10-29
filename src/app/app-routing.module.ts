@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LunchListComponent } from './lunch-list/lunch-list/lunch-list.component';
+import { AdminComponent } from './admin/admin/admin.component';
 
 const routes: Routes = [
   {
@@ -15,7 +16,11 @@ const routes: Routes = [
     component: LunchListComponent
   },
   {
-    path: '**',
+    path: 'admin',
+    component: AdminComponent
+  },
+  {
+    path: '*',
     redirectTo: ''
   }];
 
