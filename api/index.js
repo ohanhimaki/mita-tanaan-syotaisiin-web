@@ -3,6 +3,7 @@ dotenv.config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+var path = require('path');
 const app = express();
 
 app.use(bodyParser.json());
@@ -21,7 +22,7 @@ app.use(express.static(distDir));
 
 
 app.get("*", (request, response) => {
-  response.sendFile(path.join(__dirname, "//dist/", "index.html"));
+  response.sendFile(path.join(__dirname, "../dist/", "index.html"));
 });
 
 // Start server
