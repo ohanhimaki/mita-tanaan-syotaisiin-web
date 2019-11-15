@@ -11,6 +11,8 @@ import { MaterialModule } from './material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { DatePipe } from '@angular/common';
 import { AdminComponent } from './admin/admin/admin.component';
+import { EditRestaurantsComponent } from './admin/edit-restaurants/edit-restaurants.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -18,7 +20,8 @@ import { AdminComponent } from './admin/admin/admin.component';
     AppComponent,
     LunchDetailsComponent,
     LunchListComponent,
-    AdminComponent
+    AdminComponent,
+    EditRestaurantsComponent
   ],
   imports: [
     BrowserModule,
@@ -26,7 +29,8 @@ import { AdminComponent } from './admin/admin/admin.component';
     HttpModule,
     BrowserAnimationsModule,
     MaterialModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    FormsModule
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

@@ -21,5 +21,10 @@ export class AdminService {
 
     let apiurl = environment.apiurl + '/api/admin/salamoi';
     return this.http.get(apiurl, { headers: headers }).toPromise();
+
+  }
+  getRestaurants() {
+    let apiurl = environment.apiurl + '/api/ravintolat';
+    return this.http.get(apiurl).toPromise();
   }
 }
