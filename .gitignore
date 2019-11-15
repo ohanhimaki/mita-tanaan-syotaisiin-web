@@ -102,3 +102,4 @@ public
 
 # Build dir
 dist/
+.vscode/settings.json
