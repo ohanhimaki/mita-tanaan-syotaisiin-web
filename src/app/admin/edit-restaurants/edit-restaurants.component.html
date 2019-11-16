@@ -2,14 +2,35 @@
   <mat-card-title>Ravintolat</mat-card-title>
   <mat-card-subtitle>Muokkaa ravintoloita</mat-card-subtitle>
 </mat-card-header>
-<mat-card-content>
-
-</mat-card-content>
+<mat-card-content> </mat-card-content>
 <mat-card-actions>
-  <mat-select placeholder="Valitse ravintola" [(ngModel)]="restaurant" name="item">
-    <mat-option *ngFor="let restaurant of restaurants" [value]="restaurant.ravintolaid">
-      {{restaurant?.nimi}}
+  <mat-select
+    placeholder="Valitse ravintola"
+    [(ngModel)]="restaurant"
+    name="item"
+  >
+    <mat-option *ngFor="let restaurant of restaurants" [value]="restaurant">
+      {{ restaurant?.nimi }}
     </mat-option>
   </mat-select>
 
+  <mat-form-field>
+    <input matInput [(ngModel)]="restaurant.apiid" placeholder="apiid" />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [(ngModel)]="restaurant.nimi" placeholder="nimi" />
+  </mat-form-field>
+  <mat-form-field>
+    <input
+      matInput
+      [(ngModel)]="restaurant.tassalista"
+      placeholder="tassalista"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [(ngModel)]="restaurant.linkki" placeholder="linkki" />
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="updateRestaurant()">
+    Paivita
+  </button>
 </mat-card-actions>
