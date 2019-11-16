@@ -8,7 +8,7 @@ import { AdminService } from '../admin.service';
 })
 export class AdminComponent implements OnInit {
   private apikey: string;
-  private restaurants: any[];
+  restaurants: any[];
   constructor(private _api: AdminService) { }
 
   ngOnInit() {
