@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { LunchListService } from 'src/app/lunch-list/lunch-list.service';
 import { Restaurant } from 'src/app/restaurant';
+import { AdminService } from '../admin.service';
 
 
 @Component({
@@ -11,14 +11,15 @@ import { Restaurant } from 'src/app/restaurant';
 export class EditRestaurantsComponent implements OnInit {
   @Input() restaurants: any[];
   restaurant = new Restaurant();
-  constructor(private _api: LunchListService) { }
+  apikey = '';
+  constructor(private _api: AdminService) { }
 
   ngOnInit() {
   }
 
   updateRestaurant() {
     console.log(this.restaurant);
-    let vastaus = this._api.updateRestaurant(this.restaurant);
+    let vastaus = this._api.updateRestaurant(this.restaurant, this.apikey);
     console.log(vastaus);
   }
 

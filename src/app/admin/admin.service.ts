@@ -27,4 +27,14 @@ export class AdminService {
     let apiurl = environment.apiurl + '/api/ravintolat';
     return this.http.get(apiurl).toPromise();
   }
+
+  updateRestaurant(parameters, apikey) {
+
+    const headers = new Headers();
+    headers.append('apikey', apikey);
+
+    const apiurl = environment.apiurl + '/api/ravintolapaivita';
+    return this.http.post(apiurl, parameters, { headers: headers }).toPromise();
+
+  }
 }

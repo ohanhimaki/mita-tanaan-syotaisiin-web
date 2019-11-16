@@ -30,6 +30,16 @@ exports.lisaaRavintola = (request, response) => {
 };
 
 exports.muokkaaRavintola = (request, response) => {
+  if (
+    !request.header("apiKey") ||
+    request.header("apiKey") !== process.env.API_KEY
+  ) {
+    return response.status(401).json({
+      status: "error",
+      message: "Unauthorized."
+    });
+  }
+
   const { ravintolaid, apiid, nimi, tassalista, linkki } = request.body;
 
   pool.query(

@@ -39,9 +39,4 @@ export class LunchListService {
     }
   }
 
-  updateRestaurant(parameters) {
-    const apiurl = environment.apiurl + '/api/ravintolapaivita';
-    return this.http.post(apiurl, parameters).toPromise();
-
-  }
 }

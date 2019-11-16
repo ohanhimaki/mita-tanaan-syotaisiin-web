@@ -30,6 +30,9 @@
   <mat-form-field>
     <input matInput [(ngModel)]="restaurant.linkki" placeholder="linkki" />
   </mat-form-field>
+  <mat-form-field>
+    <input matInput [(ngModel)]="apikey" type="password" placeholder="apikey" />
+  </mat-form-field>
   <button mat-raised-button color="primary" (click)="updateRestaurant()">
     Paivita
   </button>
