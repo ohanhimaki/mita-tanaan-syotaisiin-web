@@ -1,9 +1,8 @@
-const {
-  pool
-} = require('../db/db')
+const { pool } = require("../db/db");
 const dw = require("../../dw");
 
 exports.haeRavintolat = (request, response) => {
+  console.log("test");
   pool.query("SELECT * FROM ravintolat;", (error, results) => {
     if (error) {
       throw error;
@@ -13,10 +12,7 @@ exports.haeRavintolat = (request, response) => {
 };
 
 exports.lisaaRavintola = (request, response) => {
-  const {
-    apiid,
-    nimi
-  } = request.body;
+  const { apiid, nimi } = request.body;
 
   pool.query(
     "INSERT INTO ravintolat (apiid, nimi) VALUES ($1, $2);",
@@ -28,6 +24,29 @@ exports.lisaaRavintola = (request, response) => {
       response.status(201).json({
         status: "success",
         message: "Ravintola added."
+      });
+    }
+  );
+};
+
+exports.muokkaaRavintola = (request, response) => {
+  const { ravintolaid, apiid, nimi, tassalista, linkki } = request.body;
+
+  pool.query(
+    `UPDATE ravintolat
+    SET apiid = $1,
+    nimi = $2,
+    tassalista = $3,
+    linkki = $4
+    where ravintolaid = $5`,
+    [apiid, nimi, tassalista, linkki, ravintolaid],
+    error => {
+      if (error) {
+        throw error;
+      }
+      response.status(201).json({
+        status: "success",
+        message: "Ravintola edited."
       });
     }
   );
@@ -52,7 +71,7 @@ exports.haeListat = (request, response) => {
   }
 
   pool.query(
-    `SELECT r.*, ra.nimi FROM ruokalistat r left join ravintolat ra on r.apiid = ra.apiid where 
+    `SELECT r.*, ra.nimi FROM ruokalistat r left join ravintolat ra on r.apiid = ra.apiid where
     (paiva = $1 OR 1 = $2) AND (r.apiid = $3  OR 1 = $4)`,
     [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat],
     (error, results) => {
@@ -77,11 +96,9 @@ exports.salamoi = async (request, response) => {
   }
   try {
     apiresponse = await dw.suoritaDatanLataus();
-
   } catch (e) {
     throw e;
   }
 
   return apiresponse;
-
-}
+};
