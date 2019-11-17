@@ -37,4 +37,12 @@ export class AdminService {
     return this.http.post(apiurl, parameters, { headers: headers }).toPromise();
 
   }
+  addRestaurant(parameters, apikey) {
+    const headers = new Headers();
+    headers.append('apikey', apikey);
+
+    const apiurl = environment.apiurl + '/api/ravintolat';
+    return this.http.post(apiurl, parameters, { headers: headers }).toPromise();
+
+  }
 }

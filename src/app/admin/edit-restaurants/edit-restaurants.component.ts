@@ -18,7 +18,6 @@ export class EditRestaurantsComponent implements OnInit {
   }
 
   updateRestaurant() {
-    console.log(this.restaurant);
     const vastaus = this._api.updateRestaurant(this.restaurant, this.apikey);
     console.log(vastaus);
   }

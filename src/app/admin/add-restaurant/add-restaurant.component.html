@@ -1,1 +1,27 @@
-<p>add-restaurant works!</p>
+<mat-card-header>
+  <mat-card-title>Lisää ravintola</mat-card-title>
+</mat-card-header>
+<mat-card-actions>
+  <mat-form-field>
+    <input matInput [(ngModel)]="restaurant.apiid" placeholder="apiid" />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [(ngModel)]="restaurant.nimi" placeholder="nimi" />
+  </mat-form-field>
+  <mat-form-field>
+    <input
+      matInput
+      [(ngModel)]="restaurant.tassalista"
+      placeholder="tassalista"
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [(ngModel)]="restaurant.linkki" placeholder="linkki" />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [(ngModel)]="apikey" type="password" placeholder="apikey" />
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="addRestaurant()">
+    Paivita
+  </button>
+</mat-card-actions>
