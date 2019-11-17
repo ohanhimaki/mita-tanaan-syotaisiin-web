@@ -21,5 +21,9 @@ export class EditRestaurantsComponent implements OnInit {
     const vastaus = this._api.updateRestaurant(this.restaurant, this.apikey);
     console.log(vastaus);
   }
+  deleteRestaurant() {
+    const vastaus = this._api.deleteRestaurant(this.restaurant, this.apikey);
+    console.log(vastaus);
 
+  }
 }
