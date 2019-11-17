@@ -9,6 +9,7 @@ router
   .post(controller.lisaaRavintola);
 
 router.post("/api/ravintolapaivita", controller.muokkaaRavintola);
+router.post("/api/ravintolapoista", controller.poistaRavintola);
 
 router.get("/api/listat", controller.haeListat);
 

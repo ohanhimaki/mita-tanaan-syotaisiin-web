@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Restaurant } from 'src/app/restaurant';
+import { Restaurant } from 'src/app/shared/models/restaurant';
 import { AdminService } from '../admin.service';
 
 
@@ -18,9 +18,12 @@ export class EditRestaurantsComponent implements OnInit {
   }
 
   updateRestaurant() {
-    console.log(this.restaurant);
-    let vastaus = this._api.updateRestaurant(this.restaurant, this.apikey);
+    const vastaus = this._api.updateRestaurant(this.restaurant, this.apikey);
     console.log(vastaus);
   }
+  deleteRestaurant() {
+    const vastaus = this._api.deleteRestaurant(this.restaurant, this.apikey);
+    console.log(vastaus);
 
+  }
 }

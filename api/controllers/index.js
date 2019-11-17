@@ -12,11 +12,21 @@ exports.haeRavintolat = (request, response) => {
 };
 
 exports.lisaaRavintola = (request, response) => {
-  const { apiid, nimi } = request.body;
+  if (
+    !request.header("apiKey") ||
+    request.header("apiKey") !== process.env.API_KEY
+  ) {
+    return response.status(401).json({
+      status: "error",
+      message: "Unauthorized."
+    });
+  }
+
+  const { ravintolaid, apiid, nimi, tassalista, linkki } = request.body;
 
   pool.query(
-    "INSERT INTO ravintolat (apiid, nimi) VALUES ($1, $2);",
-    [apiid, nimi],
+    "INSERT INTO ravintolat (apiid, nimi, tassalista, linkki) VALUES ($1, $2, $3, $4);",
+    [apiid, nimi, tassalista, linkki],
     error => {
       if (error) {
         throw error;
@@ -24,6 +34,34 @@ exports.lisaaRavintola = (request, response) => {
       response.status(201).json({
         status: "success",
         message: "Ravintola added."
+      });
+    }
+  );
+};
+
+exports.poistaRavintola = (request, response) => {
+  if (
+    !request.header("apiKey") ||
+    request.header("apiKey") !== process.env.API_KEY
+  ) {
+    return response.status(401).json({
+      status: "error",
+      message: "Unauthorized."
+    });
+  }
+
+  const { ravintolaid, apiid, nimi, tassalista, linkki } = request.body;
+
+  pool.query(
+    "DELETE FROM ravintolat WHERE ravintolaid = $1;",
+    [ravintolaid],
+    error => {
+      if (error) {
+        throw error;
+      }
+      response.status(201).json({
+        status: "success",
+        message: "Ravintola deleted."
       });
     }
   );

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Listrow } from '../listrow';
+import { Listrow } from '../../shared/models/listrow';
 
 @Component({
   selector: 'app-lunch-details',

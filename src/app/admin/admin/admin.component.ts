@@ -22,4 +22,5 @@ export class AdminComponent implements OnInit {
   async getRestaurants() {
     this.restaurants = await this._api.getRestaurants().then(x => x.json());
   }
+
 }
