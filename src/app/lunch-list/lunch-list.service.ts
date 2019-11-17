@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Listrow } from './listrow';
+import { Listrow } from '../shared/models/listrow';
 import { Http, Response } from '@angular/http';
 import { environment } from '../../environments/environment';
 
@@ -17,7 +17,7 @@ export class LunchListService {
   constructor(private http: Http) { }
 
   getLunchListRows(parameters = { paiva: '20191014' }) {
-    let apiurl = environment.apiurl + this.getApiUrl(parameters);
+    const apiurl = environment.apiurl + this.getApiUrl(parameters);
     return this.http.get(apiurl)
       .toPromise()
       .then(response => response.json() as Listrow[])
@@ -25,7 +25,7 @@ export class LunchListService {
   }
 
   private handleError(error: any) {
-    let errMsg = (error.message) ? error.message :
+    const errMsg = (error.message) ? error.message :
       error.status ? `${error.status} - ${error.statusText}` : 'Server error';
     console.error(errMsg);
   }
@@ -34,7 +34,7 @@ export class LunchListService {
     if (parameters.ravintolaid) {
       return '/api/listat?ravintolaid=' + parameters.ravintolaid;
     } else {
-      let date = parameters.paiva ? parameters.paiva : 20191021;
+      const date = parameters.paiva ? parameters.paiva : 20191021;
       return '/api/listat?paiva=' + date;
     }
   }
