@@ -1,8 +1,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
-const {
-  pool
-} = require("./config");
+const { pool } = require("./config");
 const https = require("https");
 const $ = require("cheerio");
 const format = require("pg-format");
@@ -13,12 +11,12 @@ let thisWeekMonday = new Date(helpers.date.getPreviousMonday());
 let ravintolat = [];
 let rowsToInsert = [];
 
-exports.suoritaDatanLataus = async function () {
+exports.suoritaDatanLataus = async function() {
   rowsToInsert = [];
   ravintolat = [];
 
   pool.query(
-    "SELECT RavintolaID, apiid, Nimi FROM Ravintolat;",
+    "SELECT RavintolaID, apiid, Nimi FROM Ravintolat where tassalista = 1;",
     async (err, res) => {
       if (err) throw err;
       for (let row of res.rows) {
@@ -78,9 +76,10 @@ async function haeDatat() {
         console.error("Error" + err.message);
       });
 
-    if (ravintolatProsessoitu === array.length) {}
+    if (ravintolatProsessoitu === array.length) {
+    }
   });
-  setTimeout(async function () {
+  setTimeout(async function() {
     done = await insertIntoRuokalistat(rowsToInsert);
   }, 10000);
   return done;
