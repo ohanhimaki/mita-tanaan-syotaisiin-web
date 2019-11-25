@@ -49,6 +49,8 @@
     "@types/jasmine": "~3.4.4",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~12.11.1",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "codelyzer": "~5.1.2",
     "concurrently": "^5.0.0",
     "jasmine-core": "~3.5.0",
