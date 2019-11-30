@@ -9,7 +9,7 @@ import { AdminService } from '../admin.service';
   styleUrls: ['./edit-restaurants.component.scss']
 })
 export class EditRestaurantsComponent implements OnInit {
-  @Input() restaurants: any[];
+  @Input() restaurants: Restaurant[];
   restaurant = new Restaurant();
   apikey = '';
   constructor(private _api: AdminService) { }

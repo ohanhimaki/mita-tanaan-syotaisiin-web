@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { AddRestaurantComponent } from '../add-restaurant/add-restaurant.component';
+import { Restaurant } from 'src/app/shared/models/restaurant';
 
 @Component({
   selector: 'app-admin',
@@ -9,7 +10,7 @@ import { AddRestaurantComponent } from '../add-restaurant/add-restaurant.compone
 })
 export class AdminComponent implements OnInit {
   private apikey: string;
-  restaurants: any[];
+  restaurants: Restaurant[];
   constructor(private _api: AdminService) { }
 
   ngOnInit() {
@@ -21,7 +22,9 @@ export class AdminComponent implements OnInit {
     this._api.salamoiAdmin(event);
   }
   async getRestaurants() {
-    this.restaurants = await this._api.getRestaurants().then(x => x.json());
+    this._api.getRestaurants().subscribe((res => {
+      this.restaurants = res;
+    }));
   }
 
 }

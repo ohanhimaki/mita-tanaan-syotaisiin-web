@@ -2,12 +2,13 @@ import { TestBed } from '@angular/core/testing';
 
 import { AdminService } from './admin.service';
 import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('AdminService', () => {
   beforeEach(() => TestBed.configureTestingModule({
 
     imports: [
-      HttpModule
+      HttpClientModule
     ]
 
   }));

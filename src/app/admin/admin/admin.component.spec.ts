@@ -7,6 +7,7 @@ import { AddRestaurantComponent } from '../add-restaurant/add-restaurant.compone
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('AdminComponent', () => {
   let component: AdminComponent;
@@ -17,7 +18,7 @@ describe('AdminComponent', () => {
       imports: [
         MaterialModule,
         FormsModule,
-        HttpModule,
+        HttpClientModule,
         BrowserAnimationsModule
       ],
       declarations: [AdminComponent,

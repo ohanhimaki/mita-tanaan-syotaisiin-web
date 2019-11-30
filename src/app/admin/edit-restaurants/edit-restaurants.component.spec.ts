@@ -5,6 +5,7 @@ import { MaterialModule } from 'src/app/shared/material.module';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('EditRestaurantsComponent', () => {
   let component: EditRestaurantsComponent;
@@ -15,7 +16,7 @@ describe('EditRestaurantsComponent', () => {
       imports: [
         MaterialModule,
         FormsModule,
-        HttpModule,
+        HttpClientModule,
         BrowserAnimationsModule
       ],
       declarations: [EditRestaurantsComponent]
