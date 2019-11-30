@@ -7,7 +7,7 @@ import { Listrow } from '../../shared/models/listrow';
   styleUrls: ['./lunch-details.component.scss']
 })
 export class LunchDetailsComponent implements OnInit {
-  @Input() lunchList: Listrow;
+  @Input() lunchList: Listrow[];
 
 
   constructor() { }
