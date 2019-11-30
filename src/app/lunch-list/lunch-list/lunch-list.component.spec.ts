@@ -4,7 +4,7 @@ import { LunchListComponent } from './lunch-list.component';
 import { MaterialModule } from 'src/app/shared/material.module';
 import { LunchDetailsComponent } from '../lunch-details/lunch-details.component';
 import { HttpModule } from '@angular/http';
-import { DatePipe } from '@angular/common';
+import { DatePipe, APP_BASE_HREF } from '@angular/common';
 import { AppRoutingModule } from 'src/app/app-routing.module';
 import { AdminComponent } from 'src/app/admin/admin/admin.component';
 import { EditRestaurantsComponent } from 'src/app/admin/edit-restaurants/edit-restaurants.component';
@@ -29,7 +29,8 @@ describe('LunchListComponent', () => {
         EditRestaurantsComponent,
         AddRestaurantComponent
       ],
-      providers: [DatePipe]
+      providers: [DatePipe,
+        { provide: APP_BASE_HREF, useValue: '/' }]
     })
       .compileComponents();
   }));
