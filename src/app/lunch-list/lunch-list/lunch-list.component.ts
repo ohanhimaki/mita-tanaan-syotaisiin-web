@@ -49,6 +49,9 @@ export class LunchListComponent implements OnInit {
       .getLunchListRows(this.lunchlistparams)
       .then((lunchListRows: Listrow[]) => {
         this.lunchListRows = lunchListRows;
+        if (!this.lunchListRows) {
+          return;
+        }
       }).then(x => {
         this.uniqueRestaurantIDs = this.lunchListRows.map(x => x.apiid).filter(this.getDistinct);
 
