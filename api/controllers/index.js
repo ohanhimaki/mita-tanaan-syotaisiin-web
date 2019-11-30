@@ -2,7 +2,6 @@ const { pool } = require("../db/db");
 const dw = require("../../dw");
 
 exports.haeRavintolat = (request, response) => {
-  console.log("test");
   pool.query("SELECT * FROM ravintolat;", (error, results) => {
     if (error) {
       throw error;

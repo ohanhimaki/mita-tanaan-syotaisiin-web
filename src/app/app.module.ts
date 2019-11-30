@@ -9,7 +9,7 @@ import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './shared/material.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { DatePipe } from '@angular/common';
+import { DatePipe, APP_BASE_HREF } from '@angular/common';
 import { AdminComponent } from './admin/admin/admin.component';
 import { EditRestaurantsComponent } from './admin/edit-restaurants/edit-restaurants.component';
 import { FormsModule } from '@angular/forms';
@@ -34,7 +34,8 @@ import { AddRestaurantComponent } from './admin/add-restaurant/add-restaurant.co
     FlexLayoutModule,
     FormsModule
   ],
-  providers: [DatePipe],
+  providers: [DatePipe,
+    { provide: APP_BASE_HREF, useValue: '/' }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

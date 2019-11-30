@@ -1,6 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditRestaurantsComponent } from './edit-restaurants.component';
+import { MaterialModule } from 'src/app/shared/material.module';
+import { FormsModule } from '@angular/forms';
+import { HttpModule } from '@angular/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('EditRestaurantsComponent', () => {
   let component: EditRestaurantsComponent;
@@ -8,9 +12,15 @@ describe('EditRestaurantsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EditRestaurantsComponent ]
+      imports: [
+        MaterialModule,
+        FormsModule,
+        HttpModule,
+        BrowserAnimationsModule
+      ],
+      declarations: [EditRestaurantsComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
