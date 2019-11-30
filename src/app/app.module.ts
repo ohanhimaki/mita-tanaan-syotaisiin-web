@@ -14,6 +14,7 @@ import { AdminComponent } from './admin/admin/admin.component';
 import { EditRestaurantsComponent } from './admin/edit-restaurants/edit-restaurants.component';
 import { FormsModule } from '@angular/forms';
 import { AddRestaurantComponent } from './admin/add-restaurant/add-restaurant.component';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { AddRestaurantComponent } from './admin/add-restaurant/add-restaurant.co
     BrowserAnimationsModule,
     MaterialModule,
     FlexLayoutModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   providers: [DatePipe,
     { provide: APP_BASE_HREF, useValue: '/' }],
