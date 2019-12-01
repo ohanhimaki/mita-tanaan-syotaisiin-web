@@ -1,0 +1,33 @@
+<mat-card-header>
+  <mat-card-title>Listat</mat-card-title>
+  <mat-card-subtitle>Muokkaa käsin ylläpidettäviä listoja</mat-card-subtitle>
+</mat-card-header>
+<mat-card-content> </mat-card-content>
+<mat-card-actions>
+  <mat-select
+    placeholder="Valitse ravintola"
+    [(ngModel)]="restaurant"
+    name="item"
+    (selectionChange)="getHandEdited()"
+  >
+    <mat-option
+      *ngFor="let restaurant of restaurantsFiltered"
+      [value]="restaurant"
+    >
+      {{ restaurant?.nimi }}
+    </mat-option>
+  </mat-select>
+
+  <mat-form-field *ngFor="let row of handEditedrows">
+    <input matInput [(ngModel)]="row.teksti" placeholder="tekstiä" />
+  </mat-form-field>
+  <mat-form-field>
+    <input matInput [(ngModel)]="apikey" type="password" placeholder="apikey" />
+  </mat-form-field>
+  <button mat-raised-button color="primary" (click)="newHandEditedRow()">
+    Lisää rivi
+  </button>
+  <button mat-raised-button color="primary" (click)="updateHandEdited()">
+    Paivita
+  </button>
+</mat-card-actions>
