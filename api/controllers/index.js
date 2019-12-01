@@ -166,16 +166,7 @@ exports.createHandEditedRow = (request, response) => {
   pool.query(
     `DELETE FROM kasinpaivitetytlistat
     WHERE ravintolaID = $1`,
-    [ravintolaid],
-    error => {
-      if (error) {
-        throw error;
-      }
-      response.status(201).json({
-        status: "success",
-        message: "Delete kasinpaivitetytlistat before inserting news"
-      });
-    }
+    [ravintolaid]
   );
   pool.query(
     `INSERT INTO kasinpaivitetytlistat (ravintolaid, rivi, teksti)
