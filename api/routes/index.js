@@ -17,5 +17,7 @@ router.route("/api/handedited").post(controller.createHandEditedRow);
 router.get("/api/listat", controller.haeListat);
 
 router.get("/api/admin/salamoi", controller.salamoi);
+router.get("/api/lunchofdayGen", controller.generateLunchOfDay);
 
+router.get("/api/lunchofday", controller.getLunchOfDay);
 module.exports = router;
