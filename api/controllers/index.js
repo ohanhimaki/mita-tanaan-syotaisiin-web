@@ -195,10 +195,14 @@ exports.createHandEditedRow = (request, response) => {
 };
 
 exports.readHandEditedRow = (request, response) => {
-  pool.query("SELECT * FROM kasinpaivitetytlistat;", (error, results) => {
-    if (error) {
-      throw error;
+  pool.query(
+    "SELECT * FROM kasinpaivitetytlistat WHERE ravintolaid = $1;",
+    [request.query.ravintolaid],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
     }
-    response.status(200).json(results.rows);
-  });
+  );
 };

@@ -8,7 +8,7 @@
     placeholder="Valitse ravintola"
     [(ngModel)]="restaurant"
     name="item"
-    (selectionChange)="getHandEdited()"
+    (selectionChange)="getHandEdited(restaurant)"
   >
     <mat-option
       *ngFor="let restaurant of restaurantsFiltered"

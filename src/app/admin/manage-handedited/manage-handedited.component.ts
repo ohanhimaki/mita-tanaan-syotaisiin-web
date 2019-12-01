@@ -35,7 +35,7 @@ export class ManageHandeditedComponent implements OnInit, OnChanges {
     });
   }
   getHandEdited(restaurant: Restaurant) {
-    this._api.getHandEditedRows().subscribe((res => {
+    this._api.getHandEditedRows(restaurant).subscribe((res => {
       this.handEditedrows = res;
     }));
   }

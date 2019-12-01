@@ -29,8 +29,8 @@ export class AdminService {
     const apiurl = environment.apiurl + '/api/ravintolat';
     return this.http.get<Restaurant[]>(apiurl);
   }
-  getHandEditedRows() {
-    const apiurl = environment.apiurl + '/api/handedited';
+  getHandEditedRows(parameters) {
+    const apiurl = environment.apiurl + '/api/handedited?ravintolaid=' + parameters.ravintolaid;
     return this.http.get<Handeditedrow[]>(apiurl);
   }
 
