@@ -11,10 +11,8 @@ router
 router.post("/api/ravintolapaivita", controller.muokkaaRavintola);
 router.post("/api/ravintolapoista", controller.poistaRavintola);
 
-router
-  .route("api/handedited")
-  .get(controller.readHandEditedRow)
-  .post(controller.createHandEditedRow);
+router.route("/api/handedited").get(controller.readHandEditedRow);
+router.route("/api/handedited").post(controller.createHandEditedRow);
 
 router.get("/api/listat", controller.haeListat);
 
