@@ -118,8 +118,21 @@ exports.haeListat = (request, response) => {
   }
 
   pool.query(
-    `SELECT r.*, ra.nimi FROM ruokalistat r left join ravintolat ra on r.apiid = ra.apiid where
-    (paiva = $1 OR 1 = $2) AND (r.apiid = $3  OR 1 = $4)`,
+    `SELECT r.*, ra.nimi
+FROM ruokalistat r
+left join ravintolat ra on r.apiid = ra.apiid
+where (paiva = $1 OR 1 = $2) AND (r.apiid = $3  OR 1 = $4)
+
+UNION
+
+SELECT CASE WHEN $2 = 1 then 20191201 else $1 end paiva,
+0 as apiid,
+kpl.rivi rivi,
+kpl.teksti teksti,
+r.nimi nimi
+from kasinpaivitetytlistat kpl
+left join ravintolat r on kpl.ravintolaid = r.ravintolaid
+where r.nimi is not null`,
     [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat],
     (error, results) => {
       if (error) {
@@ -148,4 +161,52 @@ exports.salamoi = async (request, response) => {
   }
 
   return apiresponse;
+};
+
+exports.createHandEditedRow = (request, response) => {
+  if (
+    !request.header("apiKey") ||
+    request.header("apiKey") !== process.env.API_KEY
+  ) {
+    return response.status(401).json({
+      status: "error",
+      message: "Unauthorized."
+    });
+  }
+
+  const { ravintolaid, rivi, teksti } = request.body;
+
+  pool.query(
+    `DELETE FROM kasinpaivitetytlistat
+    WHERE ravintolaID = $1`,
+    [ravintolaid]
+  );
+  pool.query(
+    `INSERT INTO kasinpaivitetytlistat (ravintolaid, rivi, teksti)
+    VALUES ($1, $2, $3)
+    `,
+    [ravintolaid, rivi, teksti],
+    error => {
+      if (error) {
+        throw error;
+      }
+      response.status(201).json({
+        status: "success",
+        message: "Create rows"
+      });
+    }
+  );
+};
+
+exports.readHandEditedRow = (request, response) => {
+  pool.query(
+    "SELECT * FROM kasinpaivitetytlistat WHERE ravintolaid = $1;",
+    [request.query.ravintolaid],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
 };

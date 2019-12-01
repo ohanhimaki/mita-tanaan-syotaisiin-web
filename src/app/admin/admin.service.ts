@@ -3,6 +3,7 @@ import { Http, RequestOptions } from '@angular/http';
 import { environment } from 'src/environments/environment';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Restaurant } from '../shared/models/restaurant';
+import { Handeditedrow } from '../shared/models/handeditedrow';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +14,10 @@ export class AdminService {
 
   salamoiAdmin(apikey) {
     const options2 = new URLSearchParams();
-    options2.append('apikey', apikey);
+    options2.set('apikey', apikey);
 
-    const headers = new HttpHeaders();
-    headers.append('apikey', apikey);
+    let headers = new HttpHeaders();
+    headers = headers.set('apikey', apikey);
 
     console.log(options2);
 
@@ -28,28 +29,39 @@ export class AdminService {
     const apiurl = environment.apiurl + '/api/ravintolat';
     return this.http.get<Restaurant[]>(apiurl);
   }
+  getHandEditedRows(parameters) {
+    const apiurl = environment.apiurl + '/api/handedited?ravintolaid=' + parameters.ravintolaid;
+    return this.http.get<Handeditedrow[]>(apiurl);
+  }
 
   updateRestaurant(parameters: Restaurant, apikey: string) {
 
-    const headers = new HttpHeaders();
-    headers.append('apikey', apikey);
-
+    let headers = new HttpHeaders();
+    headers = headers.set('apikey', apikey);
     const apiurl = environment.apiurl + '/api/ravintolapaivita';
+    return this.http.post(apiurl, parameters, { headers: headers }).toPromise();
+
+  }
+  updateHandEditedRows(parameters: Handeditedrow, apikey: string) {
+
+    let headers = new HttpHeaders();
+    headers = headers.set('apikey', apikey);
+    const apiurl = environment.apiurl + '/api/handedited';
     return this.http.post(apiurl, parameters, { headers: headers }).toPromise();
 
   }
   deleteRestaurant(parameters: Restaurant, apikey: string) {
 
-    const headers = new HttpHeaders();
-    headers.append('apikey', apikey);
+    let headers = new HttpHeaders();
+    headers = headers.set('apikey', apikey);
 
     const apiurl = environment.apiurl + '/api/ravintolapoista';
     return this.http.post(apiurl, parameters, { headers: headers }).toPromise();
 
   }
   addRestaurant(parameters, apikey) {
-    const headers = new HttpHeaders();
-    headers.append('apikey', apikey);
+    let headers = new HttpHeaders();
+    headers = headers.set('apikey', apikey);
 
     const apiurl = environment.apiurl + '/api/ravintolat';
     return this.http.post(apiurl, parameters, { headers: headers }).toPromise();

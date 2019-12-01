@@ -15,6 +15,7 @@ import { EditRestaurantsComponent } from './admin/edit-restaurants/edit-restaura
 import { FormsModule } from '@angular/forms';
 import { AddRestaurantComponent } from './admin/add-restaurant/add-restaurant.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ManageHandeditedComponent } from './admin/manage-handedited/manage-handedited.component';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
     LunchListComponent,
     AdminComponent,
     EditRestaurantsComponent,
-    AddRestaurantComponent
+    AddRestaurantComponent,
+    ManageHandeditedComponent
   ],
   imports: [
     BrowserModule,
