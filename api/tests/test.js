@@ -48,3 +48,17 @@ describe("Ruokalistat", function() {
     });
   });
 });
+
+describe("Kasinpaivitetyt listat", function() {
+  describe("#haeListat()", function() {
+    it("Palauttaa status 200 ", done => {
+      chai
+        .request(app)
+        .get("/api/handedited")
+        .then(res => {
+          expect(res).to.have.status(200);
+          done();
+        });
+    });
+  });
+});
