@@ -210,3 +210,56 @@ exports.readHandEditedRow = (request, response) => {
     }
   );
 };
+
+exports.generateLunchOfDay = (request, response) => {
+  pool.query(
+    `INSERT INTO lunchofday
+SELECT x.paiva, x.apiid, x.nimi, string_agg(x.teksti, ' <br>' )
+from (
+SELECT r.*, ra.nimi
+FROM ruokalistat r
+left join ravintolat ra on r.apiid = ra.apiid
+where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
+
+UNION
+
+SELECT to_number(to_char(now(), 'YYYYMMDD'), '99999999') paiva,
+0 as apiid,
+kpl.rivi rivi,
+kpl.teksti teksti,
+r.nimi nimi
+from kasinpaivitetytlistat kpl
+left join ravintolat r on kpl.ravintolaid = r.ravintolaid
+where r.nimi is not null
+) x
+left join lunchofday l on l.paiva = x.paiva
+where l.paiva is NULL
+group by x.paiva, x.apiid, x.nimi
+order by RANDOM()
+LIMIT 1;`,
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(201).json({
+        status: "Success",
+        message: "Lunchofday Generated"
+      });
+    }
+  );
+};
+
+exports.getLunchOfDay = (request, response) => {
+  pool.query(
+    `SELECT *
+from lunchofday
+where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
+;`,
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
