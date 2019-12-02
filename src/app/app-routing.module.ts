@@ -2,17 +2,21 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LunchListComponent } from './lunch-list/lunch-list/lunch-list.component';
 import { AdminComponent } from './admin/admin/admin.component';
+import { LunchofdayComponent } from './lunchofday/lunchofday/lunchofday.component';
 
 const routes: Routes = [
   {
     path: '',
+    component: LunchofdayComponent
+  }, {
+    path: 'lista',
     component: LunchListComponent
   }, {
-    path: 'ravintola/:ravid',
+    path: 'lista/ravintola/:ravid',
     component: LunchListComponent
   },
   {
-    path: 'paiva/:paiva',
+    path: 'lista/paiva/:paiva',
     component: LunchListComponent
   },
   {

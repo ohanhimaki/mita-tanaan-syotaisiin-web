@@ -1,6 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LunchofdayTodayComponent } from './lunchofday-today.component';
+import { MaterialModule } from 'src/app/shared/material.module';
 
 describe('LunchofdayTodayComponent', () => {
   let component: LunchofdayTodayComponent;
@@ -8,9 +9,10 @@ describe('LunchofdayTodayComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LunchofdayTodayComponent ]
+      imports: [MaterialModule],
+      declarations: [LunchofdayTodayComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
