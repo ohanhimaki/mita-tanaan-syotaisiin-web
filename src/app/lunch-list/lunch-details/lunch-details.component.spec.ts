@@ -2,7 +2,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LunchDetailsComponent } from './lunch-details.component';
 import { MaterialModule } from 'src/app/shared/material.module';
-import { exec } from 'child_process';
 
 describe('LunchDetailsComponent', () => {
   let component: LunchDetailsComponent;
