@@ -118,7 +118,8 @@ exports.haeListat = (request, response) => {
   }
 
   pool.query(
-    `SELECT r.*, ra.nimi
+    `SELECT *
+    FROM (SELECT r.*, ra.nimi
 FROM ruokalistat r
 left join ravintolat ra on r.apiid = ra.apiid
 where (paiva = $1 OR 1 = $2) AND (r.apiid = $3  OR 1 = $4)
@@ -132,7 +133,9 @@ kpl.teksti teksti,
 r.nimi nimi
 from kasinpaivitetytlistat kpl
 left join ravintolat r on kpl.ravintolaid = r.ravintolaid
-where r.nimi is not null`,
+where r.nimi is not null
+) x
+order by paiva, nimi, apiid,  rivi`,
     [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat],
     (error, results) => {
       if (error) {
