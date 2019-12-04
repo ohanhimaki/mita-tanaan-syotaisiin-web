@@ -1,4 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { LunchofdayService } from '../lunchofday.service';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { Lunchofday } from 'src/app/shared/models/lunchofday';
 
 @Component({
   selector: 'app-lunchofday-history',
@@ -7,10 +10,18 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LunchofdayHistoryComponent implements OnInit {
+  private lunchofdayHistory: BehaviorSubject<Lunchofday> = new BehaviorSubject(null);
+  public lunchofdayHistory$: Observable<Lunchofday> = this.lunchofdayHistory.asObservable();
 
-  constructor() { }
+  constructor(private _api: LunchofdayService) { }
 
   ngOnInit() {
+    this._api.getLunchOfDayHistory().subscribe((res => {
+      this.lunchofdayHistory.next(res);
+
+    }));
   }
+
+
 
 }

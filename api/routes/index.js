@@ -20,4 +20,5 @@ router.get("/api/admin/salamoi", controller.salamoi);
 router.get("/api/lunchofdayGen", controller.generateLunchOfDay);
 
 router.get("/api/lunchofday", controller.getLunchOfDay);
+router.get("/api/lunchofdayhistory", controller.getLunchOfDayHistory);
 module.exports = router;

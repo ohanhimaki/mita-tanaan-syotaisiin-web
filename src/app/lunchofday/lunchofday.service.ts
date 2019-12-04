@@ -16,4 +16,7 @@ export class LunchofdayService {
   getLunchOfDay() {
     return this.http.get<Lunchofday>(environment.apiurl + '/api/lunchofday');
   }
+  getLunchOfDayHistory() {
+    return this.http.get<Lunchofday>(environment.apiurl + '/api/lunchofdayhistory');
+  }
 }
