@@ -272,7 +272,8 @@ exports.getLunchOfDayHistory = (request, response) => {
     `SELECT *
 from lunchofday
 where paiva != to_number(to_char(now(), 'YYYYMMDD'), '99999999')
-ORDER BY paiva DESC;`,
+ORDER BY paiva DESC
+LIMIT 5;`,
     (error, results) => {
       if (error) {
         throw error;
