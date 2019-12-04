@@ -1,4 +1,4 @@
-<mat-card *ngIf="lunchofday$">
+<mat-card *ngIf="lunchofday$ | async">
   <mat-card-header>
     <mat-card-title> {{ (lunchofday$ | async)?.nimi }} </mat-card-title>
 
@@ -10,4 +10,10 @@
   >
   </mat-card-content>
   <mat-card-actions> </mat-card-actions>
+</mat-card>
+
+<mat-card *ngIf="!(lunchofday$ | async)">
+  <mat-card-content>
+    Päivän lounaspaikkaa ei ole vielä arvottu! Tule myöhemmin uudelleen!
+  </mat-card-content>
 </mat-card>
