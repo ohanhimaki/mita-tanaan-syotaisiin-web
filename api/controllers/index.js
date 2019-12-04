@@ -266,3 +266,18 @@ where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
     }
   );
 };
+
+exports.getLunchOfDayHistory = (request, response) => {
+  pool.query(
+    `SELECT *
+from lunchofday
+where paiva != to_number(to_char(now(), 'YYYYMMDD'), '99999999')
+ORDER BY paiva DESC;`,
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).json(results.rows);
+    }
+  );
+};
