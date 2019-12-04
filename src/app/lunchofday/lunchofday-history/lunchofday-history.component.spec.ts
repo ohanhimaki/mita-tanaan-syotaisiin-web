@@ -2,6 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LunchofdayHistoryComponent } from './lunchofday-history.component';
 import { MaterialModule } from 'src/app/shared/material.module';
+import { HttpClientModule } from '@angular/common/http';
 
 describe('LunchofdayHistoryComponent', () => {
   let component: LunchofdayHistoryComponent;
@@ -9,7 +10,8 @@ describe('LunchofdayHistoryComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [MaterialModule],
+      imports: [MaterialModule,
+        HttpClientModule],
       declarations: [LunchofdayHistoryComponent]
     })
       .compileComponents();
