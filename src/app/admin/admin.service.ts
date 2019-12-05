@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Restaurant } from '../shared/models/restaurant';
 import { Handeditedrow } from '../shared/models/handeditedrow';
+import { Restaurantgenre } from '../shared/models/restaurantgenre';
 
 @Injectable({
   providedIn: 'root'
@@ -28,6 +29,10 @@ export class AdminService {
   getRestaurants() {
     const apiurl = environment.apiurl + '/api/ravintolat';
     return this.http.get<Restaurant[]>(apiurl);
+  }
+  getRestaurantGenres() {
+    const apiurl = environment.apiurl + '/api/restaurantGenre';
+    return this.http.get<Restaurantgenre[]>(apiurl);
   }
   getHandEditedRows(parameters) {
     const apiurl = environment.apiurl + '/api/handedited?ravintolaid=' + parameters.ravintolaid;
@@ -65,6 +70,26 @@ export class AdminService {
 
     const apiurl = environment.apiurl + '/api/ravintolat';
     return this.http.post(apiurl, parameters, { headers: headers }).toPromise();
+
+  }
+  updateRestaurantGenre(parameters: Restaurantgenre, apikey: string) {
+
+    let headers = new HttpHeaders();
+    headers = headers.set('apikey', apikey);
+    const apiurl = environment.apiurl + '/api/restaurantgenre';
+    return this.http.put(apiurl, parameters, { headers: headers }).toPromise();
+
+  }
+  deleteRestaurantGenre(parameters: Restaurantgenre, apikey: string) {
+
+    let headers = new HttpHeaders();
+    headers = headers.set('apikey', apikey);
+    const body = {
+      genreid: parameters.genreid
+    };
+    const options = { headers, body };
+    const apiurl = environment.apiurl + '/api/restaurantgenre';
+    return this.http.delete(apiurl, options).toPromise();
 
   }
 }
