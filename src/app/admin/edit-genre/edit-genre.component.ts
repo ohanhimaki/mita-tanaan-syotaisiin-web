@@ -18,11 +18,25 @@ export class EditGenreComponent implements OnInit {
   }
   updateRestaurantGenre() {
     const response = this._api.updateRestaurantGenre(this.restaurantGenre, this.apikey);
+
+    response.catch(x => {
+      console.log(x);
+      alert('Error ' + x.status + ' ' + x.statusText);
+    });
+
   }
   deleteRestaurantGenre() {
     const response = this._api.deleteRestaurantGenre(this.restaurantGenre, this.apikey);
+    response.catch(x => {
+      console.log(x);
+      alert('Error ' + x.status + ' ' + x.statusText);
+    });
   }
   createRestaurantGenre() {
     const response = this._api.createRestaurantGenre(this.restaurantGenre, this.apikey);
+    response.catch(x => {
+      console.log(x);
+      alert('Error ' + x.status + ' ' + x.statusText);
+    });
   }
 }

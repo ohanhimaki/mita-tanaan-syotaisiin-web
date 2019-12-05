@@ -32,17 +32,31 @@ export class EditRestaurantsComponent implements OnInit {
 
   addGenreToRestaurant() {
     const vastaus = this._api.addGenreToRestaurant(this.restaurant, this.restaurantGenre, this.apikey);
+    vastaus.catch(x => {
+      console.log(x);
+      alert('Error ' + x.status + ' ' + x.statusText);
+    });
   }
   updateRestaurant() {
     const vastaus = this._api.updateRestaurant(this.restaurant, this.apikey);
-    console.log(vastaus);
+    vastaus.catch(x => {
+      console.log(x);
+      alert('Error ' + x.status + ' ' + x.statusText);
+    });
   }
   deleteRestaurant() {
     const vastaus = this._api.deleteRestaurant(this.restaurant, this.apikey);
-    console.log(vastaus);
+    vastaus.catch(x => {
+      console.log(x);
+      alert('Error ' + x.status + ' ' + x.statusText);
+    });
 
   }
   removeGenre(params: Genreofrestaurant) {
     const vastaus = this._api.deleteGenreofRestaurant(params, this.apikey);
+    vastaus.catch(x => {
+      console.log(x);
+      alert('Error ' + x.status + ' ' + x.statusText);
+    });
   }
 }
