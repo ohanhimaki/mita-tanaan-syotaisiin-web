@@ -62,3 +62,18 @@ describe("Kasinpaivitetyt listat", function() {
     });
   });
 });
+
+describe("Read RestaurantGenre", function() {
+  describe("#readRestaurantGenre()", function() {
+    it("Palauttaa status 200 ja vähintään yhden rivin", done => {
+      chai
+        .request(app)
+        .get("/api/restaurantgenre")
+        .then(res => {
+          expect(res).to.have.status(200);
+          expect(res.body).length.greaterThan(0);
+          done();
+        });
+    });
+  });
+});

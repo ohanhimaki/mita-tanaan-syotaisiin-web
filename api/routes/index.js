@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const controller = require("../controllers");
 const { pool } = require("../db/db");
+const restaurantgenre = require("./restaurantgenre");
 
 router
   .route("/api/ravintolat")
@@ -21,4 +22,6 @@ router.get("/api/lunchofdayGen", controller.generateLunchOfDay);
 
 router.get("/api/lunchofday", controller.getLunchOfDay);
 router.get("/api/lunchofdayhistory", controller.getLunchOfDayHistory);
+router.use(restaurantgenre);
+
 module.exports = router;
