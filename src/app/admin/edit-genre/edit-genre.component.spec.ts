@@ -1,6 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditGenreComponent } from './edit-genre.component';
+import { MaterialModule } from 'src/app/shared/material.module';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('EditGenreComponent', () => {
   let component: EditGenreComponent;
@@ -8,9 +12,14 @@ describe('EditGenreComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EditGenreComponent ]
+      imports: [MaterialModule,
+        FormsModule,
+        HttpClientModule,
+        BrowserAnimationsModule
+      ],
+      declarations: [EditGenreComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
