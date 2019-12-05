@@ -51,19 +51,19 @@ exports.updateRestaurantGenre = (request, response) => {
     });
   }
 
-  const { genreName, genreID } = request.body;
+  const { genreid, genrename } = request.body;
   pool.query(
     `UPDATE restaurantGenre
       SET GenreName = $1
     WHERE GenreID = $2;`,
-    [genreName, genreID],
+    [genrename, genreid],
     (error, results) => {
       if (error) {
         throw error;
       }
       response.status(201).json({
         status: "success",
-        message: "restaurantGenre successfully updated"
+        message: "restaurantGenre successfully updated to " + genrename
       });
     }
   );
@@ -79,12 +79,11 @@ exports.deleteRestaurantGenre = (request, response) => {
       message: "Unauthorized."
     });
   }
-
-  const { genreName, genreID } = request.body;
+  const { genreid } = request.body;
   pool.query(
-    `DELETE restaurantgenre
+    `DELETE from restaurantgenre
     WHERE GenreID = $1;`,
-    [genreID],
+    [genreid],
     (error, results) => {
       if (error) {
         throw error;
