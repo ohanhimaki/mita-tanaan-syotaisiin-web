@@ -22,4 +22,7 @@ export class EditGenreComponent implements OnInit {
   deleteRestaurantGenre() {
     const response = this._api.deleteRestaurantGenre(this.restaurantGenre, this.apikey);
   }
+  createRestaurantGenre() {
+    const response = this._api.createRestaurantGenre(this.restaurantGenre, this.apikey);
+  }
 }

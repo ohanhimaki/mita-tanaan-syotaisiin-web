@@ -80,6 +80,14 @@ export class AdminService {
     return this.http.put(apiurl, parameters, { headers: headers }).toPromise();
 
   }
+  createRestaurantGenre(parameters: Restaurantgenre, apikey: string) {
+
+    let headers = new HttpHeaders();
+    headers = headers.set('apikey', apikey);
+    const apiurl = environment.apiurl + '/api/restaurantgenre';
+    return this.http.post(apiurl, parameters, { headers: headers }).toPromise();
+
+  }
   deleteRestaurantGenre(parameters: Restaurantgenre, apikey: string) {
 
     let headers = new HttpHeaders();

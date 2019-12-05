@@ -24,11 +24,11 @@ exports.createRestaurantGenre = (request, response) => {
     });
   }
 
-  const { genreName } = request.body;
+  const { genrename } = request.body;
   pool.query(
     `INSERT INTO restaurantGenre
     (GenreName) VALUES ($1);`,
-    [genreName],
+    [genrename],
     (error, results) => {
       if (error) {
         throw error;
