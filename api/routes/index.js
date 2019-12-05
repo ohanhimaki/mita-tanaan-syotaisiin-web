@@ -3,7 +3,7 @@ const router = express.Router();
 const controller = require("../controllers");
 const { pool } = require("../db/db");
 const restaurantgenre = require("./restaurantgenre");
-
+const genreofrestaurant = require("./GenreOfRestaurantroute");
 router
   .route("/api/ravintolat")
   .get(controller.haeRavintolat)
@@ -22,6 +22,8 @@ router.get("/api/lunchofdayGen", controller.generateLunchOfDay);
 
 router.get("/api/lunchofday", controller.getLunchOfDay);
 router.get("/api/lunchofdayhistory", controller.getLunchOfDayHistory);
+
 router.use(restaurantgenre);
+router.use(genreofrestaurant);
 
 module.exports = router;
