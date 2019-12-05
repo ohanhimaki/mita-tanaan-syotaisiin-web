@@ -8,6 +8,7 @@
     placeholder="Valitse ravintola"
     [(ngModel)]="restaurant"
     name="item"
+    (selectionChange)="restaurantSelectionChanges()"
   >
     <mat-option *ngFor="let restaurant of restaurants" [value]="restaurant">
       {{ restaurant?.nimi }}
@@ -30,11 +31,29 @@
   <mat-form-field>
     <input matInput [(ngModel)]="restaurant.linkki" placeholder="linkki" />
   </mat-form-field>
+  <ng-container *ngFor="let genre of genresofrestaurant$ | async">
+    <mat-card-content [innerHTML]="genre.genrename"> </mat-card-content>
+    <button mat-raised-button color="primary" (click)="removeGenre(genre)">
+      Poista
+    </button>
+  </ng-container>
+  <mat-select
+    placeholder="Valitse genre"
+    [(ngModel)]="restaurantGenre"
+    name="item"
+  >
+    <mat-option *ngFor="let genre of restaurantGenres" [value]="genre">
+      {{ genre?.genrename }}
+    </mat-option>
+  </mat-select>
   <mat-form-field>
     <input matInput [(ngModel)]="apikey" type="password" placeholder="apikey" />
   </mat-form-field>
   <button mat-raised-button color="primary" (click)="updateRestaurant()">
     Paivita
+  </button>
+  <button mat-raised-button color="primary" (click)="addGenreToRestaurant()">
+    Lisää genre ravintolalle.
   </button>
   <button mat-raised-button color="primary" (click)="deleteRestaurant()">
     poista

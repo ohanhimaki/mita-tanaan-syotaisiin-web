@@ -4,8 +4,9 @@ exports.read = (request, response) => {
   let restaurantid = request.query.restaurantid;
 
   pool.query(
-    `SELECT *
-    FROM genreofrestaurant
+    `SELECT gg.genrename, g.genreid, g.restaurantid
+from genreofrestaurant g
+left join restaurantgenre gg on g.genreid = gg.genreid
     WHERE restaurantid = $1;`,
     [restaurantid],
     (error, results) => {
