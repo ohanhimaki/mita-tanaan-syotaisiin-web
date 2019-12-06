@@ -24,8 +24,10 @@ app.get("*", (request, response) => {
 });
 
 // Start server
-app.listen(process.env.PORT || 3002, () => {
-  console.log(`Server listening`);
-});
+if (!module.parent) {
+  app.listen(process.env.PORT || 3002, () => {
+    console.log(`Server listening`);
+  });
+}
 
 module.exports = app;
