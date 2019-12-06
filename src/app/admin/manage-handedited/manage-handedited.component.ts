@@ -33,21 +33,21 @@ export class ManageHandeditedComponent implements OnInit, OnChanges {
     }
   }
   updateHandEdited() {
+
+    const response = [];
     this.handEditedRows.getValue().forEach(handEditedRow => {
-      const response = [];
       response.push(this._api.updateHandEditedRows(handEditedRow, this.apikey));
-
-      Promise.all(response).then(results => {
-        if (results.every(res => res.success)) {
-          alert('Käsinylläpidettävä lista päivitettiin');
-        }
-      })
-        .catch(x => {
-          console.log(x);
-          alert('Error ' + x.status + ' ' + x.statusText);
-        });
-
     });
+    Promise.all(response).then(results => {
+      if (results.every(res => res.status === 'success')) {
+        alert('Käsinylläpidettävä lista päivitettiin');
+      }
+    })
+      .catch(x => {
+        console.log(x);
+        alert('Error ' + x.status + ' ' + x.statusText);
+      });
+
   }
   getHandEdited(restaurant: Restaurant) {
     this._api.getHandEditedRows(restaurant).subscribe((res => {
