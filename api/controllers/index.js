@@ -217,9 +217,12 @@ exports.readHandEditedRow = (request, response) => {
 exports.generateLunchOfDay = (request, response) => {
   pool.query(
     `INSERT INTO lunchofday
-SELECT x.paiva, x.apiid, x.nimi, string_agg(x.teksti, ' <br>' )
+SELECT *
+FROM(
+SELECT x.paiva, x.apiid, x.nimi, string_agg(x.teksti, ' <br>' ), (1-AVG(CASE WHEN historykerroin is null then 0 else historykerroin end )) * avg(kerroin) kerroin
 from (
-SELECT r.*, ra.nimi
+
+SELECT r.*, ra.nimi, ra.ravintolaid restaurantid, random() kerroin
 FROM ruokalistat r
 left join ravintolat ra on r.apiid = ra.apiid
 where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
@@ -230,15 +233,28 @@ SELECT to_number(to_char(now(), 'YYYYMMDD'), '99999999') paiva,
 0 as apiid,
 kpl.rivi rivi,
 kpl.teksti teksti,
-r.nimi nimi
+r.nimi nimi,
+r.ravintolaid restaurantid,
+random() kerroin
 from kasinpaivitetytlistat kpl
 left join ravintolat r on kpl.ravintolaid = r.ravintolaid
 where r.nimi is not null
+
 ) x
 left join lunchofday l on l.paiva = x.paiva
+left join (
+    select * ,
+     1/ (DATE_PART('day', date(now())) - DATE_PART('day',to_date(to_char(paiva, '99999999'), 'YYYYMMDD'))) historykerroin
+    from lunchofday
+    order by paiva desc
+    limit 5
+    ) history on history.restaurantid  = x.restaurantid
+
 where l.paiva is NULL
 group by x.paiva, x.apiid, x.nimi
-order by RANDOM()
+) y
+
+order by kerroin DESC
 LIMIT 1;`,
     (error, results) => {
       if (error) {
