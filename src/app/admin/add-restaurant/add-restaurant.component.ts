@@ -17,6 +17,7 @@ export class AddRestaurantComponent implements OnInit {
   ngOnInit() {
   }
   addRestaurant() {
+    this.restaurant.tassalista = this.restaurant.tassalista ? 1 : 0;
     const response = this._api.addRestaurant(this.restaurant, this.apikey);
     response.catch(x => {
       console.log(x);

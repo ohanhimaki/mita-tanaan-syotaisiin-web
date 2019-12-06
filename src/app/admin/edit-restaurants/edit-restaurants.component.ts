@@ -4,6 +4,7 @@ import { AdminService } from '../admin.service';
 import { Restaurantgenre } from 'src/app/shared/models/restaurantgenre';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Genreofrestaurant } from 'src/app/shared/models/genreofrestaurant';
+import { MatCheckbox } from '@angular/material';
 
 
 @Component({
@@ -36,13 +37,24 @@ export class EditRestaurantsComponent implements OnInit {
       console.log(x);
       alert('Error ' + x.status + ' ' + x.statusText);
     });
+    vastaus.then(() => {
+      this._api.getGenresOfRestaurant(this.restaurant.ravintolaid).subscribe((res => {
+        this.genresofrestaurant.next(res);
+      }));
+    });
   }
   updateRestaurant() {
+    let params: Restaurant = this.restaurant;
+    params.tassalista = this.restaurant.tassalista ? 1 : 0;
+    console.log(params);
     const vastaus = this._api.updateRestaurant(this.restaurant, this.apikey);
     vastaus.catch(x => {
       console.log(x);
       alert('Error ' + x.status + ' ' + x.statusText);
     });
+    vastaus.then(() => {
+      alert('Ravintolaa päivitettiin');
+    })
   }
   deleteRestaurant() {
     const vastaus = this._api.deleteRestaurant(this.restaurant, this.apikey);
@@ -50,6 +62,10 @@ export class EditRestaurantsComponent implements OnInit {
       console.log(x);
       alert('Error ' + x.status + ' ' + x.statusText);
     });
+    vastaus.then(() => {
+      alert('Ravintola poistettiin');
+    })
+
 
   }
   removeGenre(params: Genreofrestaurant) {
@@ -58,5 +74,16 @@ export class EditRestaurantsComponent implements OnInit {
       console.log(x);
       alert('Error ' + x.status + ' ' + x.statusText);
     });
+    vastaus.then(() => {
+      this.removeFromGenresOfRestaurant(params);
+    });
   }
+  removeFromGenresOfRestaurant(params: Genreofrestaurant) {
+    const tmpArr: Genreofrestaurant[] = this.genresofrestaurant.getValue();
+    tmpArr.forEach((item, index) => {
+      if (item === params) { tmpArr.splice(index, 1); }
+    });
+    this.genresofrestaurant.next(tmpArr);
+  }
+
 }
