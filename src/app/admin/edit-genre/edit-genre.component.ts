@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { Restaurantgenre } from 'src/app/shared/models/restaurantgenre';
 import { AdminService } from '../admin.service';
 
@@ -9,6 +9,7 @@ import { AdminService } from '../admin.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditGenreComponent implements OnInit {
+  @Output() refreshGenres: EventEmitter<any> = new EventEmitter();
   @Input() restaurantGenres: Restaurantgenre[];
   restaurantGenre = new Restaurantgenre;
   apikey = '';
@@ -23,6 +24,10 @@ export class EditGenreComponent implements OnInit {
       console.log(x);
       alert('Error ' + x.status + ' ' + x.statusText);
     });
+    response.finally(() => {
+      this.refreshGenres.emit(null);
+      alert('Genreä päivitettiin');
+    });
 
   }
   deleteRestaurantGenre() {
@@ -31,12 +36,20 @@ export class EditGenreComponent implements OnInit {
       console.log(x);
       alert('Error ' + x.status + ' ' + x.statusText);
     });
+    response.finally(() => {
+      alert('Genre poistettiin');
+      this.refreshGenres.emit(null);
+    });
   }
   createRestaurantGenre() {
     const response = this._api.createRestaurantGenre(this.restaurantGenre, this.apikey);
     response.catch(x => {
       console.log(x);
       alert('Error ' + x.status + ' ' + x.statusText);
+    });
+    response.finally(() => {
+      alert('Genre luotiin');
+      this.refreshGenres.emit(null);
     });
   }
 }
