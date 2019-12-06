@@ -3,6 +3,7 @@ import { Restaurant } from 'src/app/shared/models/restaurant';
 import { AdminService } from '../admin.service';
 import { Handeditedrow } from 'src/app/shared/models/handeditedrow';
 import { filter } from 'minimatch';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-manage-handedited',
@@ -14,9 +15,11 @@ export class ManageHandeditedComponent implements OnInit, OnChanges {
   @Input() restaurants: Restaurant[];
   public restaurantsFiltered: Restaurant[];
   public restaurant = new Restaurant();
+  private handEditedRows: BehaviorSubject<Handeditedrow[]> = new BehaviorSubject(null);
+  public handEditedRows$: Observable<Handeditedrow[]> = this.handEditedRows.asObservable();
   public apikey = '';
   constructor(private _api: AdminService) { }
-  public handEditedrows: Handeditedrow[] = [];
+  // public handEditedrows: Handeditedrow[] = [];
   ngOnInit() {
   }
   ngOnChanges(changes: SimpleChanges) {
@@ -30,25 +33,33 @@ export class ManageHandeditedComponent implements OnInit, OnChanges {
     }
   }
   updateHandEdited() {
-    this.handEditedrows.forEach(handEditedRow => {
-      const response = this._api.updateHandEditedRows(handEditedRow, this.apikey);
-      response.catch(x => {
+
+    const response = [];
+    this.handEditedRows.getValue().forEach(handEditedRow => {
+      response.push(this._api.updateHandEditedRows(handEditedRow, this.apikey));
+    });
+    Promise.all(response).then(results => {
+      if (results.every(res => res.status === 'success')) {
+        alert('Käsinylläpidettävä lista päivitettiin');
+      }
+    })
+      .catch(x => {
         console.log(x);
         alert('Error ' + x.status + ' ' + x.statusText);
       });
-    });
+
   }
   getHandEdited(restaurant: Restaurant) {
     this._api.getHandEditedRows(restaurant).subscribe((res => {
-      this.handEditedrows = res;
+      this.handEditedRows.next(res);
     }));
   }
   newHandEditedRow() {
     const newRow: Handeditedrow = {
       ravintolaid: this.restaurant.ravintolaid,
-      rivi: this.handEditedrows.length,
+      rivi: this.handEditedRows.getValue().length,
       teksti: ''
     };
-    this.handEditedrows.push(newRow);
+    this.handEditedRows.next(this.handEditedRows.getValue().concat([newRow]));
   }
 }

@@ -18,7 +18,7 @@
     </mat-option>
   </mat-select>
 
-  <mat-form-field *ngFor="let row of handEditedrows">
+  <mat-form-field *ngFor="let row of handEditedRows$ | async">
     <input matInput [(ngModel)]="row.teksti" placeholder="tekstiä" />
   </mat-form-field>
   <mat-form-field>

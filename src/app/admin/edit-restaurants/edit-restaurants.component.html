@@ -16,44 +16,50 @@
   </mat-select>
 
   <mat-form-field>
-    <input matInput [(ngModel)]="restaurant.apiid" placeholder="apiid" />
-  </mat-form-field>
-  <mat-form-field>
     <input matInput [(ngModel)]="restaurant.nimi" placeholder="nimi" />
   </mat-form-field>
+
   <mat-form-field>
-    <input
-      matInput
-      [(ngModel)]="restaurant.tassalista"
-      placeholder="tassalista"
-    />
+    <input matInput [(ngModel)]="restaurant.apiid" placeholder="apiid" />
   </mat-form-field>
   <mat-form-field>
     <input matInput [(ngModel)]="restaurant.linkki" placeholder="linkki" />
   </mat-form-field>
-  <ng-container *ngFor="let genre of genresofrestaurant$ | async">
-    <mat-card-content [innerHTML]="genre.genrename"> </mat-card-content>
-    <button mat-raised-button color="primary" (click)="removeGenre(genre)">
-      Poista
+  <mat-checkbox class="example-margin" [(ngModel)]="restaurant.tassalista"
+    >Tässä.fi-lista
+  </mat-checkbox>
+  <mat-form-field>
+    <mat-chip-list aria-label="Ravintolan genret">
+      <mat-chip
+        color="primary"
+        *ngFor="let genre of genresofrestaurant$ | async"
+        [removable]="true"
+        (removed)="removeGenre(genre)"
+        selected
+        >{{ genre.genrename }}
+        <mat-icon matChipRemove>cancel</mat-icon>
+      </mat-chip>
+    </mat-chip-list>
+  </mat-form-field>
+  <div class="addRestaurantGenre">
+    <mat-select
+      placeholder="Valitse genre"
+      [(ngModel)]="restaurantGenre"
+      name="item"
+    >
+      <mat-option *ngFor="let genre of restaurantGenres" [value]="genre">
+        {{ genre?.genrename }}
+      </mat-option>
+    </mat-select>
+    <button mat-raised-button color="primary" (click)="addGenreToRestaurant()">
+      Lisää genre ravintolalle.
     </button>
-  </ng-container>
-  <mat-select
-    placeholder="Valitse genre"
-    [(ngModel)]="restaurantGenre"
-    name="item"
-  >
-    <mat-option *ngFor="let genre of restaurantGenres" [value]="genre">
-      {{ genre?.genrename }}
-    </mat-option>
-  </mat-select>
+  </div>
   <mat-form-field>
     <input matInput [(ngModel)]="apikey" type="password" placeholder="apikey" />
   </mat-form-field>
   <button mat-raised-button color="primary" (click)="updateRestaurant()">
     Paivita
-  </button>
-  <button mat-raised-button color="primary" (click)="addGenreToRestaurant()">
-    Lisää genre ravintolalle.
   </button>
   <button mat-raised-button color="primary" (click)="deleteRestaurant()">
     poista

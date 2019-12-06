@@ -34,12 +34,17 @@
   </mat-card>
 
   <mat-card>
-    <app-add-restaurant></app-add-restaurant>
+    <app-add-restaurant
+      (refreshRestaurants)="getRestaurants($event)"
+    ></app-add-restaurant>
   </mat-card>
   <mat-card>
     <app-manage-handedited [restaurants]="restaurants"></app-manage-handedited>
   </mat-card>
   <mat-card>
-    <app-edit-genre [restaurantGenres]="restaurantGenres"></app-edit-genre>
+    <app-edit-genre
+      [restaurantGenres]="restaurantGenres"
+      (refreshGenres)="getRestaurantGenres($event)"
+    ></app-edit-genre>
   </mat-card>
 </div>

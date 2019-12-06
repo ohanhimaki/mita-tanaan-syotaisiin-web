@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { Restaurant } from 'src/app/shared/models/restaurant';
 import { AdminService } from '../admin.service';
 
@@ -9,6 +9,7 @@ import { AdminService } from '../admin.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddRestaurantComponent implements OnInit {
+  @Output() refreshRestaurants: EventEmitter<any> = new EventEmitter(true);
   restaurant = new Restaurant();
   apikey = '';
   constructor(private _api: AdminService) { }
@@ -16,11 +17,15 @@ export class AddRestaurantComponent implements OnInit {
   ngOnInit() {
   }
   addRestaurant() {
+    this.restaurant.tassalista = this.restaurant.tassalista ? 1 : 0;
     const response = this._api.addRestaurant(this.restaurant, this.apikey);
     response.catch(x => {
       console.log(x);
       alert('Error ' + x.status + ' ' + x.statusText);
     });
+
+    this.refreshRestaurants.emit(null);
+
   }
 
 

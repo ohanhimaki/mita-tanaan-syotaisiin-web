@@ -203,7 +203,7 @@ exports.createHandEditedRow = (request, response) => {
 
 exports.readHandEditedRow = (request, response) => {
   pool.query(
-    "SELECT * FROM kasinpaivitetytlistat WHERE ravintolaid = $1;",
+    "SELECT * FROM kasinpaivitetytlistat WHERE ravintolaid = $1 ORDER BY rivi;",
     [request.query.ravintolaid],
     (error, results) => {
       if (error) {
