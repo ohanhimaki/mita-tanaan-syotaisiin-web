@@ -16,8 +16,11 @@ export class AddRestaurantComponent implements OnInit {
   ngOnInit() {
   }
   addRestaurant() {
-    const vastaus = this._api.addRestaurant(this.restaurant, this.apikey);
-    console.log(vastaus);
+    const response = this._api.addRestaurant(this.restaurant, this.apikey);
+    response.catch(x => {
+      console.log(x);
+      alert('Error ' + x.status + ' ' + x.statusText);
+    });
   }
 
 

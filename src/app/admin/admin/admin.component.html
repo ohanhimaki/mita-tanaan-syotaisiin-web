@@ -27,7 +27,10 @@
     </mat-card-actions>
   </mat-card>
   <mat-card>
-    <app-edit-restaurants [restaurants]="restaurants"></app-edit-restaurants>
+    <app-edit-restaurants
+      [restaurants]="restaurants"
+      [restaurantGenres]="restaurantGenres"
+    ></app-edit-restaurants>
   </mat-card>
 
   <mat-card>
@@ -35,5 +38,8 @@
   </mat-card>
   <mat-card>
     <app-manage-handedited [restaurants]="restaurants"></app-manage-handedited>
+  </mat-card>
+  <mat-card>
+    <app-edit-genre [restaurantGenres]="restaurantGenres"></app-edit-genre>
   </mat-card>
 </div>

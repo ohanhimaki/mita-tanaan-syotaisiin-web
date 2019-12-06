@@ -9,6 +9,7 @@ import { HttpModule } from '@angular/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { ManageHandeditedComponent } from '../manage-handedited/manage-handedited.component';
+import { EditGenreComponent } from '../edit-genre/edit-genre.component';
 
 describe('AdminComponent', () => {
   let component: AdminComponent;
@@ -25,7 +26,8 @@ describe('AdminComponent', () => {
       declarations: [AdminComponent,
         EditRestaurantsComponent,
         AddRestaurantComponent,
-        ManageHandeditedComponent
+        ManageHandeditedComponent,
+        EditGenreComponent
       ]
     })
       .compileComponents();

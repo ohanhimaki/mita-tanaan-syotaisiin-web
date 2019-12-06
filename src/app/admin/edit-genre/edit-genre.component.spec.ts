@@ -1,24 +1,29 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LunchofdayHistoryComponent } from './lunchofday-history.component';
+import { EditGenreComponent } from './edit-genre.component';
 import { MaterialModule } from 'src/app/shared/material.module';
+import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-describe('LunchofdayHistoryComponent', () => {
-  let component: LunchofdayHistoryComponent;
-  let fixture: ComponentFixture<LunchofdayHistoryComponent>;
+describe('EditGenreComponent', () => {
+  let component: EditGenreComponent;
+  let fixture: ComponentFixture<EditGenreComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [MaterialModule,
-        HttpClientModule],
-      declarations: [LunchofdayHistoryComponent]
+        FormsModule,
+        HttpClientModule,
+        BrowserAnimationsModule
+      ],
+      declarations: [EditGenreComponent]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LunchofdayHistoryComponent);
+    fixture = TestBed.createComponent(EditGenreComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
