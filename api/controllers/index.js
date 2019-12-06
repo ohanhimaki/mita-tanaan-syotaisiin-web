@@ -224,9 +224,7 @@ SELECT x.paiva, x.restaurantid, x.nimi, string_agg(x.teksti, ' <br>' ),
 (1-AVG(CASE WHEN historykerroin is null then 0 else historykerroin end ))
 --1-(0.8/datediff) painotukseksi genrekohtaisen historian mukaan(viim 5 pv)
 * (1-AVG(CASE WHEN genrehistorykerroin is null then 0 else genrehistorykerroin end))
-* avg(kerroin) kerroin,
-avg(historykerroin),
-avg(genrehistorykerroin)
+* avg(kerroin) kerroin
 from (
 
 --Haetaan listat ravintoloille joilla automaattilistat
