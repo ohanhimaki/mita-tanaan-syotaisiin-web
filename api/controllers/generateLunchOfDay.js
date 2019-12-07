@@ -2,7 +2,7 @@ const { pool } = require("../db/db");
 
 exports.generateLunchOfDay = (request, response) => {
   pool.query(
-    `INSERT INTO lunchofday
+    `INSERT INTO lunchofday values (paiva, restaurantid, nimi, string_agg)
 SELECT *
 FROM(
 SELECT x.paiva, x.restaurantid, x.nimi, string_agg(x.teksti, ' <br>' ),

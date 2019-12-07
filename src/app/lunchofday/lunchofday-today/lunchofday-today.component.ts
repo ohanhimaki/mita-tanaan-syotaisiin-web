@@ -20,9 +20,6 @@ export class LunchofdayTodayComponent implements OnInit {
 
   ngOnInit() {
 
-    this._api.generateLunchofday().subscribe((res => {
-
-    }));
     this._api.getLunchOfDay().subscribe((res => {
       this.lunchofday.next(res[0]);
       console.log(this.lunchofday$);
