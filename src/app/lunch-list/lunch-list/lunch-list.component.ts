@@ -15,7 +15,7 @@ export class LunchListComponent implements OnInit {
 
   lunchListRows: Listrow[] = [];
   lunchListsByRestaurants: Listrow[][] = new Array<Array<Listrow>>();
-  uniqueRestaurantIDs: number[];
+  uniqueRestaurantIDs: string[];
   lunchlistparams = {
     paiva: null,
     apiid: null
@@ -53,10 +53,10 @@ export class LunchListComponent implements OnInit {
           return;
         }
       }).then(x => {
-        this.uniqueRestaurantIDs = this.lunchListRows.map(x => x.apiid).filter(this.getDistinct);
+        this.uniqueRestaurantIDs = this.lunchListRows.map(rivi => rivi.nimi).filter(this.getDistinct);
 
-        this.uniqueRestaurantIDs.forEach(x => {
-          const tmpList = this.lunchListRows.filter(row => row.apiid === x);
+        this.uniqueRestaurantIDs.forEach(uniqueRestaurant => {
+          const tmpList = this.lunchListRows.filter(row => row.nimi === uniqueRestaurant);
 
           this.lunchListsByRestaurants.push(tmpList);
         });
