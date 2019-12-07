@@ -1,29 +1,21 @@
-const express = require("express");
-const router = express.Router();
-const controller = require("../controllers");
-const { pool } = require("../db/db");
+const router = require("express").Router();
+
 const restaurantgenre = require("./restaurantgenre");
 const genreofrestaurant = require("./GenreOfRestaurantroute");
-router
-  .route("/api/ravintolat")
-  .get(controller.haeRavintolat)
-  .post(controller.lisaaRavintola);
+const restaurant = require("./restaurantroute");
+const lunchlist = require("./lunchlistroute");
+const lunchlisttodw = require("./lunchListsToDWRoute");
+const handEditedLunchList = require("./handEditedLunchListRoute");
+const generateLunchOfDay = require("./generateLunchOfDayRoute");
+const lunchofday = require("./lunchOfDayRoute");
 
-router.post("/api/ravintolapaivita", controller.muokkaaRavintola);
-router.post("/api/ravintolapoista", controller.poistaRavintola);
-
-router.route("/api/handedited").get(controller.readHandEditedRow);
-router.route("/api/handedited").post(controller.createHandEditedRow);
-
-router.get("/api/listat", controller.haeListat);
-
-router.get("/api/admin/salamoi", controller.salamoi);
-router.get("/api/lunchofdayGen", controller.generateLunchOfDay);
-
-router.get("/api/lunchofday", controller.getLunchOfDay);
-router.get("/api/lunchofdayhistory", controller.getLunchOfDayHistory);
-
+router.use(generateLunchOfDay);
+router.use(handEditedLunchList);
 router.use(restaurantgenre);
 router.use(genreofrestaurant);
+router.use(restaurant);
+router.use(lunchlist);
+router.use(lunchlisttodw);
+router.use(lunchofday);
 
 module.exports = router;
