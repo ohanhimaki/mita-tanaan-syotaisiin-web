@@ -2,15 +2,43 @@ const { pool } = require("../db/db");
 
 exports.generateLunchOfDay = (request, response) => {
   pool.query(
-    `INSERT INTO lunchofday (paiva, restaurantid, nimi, string_agg)
-SELECT paiva, restaurantid, nimi, string_agg
+    `
+
+DELETE FROM lunchofdaytmp
+where paiva < to_number(to_char(now(), 'YYYYMMDD'), '99999999')
+`,
+    results => {
+      console.log("truncatoitiin taulu");
+
+      luoLunchofdayTmp(request, response);
+    }
+  );
+};
+
+function luoLunchofdayTmp(request, response) {
+  pool.query(
+    `insert into lunchofdaytmp (paiva,restaurantid,nimi, string_agg, totalscore, randommultiplier, restaurantMultiplier, genreMultiplier, usermultiplier)
+SELECT paiva,
+restaurantid,
+nimi,
+string_agg,
+kerroin as totalscore,
+randommultiplier,
+restaurantMultiplier,
+genreMultiplier,
+usermultiplier
+
 FROM(
 SELECT x.paiva, x.restaurantid, x.nimi, string_agg(x.teksti, ' <br>' ),
 --1-(1/datediff) painotukseksi ravintolakohtaisen historian mukaan(viim 5 pv)
 (1-AVG(CASE WHEN historykerroin is null then 0 else historykerroin end ))
 --1-(0.8/datediff) painotukseksi genrekohtaisen historian mukaan(viim 5 pv)
 * (1-AVG(CASE WHEN genrehistorykerroin is null then 0 else genrehistorykerroin end))
-* avg(kerroin) kerroin
+* avg(kerroin) kerroin,
+avg(kerroin) as randommultiplier,
+(1-AVG(CASE WHEN historykerroin is null then 0 else historykerroin end )) as restaurantMultiplier,
+(1-AVG(CASE WHEN genrehistorykerroin is null then 0 else genrehistorykerroin end)) as genreMultiplier,
+1 as usermultiplier
 from (
 
 --Haetaan listat ravintoloille joilla automaattilistat
@@ -58,17 +86,29 @@ left join (
 where l.paiva is NULL
 group by x.paiva, x.restaurantid, x.nimi
 ) y
-order by kerroin DESC
-LIMIT 1;
+order by kerroin DESC;
+
 `,
     (error, results) => {
-      if (error) {
-        throw error;
-      }
-      response.status(201).json({
-        status: "Success",
-        message: "Lunchofday Generated"
-      });
+      console.log("luotiin tmp rivit");
+      pool.query(
+        `insert into lunchofday
+SELECT paiva,nimi, string_agg, restaurantid
+from lunchofdaytmp
+order by totalscore DESC
+limit 1;`,
+        (error, results) => {
+          console.log("luotiin lunchofday");
+
+          if (error) {
+            throw error;
+          }
+          response.status(201).json({
+            status: "Success",
+            message: "Lunchofday Generated"
+          });
+        }
+      );
     }
   );
-};
+}
