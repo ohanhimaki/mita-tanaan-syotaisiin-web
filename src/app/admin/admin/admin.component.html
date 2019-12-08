@@ -1,5 +1,12 @@
-<div class="container">
-  <mat-card>
+<div
+  class="container"
+  fxLayout="row wrap"
+  fxLayoutAlign="space-between stretch center"
+  fxLayoutGap="1rem"
+  fxFlex="80%"
+  fxFlex.lt-md="100%"
+>
+  <mat-card fxFlex="100%">
     <mat-card-header>
       <mat-card-title>Admin</mat-card-title>
       <mat-card-subtitle>admintyökalut</mat-card-subtitle>
@@ -26,7 +33,7 @@
       </button>
     </mat-card-actions>
   </mat-card>
-  <mat-card>
+  <mat-card fxFlex="45%" fxFlex.lt-md="100%">
     <app-edit-restaurants
       [restaurants]="restaurants"
       [restaurantGenres]="restaurantGenres"
@@ -34,15 +41,15 @@
     ></app-edit-restaurants>
   </mat-card>
 
-  <mat-card>
+  <mat-card fxFlex="45%" fxFlex.lt-md="100%">
     <app-add-restaurant
       (refreshRestaurants)="getRestaurants($event)"
     ></app-add-restaurant>
   </mat-card>
-  <mat-card>
+  <mat-card fxFlex="45%" fxFlex.lt-md="100%">
     <app-manage-handedited [restaurants]="restaurants"></app-manage-handedited>
   </mat-card>
-  <mat-card>
+  <mat-card fxFlex="45%" fxFlex.lt-md="100%">
     <app-edit-genre
       [restaurantGenres]="restaurantGenres"
       (refreshGenres)="getRestaurantGenres()"
