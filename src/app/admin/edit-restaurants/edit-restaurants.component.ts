@@ -1,10 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Restaurant } from 'src/app/shared/models/restaurant';
 import { AdminService } from '../admin.service';
 import { Restaurantgenre } from 'src/app/shared/models/restaurantgenre';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Genreofrestaurant } from 'src/app/shared/models/genreofrestaurant';
 import { MatCheckbox } from '@angular/material';
+import { TouchSequence } from 'selenium-webdriver';
 
 
 @Component({
@@ -13,6 +14,7 @@ import { MatCheckbox } from '@angular/material';
   styleUrls: ['./edit-restaurants.component.scss']
 })
 export class EditRestaurantsComponent implements OnInit {
+  @Output() refreshRestaurants: EventEmitter<any> = new EventEmitter();
   @Input() restaurants: Restaurant[];
   @Input() restaurantGenres: Restaurantgenre[];
   restaurant = new Restaurant();
@@ -54,7 +56,7 @@ export class EditRestaurantsComponent implements OnInit {
     });
     vastaus.then(() => {
       alert('Ravintolaa päivitettiin');
-    })
+    });
   }
   deleteRestaurant() {
     const vastaus = this._api.deleteRestaurant(this.restaurant, this.apikey);
@@ -64,7 +66,8 @@ export class EditRestaurantsComponent implements OnInit {
     });
     vastaus.then(() => {
       alert('Ravintola poistettiin');
-    })
+      this.refreshRestaurants.emit(null);
+    });
 
 
   }

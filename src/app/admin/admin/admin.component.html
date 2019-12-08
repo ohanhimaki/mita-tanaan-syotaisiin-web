@@ -30,12 +30,13 @@
     <app-edit-restaurants
       [restaurants]="restaurants"
       [restaurantGenres]="restaurantGenres"
+      (refreshRestaurants)="getRestaurants($event)"
     ></app-edit-restaurants>
   </mat-card>
 
   <mat-card>
     <app-add-restaurant
-      (refreshRestaurants)="getRestaurants()"
+      (refreshRestaurants)="getRestaurants($event)"
     ></app-add-restaurant>
   </mat-card>
   <mat-card>

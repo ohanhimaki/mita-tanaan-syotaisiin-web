@@ -24,12 +24,12 @@ export class AdminComponent implements OnInit {
     console.log(event);
     this._api.salamoiAdmin(event);
   }
-  async getRestaurants() {
+  async getRestaurants(event?) {
     this._api.getRestaurants().subscribe((res => {
       this.restaurants = res;
     }));
   }
-  async getRestaurantGenres() {
+  async getRestaurantGenres(event?) {
     this._api.getRestaurantGenres().subscribe((res => {
       this.restaurantGenres = res;
     }));

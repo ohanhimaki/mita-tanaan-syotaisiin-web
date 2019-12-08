@@ -9,7 +9,7 @@ import { AdminService } from '../admin.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddRestaurantComponent implements OnInit {
-  @Output() refreshRestaurants: EventEmitter<any> = new EventEmitter(true);
+  @Output() refreshRestaurants: EventEmitter<any> = new EventEmitter();
   restaurant = new Restaurant();
   apikey = '';
   constructor(private _api: AdminService) { }
@@ -23,8 +23,11 @@ export class AddRestaurantComponent implements OnInit {
       console.log(x);
       alert('Error ' + x.status + ' ' + x.statusText);
     });
+    response.then(() => {
+      alert('Ravintola lisättiin');
+      this.refreshRestaurants.emit(null);
+    });
 
-    this.refreshRestaurants.emit(null);
 
   }
 
