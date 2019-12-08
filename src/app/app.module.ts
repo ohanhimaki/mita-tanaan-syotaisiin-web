@@ -21,6 +21,7 @@ import { LunchofdayGenerateComponent } from './lunchofday/lunchofday-generate/lu
 import { LunchofdayTodayComponent } from './lunchofday/lunchofday-today/lunchofday-today.component';
 import { LunchofdayHistoryComponent } from './lunchofday/lunchofday-history/lunchofday-history.component';
 import { EditGenreComponent } from './admin/edit-genre/edit-genre.component';
+import { LunchofdayTmpComponent } from './lunchofday-tmp/lunchofday-tmp/lunchofday-tmp.component';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { EditGenreComponent } from './admin/edit-genre/edit-genre.component';
     LunchofdayGenerateComponent,
     LunchofdayTodayComponent,
     LunchofdayHistoryComponent,
-    EditGenreComponent
+    EditGenreComponent,
+    LunchofdayTmpComponent
   ],
   imports: [
     BrowserModule,

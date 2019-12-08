@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LunchListComponent } from './lunch-list/lunch-list/lunch-list.component';
 import { AdminComponent } from './admin/admin/admin.component';
 import { LunchofdayComponent } from './lunchofday/lunchofday/lunchofday.component';
+import { LunchofdayTmpComponent } from './lunchofday-tmp/lunchofday-tmp/lunchofday-tmp.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,10 @@ const routes: Routes = [
   {
     path: 'admin',
     component: AdminComponent
+  },
+  {
+    path: 'lunchofdaytmp',
+    component: LunchofdayTmpComponent
   },
   {
     path: '*',

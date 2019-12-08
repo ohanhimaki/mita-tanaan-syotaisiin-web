@@ -1,0 +1,29 @@
+html {
+  min-height: 100%;
+}
+
+body {
+  height: 100vh;
+}
+
+.container {
+  padding: 30px;
+  width: 60%;
+  margin: auto;
+  min-height: 100%;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.card {
+  flex: 0 1 24%;
+  margin: 10px;
+}
+
+mat-card {
+  margin: 20px;
+}
