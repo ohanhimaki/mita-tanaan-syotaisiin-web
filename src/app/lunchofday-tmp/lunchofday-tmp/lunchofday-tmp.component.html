@@ -6,6 +6,74 @@
         >Luvut joilla päivän lounas on arvottu</mat-card-subtitle
       >
     </mat-card-header>
-    <mat-card-content> </mat-card-content>
+    <mat-card-content
+      ><table
+        mat-table
+        [dataSource]="lunchOfDayTmpList$ | async"
+        class="mat-elevation-z8"
+      >
+        <!--- Note that these columns can be defined in any order.
+        The actual rendered columns are set as a property on the row definition" -->
+
+        <!-- Position Column -->
+        <ng-container matColumnDef="paiva">
+          <th mat-header-cell *matHeaderCellDef>Päivä</th>
+          <td mat-cell *matCellDef="let element">{{ element.paiva }}</td>
+        </ng-container>
+
+        <!-- Name Column -->
+        <ng-container matColumnDef="nimi">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let element">{{ element.nimi }}</td>
+        </ng-container>
+
+        <!-- Weight Column -->
+        <ng-container matColumnDef="restaurantid">
+          <th mat-header-cell *matHeaderCellDef>Ravintolaid</th>
+          <td mat-cell *matCellDef="let element">{{ element.restaurantid }}</td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="randommultiplier">
+          <th mat-header-cell *matHeaderCellDef>Symbol</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.randommultiplier }}
+          </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="restaurantmultiplier">
+          <th mat-header-cell *matHeaderCellDef>restaurantmultiplier</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.restaurantmultiplier }}
+          </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="genremultiplier">
+          <th mat-header-cell *matHeaderCellDef>genremultiplier</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.genremultiplier }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="usermultiplier">
+          <th mat-header-cell *matHeaderCellDef>usermultiplier</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.usermultiplier }}
+          </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="totalscore">
+          <th mat-header-cell *matHeaderCellDef>totalscore</th>
+          <td mat-cell *matCellDef="let element">{{ element.totalscore }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </mat-card-content>
   </mat-card>
 </div>
