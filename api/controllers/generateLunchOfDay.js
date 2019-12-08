@@ -2,8 +2,8 @@ const { pool } = require("../db/db");
 
 exports.generateLunchOfDay = (request, response) => {
   pool.query(
-    `INSERT INTO lunchofday values (paiva, restaurantid, nimi, string_agg)
-SELECT *
+    `INSERT INTO lunchofday (paiva, restaurantid, nimi, string_agg)
+SELECT paiva, restaurantid, nimi, string_agg
 FROM(
 SELECT x.paiva, x.restaurantid, x.nimi, string_agg(x.teksti, ' <br>' ),
 --1-(1/datediff) painotukseksi ravintolakohtaisen historian mukaan(viim 5 pv)
