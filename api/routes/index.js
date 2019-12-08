@@ -8,6 +8,7 @@ const lunchlisttodw = require("./lunchListsToDWRoute");
 const handEditedLunchList = require("./handEditedLunchListRoute");
 const generateLunchOfDay = require("./generateLunchOfDayRoute");
 const lunchofday = require("./lunchOfDayRoute");
+const lunchofdayTmp = require("./lunchOfDayTmpRoute");
 
 router.use(generateLunchOfDay);
 router.use(handEditedLunchList);
@@ -17,5 +18,6 @@ router.use(restaurant);
 router.use(lunchlist);
 router.use(lunchlisttodw);
 router.use(lunchofday);
+router.use(lunchofdayTmp);
 
 module.exports = router;
