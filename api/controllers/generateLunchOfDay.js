@@ -80,8 +80,8 @@ left join (
     from lunchofday lod
     left join genreofrestaurant gor on lod.restaurantid = gor.restaurantid
     left join genreofrestaurant gor2 on gor.genreid = gor2.genreid
+    where DATE_PART('day', date(now())) - DATE_PART('day',to_date(to_char(paiva, '99999999'), 'YYYYMMDD')) between 1 and 5
     order by paiva DESC
-    limit 5
 ) genrehistory on genrehistory.restaurantid = x.restaurantid
 where l.paiva is NULL
 group by x.paiva, x.restaurantid, x.nimi
