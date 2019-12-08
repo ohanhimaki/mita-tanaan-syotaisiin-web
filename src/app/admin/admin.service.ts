@@ -48,8 +48,8 @@ export class AdminService {
 
     let headers = new HttpHeaders();
     headers = headers.set('apikey', apikey);
-    const apiurl = environment.apiurl + '/api/ravintolapaivita';
-    return this.http.post(apiurl, parameters, { headers: headers }).toPromise();
+    const apiurl = environment.apiurl + '/api/ravintolat';
+    return this.http.put(apiurl, parameters, { headers: headers }).toPromise();
 
   }
   updateHandEditedRows(parameters: Handeditedrow, apikey: string) {
@@ -64,9 +64,12 @@ export class AdminService {
 
     let headers = new HttpHeaders();
     headers = headers.set('apikey', apikey);
-
-    const apiurl = environment.apiurl + '/api/ravintolapoista';
-    return this.http.post(apiurl, parameters, { headers: headers }).toPromise();
+    const body = {
+      ravintolaid: parameters.ravintolaid
+    };
+    const options = { headers, body };
+    const apiurl = environment.apiurl + '/api/ravintolat';
+    return this.http.delete(apiurl, options).toPromise();
 
   }
   addRestaurant(parameters, apikey) {

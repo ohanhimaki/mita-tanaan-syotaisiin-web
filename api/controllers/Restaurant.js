@@ -48,7 +48,7 @@ exports.poistaRavintola = (request, response) => {
     });
   }
 
-  const { ravintolaid, apiid, nimi, tassalista, linkki } = request.body;
+  const { ravintolaid } = request.body;
 
   pool.query(
     "DELETE FROM ravintolat WHERE ravintolaid = $1;",

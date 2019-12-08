@@ -4,9 +4,8 @@ const Restaurant = require("../controllers/Restaurant");
 
 RestaurantRouter.route("/api/ravintolat")
   .get(Restaurant.haeRavintolat)
-  .post(Restaurant.lisaaRavintola);
-
-RestaurantRouter.post("/api/ravintolapaivita", Restaurant.muokkaaRavintola);
-RestaurantRouter.post("/api/ravintolapoista", Restaurant.poistaRavintola);
+  .post(Restaurant.lisaaRavintola)
+  .put(Restaurant.muokkaaRavintola)
+  .delete(Restaurant.poistaRavintola);
 
 module.exports = RestaurantRouter;
