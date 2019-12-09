@@ -41,17 +41,23 @@
       </mat-chip>
     </mat-chip-list>
   </mat-form-field>
-  <div class="addRestaurantGenre">
+  <div class="addRestaurantGenre" fxLayout="row">
     <mat-select
       placeholder="Valitse genre"
       [(ngModel)]="restaurantGenre"
       name="item"
+      fxFlex="60%"
     >
       <mat-option *ngFor="let genre of restaurantGenres" [value]="genre">
         {{ genre?.genrename }}
       </mat-option>
     </mat-select>
-    <button mat-raised-button color="primary" (click)="addGenreToRestaurant()">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addGenreToRestaurant()"
+      fxFlex="30%"
+    >
       Lisää genre ravintolalle.
     </button>
   </div>
