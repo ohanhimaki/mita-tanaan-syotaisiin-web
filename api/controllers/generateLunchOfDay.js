@@ -93,8 +93,10 @@ order by kerroin DESC;
       console.log("luotiin tmp rivit");
       pool.query(
         `insert into lunchofday
-SELECT paiva,nimi, string_agg, restaurantid
-from lunchofdaytmp
+SELECT tmp.paiva,tmp.nimi, tmp.string_agg, tmp.restaurantid
+from lunchofdaytmp tmp
+left join lunchofday lod on tmp.paiva = lod.paiva
+where lod.paiva is NULL
 order by totalscore DESC
 limit 1;`,
         (error, results) => {
