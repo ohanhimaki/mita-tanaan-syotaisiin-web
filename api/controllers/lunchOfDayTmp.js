@@ -3,7 +3,8 @@ const { pool } = require("../db/db");
 exports.read = (request, response) => {
   pool.query(
     `SELECT *
- from lunchofdaytmp`,
+ from lunchofdaytmp
+ ORDER BY totalscore`,
     (error, results) => {
       if (error) {
         throw error;
