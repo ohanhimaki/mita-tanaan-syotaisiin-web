@@ -14,54 +14,68 @@ let rowsToInsert = [];
 exports.suoritaDatanLataus = async function() {
   rowsToInsert = [];
   ravintolat = [];
+  haeRavintolat(() => {
+    console.log("Ravintoloita haettu" + ravintolat.length);
 
+    poistaTamaViikko(() => {
+      console.log("Tama viikko poistettiin");
+      haeDatat(() => {
+        console.log("Datat haettiin" + rowsToInsert.length);
+        insertIntoRuokalistat(rowsToInsert);
+      });
+    });
+  });
+};
+
+function haeRavintolat(_callback) {
   pool.query(
     "SELECT RavintolaID, apiid, Nimi FROM Ravintolat where tassalista = 1;",
-    async (err, res) => {
+    (err, res) => {
       if (err) throw err;
       for (let row of res.rows) {
         ravintolat.push(row);
       }
-      //onko async?
-      done = await poistaTamaViikko();
+      _callback();
     }
   );
-  return await done;
-};
+}
 
-async function poistaTamaViikko() {
-  console.log(helpers.date.formatDate(thisWeekMonday));
+function poistaTamaViikko(_callback) {
+  console.log(
+    "Poistetaan listat päiviltä joissa paiva >= " +
+      helpers.date.formatDate(thisWeekMonday)
+  );
 
   pool.query(
     "DELETE FROM ruokalistat WHERE paiva >= $1;",
     [helpers.date.formatDate(thisWeekMonday)],
     async (err, res) => {
       if (err) throw err;
-      console.log("Poistetaan rivit joissa paiva >= taman viikon maanantai");
-      //onko async?
-      done = await haeDatat();
+      _callback();
     }
   );
-  return done;
 }
 
-async function haeDatat() {
+function haeDatat(_callback) {
+  koskavalmis = [];
   let ravintolatProsessoitu = 0;
   ravintolat.forEach((ravintola, i, array) => {
     ravintolatProsessoitu++;
     https
-      .get(helpers.api.getApiUrl(ravintola.apiid), resp => {
+      .get(helpers.api.getApiUrl(ravintola.apiid), res => {
         let data = "";
-        resp.on("data", chunk => {
+        res.on("data", chunk => {
           data += chunk;
         });
-        resp.on("end", () => {
+        res.on("end", () => {
           try {
             if (data[0] != "<") {
               let parsettuData = JSON.parse(data);
-              parsettuData.ads.forEach((row, i) => {
+              parsettuData.ads.forEach(async (row, i) => {
                 if (row.ad.contentType === 0) {
-                  htmlToObject(row.ad.body, ravintola.apiid);
+                  await koskavalmis.push(
+                    htmlToObject(row.ad.body, ravintola.apiid)
+                  );
                 }
               });
             } else {
@@ -77,15 +91,19 @@ async function haeDatat() {
       });
 
     if (ravintolatProsessoitu === array.length) {
+      // koskavalmis[0].then(x => {
+      //   console.log(x);
+      //   _callback();
+      // });
+      setTimeout(() => {
+        console.log(koskavalmis);
+        _callback();
+      }, 10000);
     }
   });
-  setTimeout(async function() {
-    done = await insertIntoRuokalistat(rowsToInsert);
-  }, 10000);
-  return done;
 }
 
-async function insertIntoRuokalistat(rivit) {
+function insertIntoRuokalistat(rivit) {
   nestedArray = [];
   rivit.forEach(x => {
     nestedArray.push([x.paiva, x.ravintolaID, x.rivi, x.teksti]);
@@ -104,45 +122,30 @@ async function insertIntoRuokalistat(rivit) {
       done = "done";
     }
   });
-  return done;
 }
 
-function htmlToObject(html, ravintolaID) {
-  var paivat = [];
-
-  let kaikkiLunchHeader = $("div.lunchHeader", html);
-  for (var i = 0; i < 7; i++) {
-    if (kaikkiLunchHeader[i]) {
-      testi = kaikkiLunchHeader[i].children;
-      for (var rivi in testi) {
-        if (testi[rivi].type === "text") {
-          paivat.push(testi[rivi].data);
+async function htmlToObject(html, ravintolaID) {
+  let promise = new Promise((res, rej) => {
+    let kaikkiLunchDescit = $("div.lunchDesc", html);
+    for (var i = 0; i < 7; i++) {
+      if (kaikkiLunchDescit[i]) {
+        testi = kaikkiLunchDescit[i].children;
+        for (var rivi in testi) {
+          if (testi[rivi].type === "text") {
+            rowsToInsert.push({
+              paiva: helpers.date.formatDate(
+                helpers.date.addDays(thisWeekMonday, i)
+              ),
+              ravintolaID: ravintolaID,
+              rivi: rivi,
+              teksti: testi[rivi].data
+            });
+          }
         }
+      } else {
       }
-    } else {
-      console.error(ravintolaID + " ei lunchHeadereita");
+      res();
     }
-  }
-
-  let kaikkiLunchDescit = $("div.lunchDesc", html);
-  for (var i = 0; i < 7; i++) {
-    if (kaikkiLunchDescit[i]) {
-      testi = kaikkiLunchDescit[i].children;
-      for (var rivi in testi) {
-        if (testi[rivi].type === "text") {
-          rowsToInsert.push({
-            paiva: helpers.date.formatDate(
-              helpers.date.addDays(thisWeekMonday, i)
-            ),
-            ravintolaID: ravintolaID,
-            rivi: rivi,
-            teksti: testi[rivi].data
-          });
-        }
-      }
-    } else {
-      console.error(ravintolaID + " ei lunchDescejä");
-    }
-  }
-  return;
+  });
+  return await promise;
 }
