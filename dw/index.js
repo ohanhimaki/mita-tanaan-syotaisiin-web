@@ -63,7 +63,7 @@ function haeDatat(_callback) {
   let ravintolatProsessoitu = 0;
   ravintolat.forEach((ravintola, i, array) => {
     ravintolatProsessoitu++;
-    let promise = new Promise((res, rej) => {
+    let promise = new Promise((reso, rej) => {
       https
         .get(helpers.api.getApiUrl(ravintola.apiid), res => {
           let data = "";
@@ -90,7 +90,7 @@ function haeDatat(_callback) {
           });
         })
         .on("finish", x => {
-          res("done");
+          reso("done");
         })
         .on("error", err => {
           rej();
@@ -106,26 +106,15 @@ function haeDatat(_callback) {
     //   }, 1000);
     // }
   });
-  Promise.all(koskavalmisapicall)
-    .finally(console.log("finally"))
-    .then(console.log("then"));
 
-  setTimeout(() => {
-    Promise.all(koskavalmisapicall)
-      .finally(() => {
-        console.log("testailua");
-      })
-      .then(x => {
-        Promise.all(koskavalmis)
-          .finally(() => {
-            console.log("tuleeko tämä eka");
-          })
-          .then(x => {
-            console.log("koskavalmis ready");
-          });
-        console.log("koskavalmisapicallready");
+  Promise.all(koskavalmisapicall).then(x => {
+    console.log(x);
+    setTimeout(() => {
+      Promise.all(koskavalmis).then(x => {
+        console.log(x);
       });
-  }, 1000);
+    }, 300);
+  });
 }
 
 function htmlToObject(html, ravintolaID) {
