@@ -12,6 +12,7 @@ let ravintolat = [];
 let rowsToInsert = [];
 
 exports.suoritaDatanLataus = async function() {
+  console.log("testitoimii");
   rowsToInsert = [];
   ravintolat = [];
   haeRavintolat(() => {
@@ -47,7 +48,7 @@ function poistaTamaViikko(_callback) {
   );
 
   pool.query(
-    "DELETE FROM ruokalistat WHERE paiva >= $1;",
+    "DELETE FROM lunchlist WHERE paiva >= $1;",
     [helpers.date.formatDate(thisWeekMonday)],
     async (err, res) => {
       if (err) throw err;
@@ -58,73 +59,76 @@ function poistaTamaViikko(_callback) {
 
 function haeDatat(_callback) {
   koskavalmis = [];
+  koskavalmisapicall = [];
   let ravintolatProsessoitu = 0;
   ravintolat.forEach((ravintola, i, array) => {
     ravintolatProsessoitu++;
-    https
-      .get(helpers.api.getApiUrl(ravintola.apiid), res => {
-        let data = "";
-        res.on("data", chunk => {
-          data += chunk;
-        });
-        res.on("end", () => {
-          try {
-            if (data[0] != "<") {
-              let parsettuData = JSON.parse(data);
-              parsettuData.ads.forEach(async (row, i) => {
-                if (row.ad.contentType === 0) {
-                  await koskavalmis.push(
-                    htmlToObject(row.ad.body, ravintola.apiid)
-                  );
-                }
-              });
-            } else {
-              console.error("apiId " + ravintola.apiid + " JSON virhe");
+    let promise = new Promise((res, rej) => {
+      https
+        .get(helpers.api.getApiUrl(ravintola.apiid), res => {
+          let data = "";
+          res.on("data", chunk => {
+            data += chunk;
+          });
+          res.on("end", () => {
+            try {
+              if (data[0] != "<") {
+                let parsettuData = JSON.parse(data);
+                parsettuData.ads.forEach(async (row, i) => {
+                  if (row.ad.contentType === 0) {
+                    koskavalmis.push(
+                      htmlToObject(row.ad.body, ravintola.ravintolaID)
+                    );
+                  }
+                });
+              } else {
+                console.error("apiId " + ravintola.apiid + " JSON virhe");
+              }
+            } catch (error) {
+              console.error(error);
             }
-          } catch (error) {
-            console.error(error);
-          }
+          });
+        })
+        .on("finish", x => {
+          res("done");
+        })
+        .on("error", err => {
+          rej();
+          console.error("Error" + err.message);
         });
+    });
+    koskavalmisapicall.push(promise);
+    // if (ravintolatProsessoitu === array.length) {
+    //   setTimeout(() => {
+    //     Promise.all(koskavalmis).then(x => {
+    //       console.log(koskavalmis);
+    //     });
+    //   }, 1000);
+    // }
+  });
+  Promise.all(koskavalmisapicall)
+    .finally(console.log("finally"))
+    .then(console.log("then"));
+
+  setTimeout(() => {
+    Promise.all(koskavalmisapicall)
+      .finally(() => {
+        console.log("testailua");
       })
-      .on("error", err => {
-        console.error("Error" + err.message);
+      .then(x => {
+        Promise.all(koskavalmis)
+          .finally(() => {
+            console.log("tuleeko tämä eka");
+          })
+          .then(x => {
+            console.log("koskavalmis ready");
+          });
+        console.log("koskavalmisapicallready");
       });
-
-    if (ravintolatProsessoitu === array.length) {
-      // koskavalmis[0].then(x => {
-      //   console.log(x);
-      //   _callback();
-      // });
-      setTimeout(() => {
-        console.log(koskavalmis);
-        _callback();
-      }, 10000);
-    }
-  });
+  }, 1000);
 }
 
-function insertIntoRuokalistat(rivit) {
-  nestedArray = [];
-  rivit.forEach(x => {
-    nestedArray.push([x.paiva, x.ravintolaID, x.rivi, x.teksti]);
-  });
-
-  tehtyKysely = format(
-    "INSERT INTO Ruokalistat (paiva, apiid, rivi, teksti) VALUES %L ",
-    nestedArray
-  );
-
-  pool.query(tehtyKysely, (err, res) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(res.rowCount + " riviä tuotiin");
-      done = "done";
-    }
-  });
-}
-
-async function htmlToObject(html, ravintolaID) {
+function htmlToObject(html, ravintolaID) {
   let promise = new Promise((res, rej) => {
     let kaikkiLunchDescit = $("div.lunchDesc", html);
     for (var i = 0; i < 7; i++) {
@@ -144,8 +148,35 @@ async function htmlToObject(html, ravintolaID) {
         }
       } else {
       }
-      res();
+    }
+
+    setTimeout(() => {
+      res("done");
+    }, 1000);
+  });
+  return promise;
+}
+
+function insertIntoRuokalistat(rivit) {
+  nestedArray = [];
+  rivit.forEach(x => {
+    nestedArray.push([x.paiva, x.ravintolaID, x.teksti]);
+  });
+
+  tehtyKysely = format(
+    `INSERT INTO lunchlist (paiva,
+     ravintolaid,
+      string_agg)
+      VALUES $L`,
+    nestedArray
+  );
+  console.log(tehtyKysely);
+  pool.query(tehtyKysely, (err, res) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(res.rowCount + " riviä tuotiin");
+      done = "done";
     }
   });
-  return await promise;
 }
