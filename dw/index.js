@@ -11,7 +11,7 @@ let thisWeekMonday = new Date(helpers.date.getPreviousMonday());
 let ravintolat = [];
 let rowsToInsert = [];
 
-exports.suoritaDatanLataus = async function() {
+exports.suoritaDatanLataus = function() {
   console.log("testitoimii");
   rowsToInsert = [];
   ravintolat = [];
@@ -61,59 +61,58 @@ function haeDatat(_callback) {
   koskavalmis = [];
   koskavalmisapicall = [];
   let ravintolatProsessoitu = 0;
-  ravintolat.forEach((ravintola, i, array) => {
-    ravintolatProsessoitu++;
-    let promise = new Promise((reso, rej) => {
-      https
-        .get(helpers.api.getApiUrl(ravintola.apiid), res => {
-          let data = "";
-          res.on("data", chunk => {
-            data += chunk;
-          });
-          res.on("end", () => {
-            try {
-              if (data[0] != "<") {
-                let parsettuData = JSON.parse(data);
-                parsettuData.ads.forEach(async (row, i) => {
-                  if (row.ad.contentType === 0) {
-                    koskavalmis.push(
-                      htmlToObject(row.ad.body, ravintola.ravintolaID)
-                    );
-                  }
-                });
-              } else {
-                console.error("apiId " + ravintola.apiid + " JSON virhe");
+  let restaurantsPromise = new Promise((resolve, reject) => {
+    ravintolat.forEach((ravintola, i, array) => {
+      ravintolatProsessoitu++;
+      let promise = new Promise((reso, rej) => {
+        https
+          .get(helpers.api.getApiUrl(ravintola.apiid), res => {
+            let data = "";
+            res.on("data", chunk => {
+              data += chunk;
+            });
+            res.on("end", () => {
+              try {
+                if (data[0] != "<") {
+                  let parsettuData = JSON.parse(data);
+                  parsettuData.ads.forEach(async (row, i) => {
+                    if (row.ad.contentType === 0) {
+                      koskavalmis.push(
+                        htmlToObject(row.ad.body, ravintola.ravintolaID)
+                      );
+                    }
+                  });
+                } else {
+                  console.error("apiId " + ravintola.apiid + " JSON virhe");
+                }
+              } catch (error) {
+                console.error(error);
               }
-            } catch (error) {
-              console.error(error);
-            }
+            });
+          })
+          .on("finish", x => {})
+          .on("error", err => {
+            rej();
+            console.error("Error" + err.message);
           });
-        })
-        .on("finish", x => {
-          reso("done");
-        })
-        .on("error", err => {
-          rej();
-          console.error("Error" + err.message);
+        Promise.all(koskavalmis).then(x => {
+          reso(x);
         });
+      });
+      koskavalmisapicall.push(promise);
     });
-    koskavalmisapicall.push(promise);
-    // if (ravintolatProsessoitu === array.length) {
-    //   setTimeout(() => {
-    //     Promise.all(koskavalmis).then(x => {
-    //       console.log(koskavalmis);
-    //     });
-    //   }, 1000);
-    // }
+    Promise.all(koskavalmisapicall).then(x => {
+      resolve("Kaikki apicallit valmiita");
+    });
   });
-
-  Promise.all(koskavalmisapicall).then(x => {
+  restaurantsPromise.then(x => {
     console.log(x);
-    setTimeout(() => {
+    Promise.all(koskavalmisapicall).then(x => {
+      console.log(x);
       Promise.all(koskavalmis).then(x => {
         console.log(x);
       });
-    }, 300);
+    });
   });
 }
 
@@ -139,9 +138,7 @@ function htmlToObject(html, ravintolaID) {
       }
     }
 
-    setTimeout(() => {
-      res("done");
-    }, 1000);
+    res("done");
   });
   return promise;
 }
