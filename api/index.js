@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 var path = require("path");
 const app = express();
-
+const salamoi = require("../dw/");
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
@@ -22,7 +22,7 @@ app.use(express.static(distDir));
 app.get("*", (request, response) => {
   response.sendFile(path.join(__dirname, "../dist/", "index.html"));
 });
-
+salamoi.suoritaDatanLataus();
 // Start server
 if (!module.parent) {
   app.listen(process.env.PORT || 3002, () => {

@@ -11,7 +11,24 @@ let thisWeekMonday = new Date(helpers.date.getPreviousMonday());
 let ravintolat = [];
 let rowsToInsert = [];
 
-exports.suoritaDatanLataus = function() {
+exports.suoritaDatanLataus = async () => {
+  ravintolat = await haeRavintolat();
+  console.log(ravintolat);
+
+  console.log(await poistaTamaViikko());
+  ravintolaData = [];
+  ravintolat.forEach((ravintola, i) => {
+    ravintolaData.push(haeDatat(ravintola, i));
+  });
+  setTimeout(() => {
+    console.log(ravintolaData);
+    Promise.all(ravintolaData).then(x => {
+      console.log(x);
+    });
+  }, 1500);
+};
+
+exports.suoritaDatanLatausvanha = function() {
   console.log("testitoimii");
   rowsToInsert = [];
   ravintolat = [];
@@ -27,37 +44,69 @@ exports.suoritaDatanLataus = function() {
     });
   });
 };
-
-function haeRavintolat(_callback) {
-  pool.query(
-    "SELECT RavintolaID, apiid, Nimi FROM Ravintolat where tassalista = 1;",
-    (err, res) => {
-      if (err) throw err;
-      for (let row of res.rows) {
-        ravintolat.push(row);
-      }
-      _callback();
+function haeRavintolat() {
+  return new Promise((resolve, rej) => {
+    try {
+      pool.query(
+        "SELECT RavintolaID, apiid, Nimi FROM Ravintolat where tassalista = 1;",
+        (err, res) => {
+          if (err) throw err;
+          let tmpArray = [];
+          res.rows.forEach(ravintola => {
+            tmpArray.push(ravintola);
+          });
+          resolve(tmpArray);
+        }
+      );
+    } catch (error) {
+      rej(error);
     }
-  );
+  });
 }
 
-function poistaTamaViikko(_callback) {
-  console.log(
-    "Poistetaan listat päiviltä joissa paiva >= " +
-      helpers.date.formatDate(thisWeekMonday)
-  );
+function poistaTamaViikko() {
+  return new Promise((resolve, reject) => {
+    try {
+      console.log(
+        "Poistetaan listat päiviltä joissa paiva >= " +
+          helpers.date.formatDate(thisWeekMonday)
+      );
 
-  pool.query(
-    "DELETE FROM lunchlist WHERE paiva >= $1;",
-    [helpers.date.formatDate(thisWeekMonday)],
-    async (err, res) => {
-      if (err) throw err;
-      _callback();
+      pool.query(
+        "DELETE FROM lunchlist WHERE paiva >= $1;",
+        [helpers.date.formatDate(thisWeekMonday)],
+        async (err, res) => {
+          if (err) throw err;
+          resolve("Viikot poistettiin");
+        }
+      );
+    } catch (error) {
+      reject(error);
     }
-  );
+  });
+}
+function haeDatat(ravintola, index) {
+  return new Promise((resolve, reject) => {
+    try {
+      https.get(helpers.api.getApiUrl(ravintola.apiid), res => {
+        let tmpdata = "";
+        res.on("data", chunk => {
+          tmpdata += chunk;
+        });
+        res.on("end", () => {
+          if (tmpdata[0] != "<") {
+            let tmp = JSON.parse(tmpdata);
+            resolve(tmp);
+          } else resolve();
+        });
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
 }
 
-function haeDatat(_callback) {
+function haeDatatvanha(_callback) {
   koskavalmis = [];
   koskavalmisapicall = [];
   let ravintolatProsessoitu = 0;
