@@ -13,35 +13,21 @@ let rowsToInsert = [];
 
 exports.suoritaDatanLataus = async () => {
   ravintolat = await haeRavintolat();
-  console.log(ravintolat);
 
   console.log(await poistaTamaViikko());
   ravintolaData = [];
   ravintolat.forEach((ravintola, i) => {
     ravintolaData.push(haeDatat(ravintola, i));
   });
-  setTimeout(() => {
-    console.log(ravintolaData);
-    Promise.all(ravintolaData).then(x => {
-      console.log(x);
-    });
-  }, 1500);
-};
-
-exports.suoritaDatanLatausvanha = function() {
-  console.log("testitoimii");
-  rowsToInsert = [];
-  ravintolat = [];
-  haeRavintolat(() => {
-    console.log("Ravintoloita haettu" + ravintolat.length);
-
-    poistaTamaViikko(() => {
-      console.log("Tama viikko poistettiin");
-      haeDatat(() => {
-        console.log("Datat haettiin" + rowsToInsert.length);
-        insertIntoRuokalistat(rowsToInsert);
-      });
-    });
+  rowsToFormat = [];
+  ravintolaData.forEach(x => {
+    rowsToFormat.push(haeDatat2(x));
+  });
+  rowsToFormat.forEach(x => {
+    rowsToInsert.push(getDateData(x));
+  });
+  Promise.all(rowsToInsert).then(x => {
+    insertLunchLists(x);
   });
 };
 function haeRavintolat() {
@@ -73,7 +59,7 @@ function poistaTamaViikko() {
       );
 
       pool.query(
-        "DELETE FROM lunchlist WHERE paiva >= $1;",
+        "DELETE FROM lunchlist WHERE date >= $1;",
         [helpers.date.formatDate(thisWeekMonday)],
         async (err, res) => {
           if (err) throw err;
@@ -96,7 +82,7 @@ function haeDatat(ravintola, index) {
         res.on("end", () => {
           if (tmpdata[0] != "<") {
             let tmp = JSON.parse(tmpdata);
-            resolve(tmp);
+            resolve({ data: tmp, ravintola: ravintola });
           } else resolve();
         });
       });
@@ -106,62 +92,61 @@ function haeDatat(ravintola, index) {
   });
 }
 
-function haeDatatvanha(_callback) {
-  koskavalmis = [];
-  koskavalmisapicall = [];
-  let ravintolatProsessoitu = 0;
-  let restaurantsPromise = new Promise((resolve, reject) => {
-    ravintolat.forEach((ravintola, i, array) => {
-      ravintolatProsessoitu++;
-      let promise = new Promise((reso, rej) => {
-        https
-          .get(helpers.api.getApiUrl(ravintola.apiid), res => {
-            let data = "";
-            res.on("data", chunk => {
-              data += chunk;
+async function haeDatat2(promise) {
+  restaurantData = await promise;
+  return new Promise((resolve, reject) => {
+    try {
+      tmpArray = [];
+      if (restaurantData) {
+        restaurantData.data.ads.forEach(row => {
+          if (row.ad.contentType === 0) {
+            tmpArray.push({
+              body: row.ad.body,
+              ravintola: restaurantData.ravintola
             });
-            res.on("end", () => {
-              try {
-                if (data[0] != "<") {
-                  let parsettuData = JSON.parse(data);
-                  parsettuData.ads.forEach(async (row, i) => {
-                    if (row.ad.contentType === 0) {
-                      koskavalmis.push(
-                        htmlToObject(row.ad.body, ravintola.ravintolaID)
-                      );
-                    }
-                  });
-                } else {
-                  console.error("apiId " + ravintola.apiid + " JSON virhe");
-                }
-              } catch (error) {
-                console.error(error);
-              }
-            });
-          })
-          .on("finish", x => {})
-          .on("error", err => {
-            rej();
-            console.error("Error" + err.message);
-          });
-        Promise.all(koskavalmis).then(x => {
-          reso(x);
+          }
+          resolve(tmpArray);
         });
-      });
-      koskavalmisapicall.push(promise);
-    });
-    Promise.all(koskavalmisapicall).then(x => {
-      resolve("Kaikki apicallit valmiita");
-    });
+      } else resolve();
+    } catch (error) {
+      reject(error);
+    }
   });
-  restaurantsPromise.then(x => {
-    console.log(x);
-    Promise.all(koskavalmisapicall).then(x => {
-      console.log(x);
-      Promise.all(koskavalmis).then(x => {
-        console.log(x);
-      });
-    });
+}
+
+async function getDateData(promise) {
+  weekData = await promise;
+  if (weekData) {
+    weekData = weekData[0];
+  } else return;
+  return new Promise((resolve, reject) => {
+    try {
+      tmpArray = [];
+      let lunchDescs = $("div.lunchDesc", weekData.body);
+      for (let i = 0; i < 7; i++) {
+        if (lunchDescs[i]) {
+          childs = lunchDescs[i].children;
+          tmpDayRows = "";
+          for (var row in childs) {
+            if (childs[row].type === "text") {
+              tmpDayRows += childs[row].data + " <br>";
+            }
+          }
+          tmpDayRows = tmpDayRows.substring(0, tmpDayRows.lastIndexOf(" <br>"));
+        }
+
+        tmpArray.push({
+          date: helpers.date.formatDate(
+            helpers.date.addDays(thisWeekMonday, i)
+          ),
+          restaurantData: weekData.ravintola,
+          dayData: tmpDayRows
+        });
+      }
+      resolve(tmpArray);
+    } catch (error) {
+      reject(error);
+    }
   });
 }
 
@@ -192,20 +177,31 @@ function htmlToObject(html, ravintolaID) {
   return promise;
 }
 
-function insertIntoRuokalistat(rivit) {
+async function insertLunchLists(promise) {
+  rows = await promise;
+  rowsFinalForm = [];
+  if (rows) {
+    rows.forEach(rowsOfRestaurant => {
+      if (rowsOfRestaurant) {
+        rowsOfRestaurant.forEach(dateLunchList => {
+          rowsFinalForm.push(dateLunchList);
+        });
+      }
+    });
+  }
   nestedArray = [];
-  rivit.forEach(x => {
-    nestedArray.push([x.paiva, x.ravintolaID, x.teksti]);
+
+  rowsFinalForm.forEach(x => {
+    nestedArray.push([x.date, x.restaurantData.ravintolaid, x.dayData]);
   });
 
   tehtyKysely = format(
-    `INSERT INTO lunchlist (paiva,
-     ravintolaid,
-      string_agg)
-      VALUES $L`,
+    `INSERT INTO lunchlist (date,
+     restaurantid,
+      lunch)
+      VALUES %L`,
     nestedArray
   );
-  console.log(tehtyKysely);
   pool.query(tehtyKysely, (err, res) => {
     if (err) {
       console.log(err);
