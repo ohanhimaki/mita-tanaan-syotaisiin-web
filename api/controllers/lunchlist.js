@@ -20,23 +20,23 @@ exports.haeListat = (request, response) => {
 
   pool.query(
     `SELECT *
-    FROM (SELECT r.*, ra.nimi
-FROM ruokalistat r
-left join ravintolat ra on r.apiid = ra.apiid
-where (paiva = $1 OR 1 = $2) AND (r.apiid = $3  OR 1 = $4)
+    FROM (SELECT r.date, r.restaurantid, r.lunch, ra.nimi
+FROM lunchlist r
+left join ravintolat ra on r.restaurantid = ra.ravintolaid
+where (date = $1 OR 1 = $2) AND (ra.ravintolaid = $3  OR 1 = $4)
 
 UNION
 
-SELECT CASE WHEN $2 = 1 then 20191201 else $1 end paiva,
-0 as apiid,
-kpl.rivi rivi,
-kpl.teksti teksti,
+SELECT CASE WHEN 0 = 1 then 20191201 else $1 end date,
+kpl.ravintolaid as restaurantid,
+string_agg(kpl.teksti, ' <br>') lunch,
 r.nimi nimi
 from kasinpaivitetytlistat kpl
 left join ravintolat r on kpl.ravintolaid = r.ravintolaid
 where r.nimi is not null
+group by kpl.ravintolaid, r.nimi
 ) x
-order by paiva, nimi, apiid,  rivi`,
+order by date, nimi, restaurantid`,
     [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat],
     (error, results) => {
       if (error) {

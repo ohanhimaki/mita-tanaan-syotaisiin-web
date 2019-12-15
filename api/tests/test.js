@@ -38,11 +38,10 @@ describe("Ruokalistat", function() {
         .get("/api/listat")
         .then(res => {
           expect(res).to.have.status(200);
-          expect(res.body[0]).to.have.property("apiid");
-          expect(res.body[0]).to.have.property("paiva");
+          expect(res.body[0]).to.have.property("restaurantid");
+          expect(res.body[0]).to.have.property("date");
           expect(res.body[0]).to.have.property("nimi");
-          expect(res.body[0]).to.have.property("rivi");
-          expect(res.body[0]).to.have.property("teksti");
+          expect(res.body[0]).to.have.property("lunch");
           done();
         });
     });
