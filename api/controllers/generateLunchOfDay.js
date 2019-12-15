@@ -17,11 +17,12 @@ where paiva < to_number(to_char(now(), 'YYYYMMDD'), '99999999')
 
 function luoLunchofdayTmp(request, response) {
   pool.query(
-    `insert into lunchofdaytmp (paiva,restaurantid,nimi, string_agg, totalscore, randommultiplier, restaurantMultiplier, genreMultiplier, usermultiplier)
-SELECT paiva,
+    `
+insert into lunchofdaytmp (paiva,restaurantid,nimi, string_agg, totalscore, randommultiplier, restaurantMultiplier, genreMultiplier, usermultiplier)
+SELECT date,
 restaurantid,
 nimi,
-string_agg,
+lunch,
 kerroin as totalscore,
 randommultiplier,
 restaurantMultiplier,
@@ -29,7 +30,7 @@ genreMultiplier,
 usermultiplier
 
 FROM(
-SELECT x.paiva, x.restaurantid, x.nimi, string_agg(x.teksti, ' <br>' ),
+SELECT x.date, x.restaurantid, x.nimi, x.lunch,
 --1-(1/datediff) painotukseksi ravintolakohtaisen historian mukaan(viim 5 pv)
 (1-AVG(CASE WHEN historykerroin is null then 0 else historykerroin end ))
 --1-(0.8/datediff) painotukseksi genrekohtaisen historian mukaan(viim 5 pv)
@@ -42,28 +43,29 @@ avg(kerroin) as randommultiplier,
 from (
 
 --Haetaan listat ravintoloille joilla automaattilistat
-SELECT r.*, ra.nimi, ra.ravintolaid restaurantid, random() kerroin
-FROM ruokalistat r
-left join ravintolat ra on r.apiid = ra.apiid
-where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
+SELECT r.date, ra.apiid, 1 as rivi, r.lunch , ra.nimi, ra.ravintolaid restaurantid, random() kerroin
+FROM lunchlist r
+left join ravintolat ra on r.restaurantid = ra.ravintolaid
+where date = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
 
 UNION
 
 --Haetaan listat ravintoloille joilla käsinpäivitetytlistat
-SELECT to_number(to_char(now(), 'YYYYMMDD'), '99999999') paiva,
+SELECT to_number(to_char(now(), 'YYYYMMDD'), '99999999') date,
 0 as apiid,
 kpl.rivi rivi,
-kpl.teksti teksti,
+string_agg(kpl.teksti, ' <br>') lunch,
 r.nimi nimi,
 r.ravintolaid restaurantid,
 random() kerroin
 from kasinpaivitetytlistat kpl
 left join ravintolat r on kpl.ravintolaid = r.ravintolaid
 where r.nimi is not null
+group by kpl.rivi, r.nimi, r.ravintolaid
 
 ) x
 --Tarkastetaan löytyykö tällepvlle jo lounas, myöhemmin rajaat is null l.paiva
-left join lunchofday l on l.paiva = x.paiva
+left join lunchofday l on l.paiva = x.date
 --Haetaan historiakertaimet ravintolakohtaisen historian mukaan
 left join (
     select * ,
@@ -84,7 +86,7 @@ left join (
     order by paiva DESC
 ) genrehistory on genrehistory.restaurantid = x.restaurantid
 where l.paiva is NULL
-group by x.paiva, x.restaurantid, x.nimi
+group by x.date, x.restaurantid, x.nimi, x.lunch
 ) y
 order by kerroin DESC;
 
