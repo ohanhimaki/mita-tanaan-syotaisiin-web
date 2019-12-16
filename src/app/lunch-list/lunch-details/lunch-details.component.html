@@ -2,16 +2,16 @@
   <mat-card-header>
     <mat-card-title>
       <a
-        href="https://tassa.fi/kohde/{{ lunchList[0]?.apiid }}"
+        href="https://tassa.fi/kohde/{{ lunchList?.restaurantid }}"
         style="color:inherit"
-        >{{ lunchList[0]?.nimi }}
+        >{{ lunchList?.nimi }}
       </a>
     </mat-card-title>
 
-    <mat-card-subtitle>{{ lunchList[0]?.paiva }}</mat-card-subtitle>
+    <mat-card-subtitle>{{ lunchList?.date }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content class="card-content-size">
-    <span *ngFor="let row of lunchList">{{ row.teksti }} <br /></span>
+    <span [innerHtml]="lunchList.lunch"></span>
   </mat-card-content>
   <mat-card-actions>
     <!-- <button mat-button>Ok</button> -->

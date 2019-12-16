@@ -3,19 +3,20 @@ import { Listrow } from '../../shared/models/listrow';
 import { LunchListService } from '../lunch-list.service';
 import { DatePipe } from '@angular/common';
 import { Params, ActivatedRoute } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-lunch-list',
   templateUrl: './lunch-list.component.html',
-  styleUrls: ['./lunch-list.component.scss']
+  styleUrls: ['./lunch-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LunchListComponent implements OnInit {
 
   routeParams: Params;
 
-  lunchListRows: Listrow[] = [];
-  lunchListsByRestaurants: Listrow[][] = new Array<Array<Listrow>>();
-  uniqueRestaurantIDs: string[];
+  private lunchListRows: BehaviorSubject<Listrow[]> = new BehaviorSubject(null);
+  lunchListRows$ = this.lunchListRows.asObservable();
   lunchlistparams = {
     paiva: null,
     apiid: null
@@ -48,18 +49,13 @@ export class LunchListComponent implements OnInit {
     this.lunchListService
       .getLunchListRows(this.lunchlistparams)
       .then((lunchListRows: Listrow[]) => {
-        this.lunchListRows = lunchListRows;
+        this.lunchListRows.next(lunchListRows);
         if (!this.lunchListRows) {
           return;
         }
       }).then(x => {
-        this.uniqueRestaurantIDs = this.lunchListRows.map(rivi => rivi.nimi).filter(this.getDistinct);
 
-        this.uniqueRestaurantIDs.forEach(uniqueRestaurant => {
-          const tmpList = this.lunchListRows.filter(row => row.nimi === uniqueRestaurant);
 
-          this.lunchListsByRestaurants.push(tmpList);
-        });
       });
 
 

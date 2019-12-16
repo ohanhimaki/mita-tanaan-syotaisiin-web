@@ -7,7 +7,7 @@
   fxFlex.lt-md="100%"
 >
   <div
-    *ngFor="let lunchlist of lunchListsByRestaurants"
+    *ngFor="let lunchlist of lunchListRows$ | async"
     fxFlex="24%"
     fxFlex.lt-lg="32%"
     fxFlex.lt-md="45%"
