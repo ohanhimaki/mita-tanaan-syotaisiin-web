@@ -10,9 +10,11 @@ const helpers = require("./helpers");
 let thisWeekMonday = new Date(helpers.date.getPreviousMonday());
 let ravintolat = [];
 let rowsToInsert = [];
+let responsesOfInsert = [];
 
-exports.suoritaDatanLataus = async () => {
+exports.suoritaDatanLataus = async (request, response) => {
   ravintolat = await haeRavintolat();
+  console.log(request, response);
 
   console.log(await poistaTamaViikko());
   ravintolaData = [];
@@ -27,7 +29,8 @@ exports.suoritaDatanLataus = async () => {
     rowsToInsert.push(getDateData(x));
   });
   Promise.all(rowsToInsert).then(x => {
-    insertLunchLists(x);
+    responsesOfInsert.push(insertLunchLists(x));
+    Promise.all(responsesOfInsert).then(x => {});
   });
 };
 function haeRavintolat() {
@@ -150,64 +153,43 @@ async function getDateData(promise) {
   });
 }
 
-function htmlToObject(html, ravintolaID) {
-  let promise = new Promise((res, rej) => {
-    let kaikkiLunchDescit = $("div.lunchDesc", html);
-    for (var i = 0; i < 7; i++) {
-      if (kaikkiLunchDescit[i]) {
-        testi = kaikkiLunchDescit[i].children;
-        for (var rivi in testi) {
-          if (testi[rivi].type === "text") {
-            rowsToInsert.push({
-              paiva: helpers.date.formatDate(
-                helpers.date.addDays(thisWeekMonday, i)
-              ),
-              ravintolaID: ravintolaID,
-              rivi: rivi,
-              teksti: testi[rivi].data
-            });
-          }
-        }
-      } else {
-      }
-    }
-
-    res("done");
-  });
-  return promise;
-}
-
 async function insertLunchLists(promise) {
   rows = await promise;
-  rowsFinalForm = [];
-  if (rows) {
-    rows.forEach(rowsOfRestaurant => {
-      if (rowsOfRestaurant) {
-        rowsOfRestaurant.forEach(dateLunchList => {
-          rowsFinalForm.push(dateLunchList);
+  return new Promise((resolve, reject) => {
+    try {
+      rowsFinalForm = [];
+      if (rows) {
+        rows.forEach(rowsOfRestaurant => {
+          if (rowsOfRestaurant) {
+            rowsOfRestaurant.forEach(dateLunchList => {
+              rowsFinalForm.push(dateLunchList);
+            });
+          }
         });
       }
-    });
-  }
-  nestedArray = [];
+      nestedArray = [];
 
-  rowsFinalForm.forEach(x => {
-    nestedArray.push([x.date, x.restaurantData.ravintolaid, x.dayData]);
-  });
+      rowsFinalForm.forEach(x => {
+        nestedArray.push([x.date, x.restaurantData.ravintolaid, x.dayData]);
+      });
 
-  tehtyKysely = format(
-    `INSERT INTO lunchlist (date,
+      tehtyKysely = format(
+        `INSERT INTO lunchlist (date,
      restaurantid,
       lunch)
       VALUES %L`,
-    nestedArray
-  );
-  pool.query(tehtyKysely, (err, res) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(res.rowCount + " riviä tuotiin");
-      done = "done";
+        nestedArray
+      );
+      pool.query(tehtyKysely, (err, res) => {
+        if (err) {
+          console.log(err);
+          resolve("done");
+        } else {
+          resolve("done");
+        }
+      });
+    } catch (error) {
+      reject(error);
     }
   });
 }
