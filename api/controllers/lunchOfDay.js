@@ -2,7 +2,7 @@ const { pool } = require("../db/db");
 
 exports.getLunchOfDay = (request, response) => {
   pool.query(
-    `SELECT *
+    `SELECT distinct *
 from lunchofday
 where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
 ;`,
@@ -17,7 +17,7 @@ where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
 
 exports.getLunchOfDayHistory = (request, response) => {
   pool.query(
-    `SELECT *
+    `SELECT distinct *
 from lunchofday
 where paiva != to_number(to_char(now(), 'YYYYMMDD'), '99999999')
 ORDER BY paiva DESC
