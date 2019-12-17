@@ -3,4 +3,5 @@ export class Listrow {
   restaurantid: number;
   nimi: string;
   lunch: string;
+  link: string;
 }

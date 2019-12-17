@@ -1,9 +1,7 @@
 <mat-card *ngIf="lunchList" class="ruokalistaKortti">
   <mat-card-header>
     <mat-card-title>
-      <a
-        href="https://tassa.fi/kohde/{{ lunchList?.restaurantid }}"
-        style="color:inherit"
+      <a href="{{ lunchList?.link }}" style="color:inherit"
         >{{ lunchList?.nimi }}
       </a>
     </mat-card-title>
