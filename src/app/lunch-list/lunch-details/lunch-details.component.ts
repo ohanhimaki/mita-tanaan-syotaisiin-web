@@ -14,7 +14,6 @@ export class LunchDetailsComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.lunchList);
   }
 
 }
