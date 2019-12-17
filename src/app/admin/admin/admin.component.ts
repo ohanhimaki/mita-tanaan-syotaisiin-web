@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { AdminService } from '../admin.service';
 import { AddRestaurantComponent } from '../add-restaurant/add-restaurant.component';
 import { Restaurant } from 'src/app/shared/models/restaurant';
@@ -7,7 +7,8 @@ import { Restaurantgenre } from 'src/app/shared/models/restaurantgenre';
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
+  styleUrls: ['./admin.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminComponent implements OnInit {
   private apikey: string;

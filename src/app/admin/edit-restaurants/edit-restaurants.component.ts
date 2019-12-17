@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Restaurant } from 'src/app/shared/models/restaurant';
 import { AdminService } from '../admin.service';
 import { Restaurantgenre } from 'src/app/shared/models/restaurantgenre';
@@ -11,7 +11,8 @@ import { TouchSequence } from 'selenium-webdriver';
 @Component({
   selector: 'app-edit-restaurants',
   templateUrl: './edit-restaurants.component.html',
-  styleUrls: ['./edit-restaurants.component.scss']
+  styleUrls: ['./edit-restaurants.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditRestaurantsComponent implements OnInit {
   @Output() refreshRestaurants: EventEmitter<any> = new EventEmitter();
