@@ -1,4 +1,5 @@
 const { pool } = require("../db/db");
+const datehelper = require("../services/datehelpers");
 
 exports.getLunchOfDay = (request, response) => {
   pool.query(
@@ -10,7 +11,8 @@ where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
       if (error) {
         throw error;
       }
-      response.status(200).json(results.rows);
+      resultsArray = lunchofDayDateintToDate(results.rows);
+      response.status(200).json(resultsArray);
     }
   );
 };
@@ -26,7 +28,19 @@ LIMIT 5;`,
       if (error) {
         throw error;
       }
-      response.status(200).json(results.rows);
+      resultsArray = lunchofDayDateintToDate(results.rows);
+      response.status(200).json(resultsArray);
     }
   );
 };
+
+function lunchofDayDateintToDate(results) {
+  resultsArray = [];
+  for (var i in results) {
+    tmp = results[i];
+    tmp.paiva = datehelper.dateintToDate(tmp.paiva);
+
+    resultsArray.push(tmp);
+  }
+  return resultsArray;
+}
