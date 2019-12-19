@@ -1,12 +1,24 @@
-<div class="container" fxLayout="row wrap" fxLayoutAlign="space-between stretch center" fxLayoutGap="1rem" fxFlex="80%"
-  fxFlex.lt-md="100%">
+<div
+  class="container"
+  fxLayout="row wrap"
+  fxLayoutAlign="space-between stretch center"
+  fxLayoutGap="1rem"
+  fxFlex="80%"
+  fxFlex.lt-md="100%"
+>
   <mat-card fxFlex="100%">
     <mat-card-title>Admin</mat-card-title>
     <mat-card-content>
       <form>
         <mat-form-field>
-          <input matInput placeholder="Api key" [value]="apikey" type="password" (keydown.enter)="salamoi(apikey.value)"
-            #apikey />
+          <input
+            matInput
+            placeholder="Api key"
+            [value]="apikey"
+            type="password"
+            (keydown.enter)="salamoi(apikey.value)"
+            #apikey
+          />
         </mat-form-field>
       </form>
     </mat-card-content>
@@ -17,17 +29,25 @@
     </mat-card-actions>
   </mat-card>
   <mat-card fxFlex="45%" fxFlex.lt-md="100%">
-    <app-edit-restaurants [restaurants]="restaurants" [restaurantGenres]="restaurantGenres"
-      (refreshRestaurants)="getRestaurants($event)"></app-edit-restaurants>
+    <app-edit-restaurants
+      [restaurants]="restaurants"
+      [restaurantGenres]="restaurantGenres"
+      (refreshRestaurants)="getRestaurants($event)"
+    ></app-edit-restaurants>
   </mat-card>
 
   <mat-card fxFlex="45%" fxFlex.lt-md="100%">
-    <app-add-restaurant (refreshRestaurants)="getRestaurants($event)"></app-add-restaurant>
+    <app-add-restaurant
+      (refreshRestaurants)="getRestaurants($event)"
+    ></app-add-restaurant>
   </mat-card>
   <mat-card fxFlex="45%" fxFlex.lt-md="100%">
     <app-manage-handedited [restaurants]="restaurants"></app-manage-handedited>
   </mat-card>
   <mat-card fxFlex="45%" fxFlex.lt-md="100%">
-    <app-edit-genre [restaurantGenres]="restaurantGenres" (refreshGenres)="getRestaurantGenres()"></app-edit-genre>
+    <app-edit-genre
+      [restaurantGenres]="restaurantGenres"
+      (refreshGenres)="getRestaurantGenres()"
+    ></app-edit-genre>
   </mat-card>
 </div>
