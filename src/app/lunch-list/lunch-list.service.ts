@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Listrow } from '../shared/models/listrow';
 import { Http, Response } from '@angular/http';
 import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -14,14 +15,12 @@ export class LunchListService {
 
   private lunchListUrl = environment.apiurl;
 
-  constructor(private http: Http) { }
+  constructor(private http: HttpClient) { }
 
   getLunchListRows(parameters = { paiva: '20191014' }) {
     const apiurl = environment.apiurl + this.getApiUrl(parameters);
-    return this.http.get(apiurl)
-      .toPromise()
-      .then(response => response.json() as Listrow[])
-      .catch(this.handleError);
+    return this.http.get<Listrow[]>(apiurl);
+
   }
 
   private handleError(error: any) {
