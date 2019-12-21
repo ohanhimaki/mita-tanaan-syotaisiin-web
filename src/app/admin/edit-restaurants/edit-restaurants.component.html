@@ -3,27 +3,50 @@
 <mat-card-content>
   <form>
     <mat-select
+      name="ravintola"
       placeholder="Valitse ravintola"
       [(ngModel)]="restaurant"
       name="item"
       (selectionChange)="restaurantSelectionChanges()"
     >
-      <mat-option *ngFor="let restaurant of restaurants" [value]="restaurant">
+      <mat-option
+        name="let index"
+        *ngFor="let restaurant of restaurants"
+        [value]="restaurant"
+      >
         {{ restaurant?.nimi }}
       </mat-option>
     </mat-select>
 
     <mat-form-field>
-      <input matInput [(ngModel)]="restaurant.nimi" placeholder="nimi" />
+      <input
+        matInput
+        name="name"
+        [(ngModel)]="restaurant.nimi"
+        placeholder="nimi"
+      />
     </mat-form-field>
 
     <mat-form-field>
-      <input matInput [(ngModel)]="restaurant.apiid" placeholder="apiid" />
+      <input
+        matInput
+        name="apiid"
+        [(ngModel)]="restaurant.apiid"
+        placeholder="apiid"
+      />
     </mat-form-field>
     <mat-form-field>
-      <input matInput [(ngModel)]="restaurant.linkki" placeholder="linkki" />
+      <input
+        matInput
+        name="link"
+        [(ngModel)]="restaurant.linkki"
+        placeholder="linkki"
+      />
     </mat-form-field>
-    <mat-checkbox class="example-margin" [(ngModel)]="restaurant.tassalista"
+    <mat-checkbox
+      class="example-margin"
+      name="tassalista"
+      [(ngModel)]="restaurant.tassalista"
       >Tässä.fi-lista
     </mat-checkbox>
     <mat-form-field>
@@ -42,6 +65,7 @@
     <div class="addRestaurantGenre" fxLayout="row">
       <mat-select
         placeholder="Valitse genre"
+        name="restaurantGenre"
         [(ngModel)]="restaurantGenre"
         name="item"
         fxFlex="60%"
@@ -62,6 +86,7 @@
     <mat-form-field>
       <input
         matInput
+        name="apikey"
         [(ngModel)]="apikey"
         type="password"
         placeholder="apikey"
