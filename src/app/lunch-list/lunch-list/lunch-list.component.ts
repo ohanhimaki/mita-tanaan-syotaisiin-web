@@ -4,6 +4,8 @@ import { LunchListService } from '../lunch-list.service';
 import { DatePipe } from '@angular/common';
 import { Params, ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { AdminService } from 'src/app/admin/admin.service';
+import { Restaurant } from 'src/app/shared/models/restaurant';
 
 @Component({
   selector: 'app-lunch-list',
@@ -21,9 +23,14 @@ export class LunchListComponent implements OnInit {
     paiva: null,
     apiid: null
   };
-
-
-  constructor(private lunchListService: LunchListService, private datePipe: DatePipe, private activatedRoute: ActivatedRoute) {
+  private restaurants: BehaviorSubject<Restaurant[]> = new BehaviorSubject(null);
+  restaurants$ = this.restaurants.asObservable();
+  selectedRestaurant: Restaurant;
+  constructor(private lunchListService: LunchListService,
+    private datePipe: DatePipe,
+    private activatedRoute: ActivatedRoute,
+    private adminService: AdminService
+  ) {
     this.getRouteParams();
   }
 
@@ -41,10 +48,7 @@ export class LunchListComponent implements OnInit {
         paiva: this.getDateToday(),
         apiid: null
       };
-
     }
-
-
 
     this.lunchListService
       .getLunchListRows(this.lunchlistparams)
@@ -55,10 +59,9 @@ export class LunchListComponent implements OnInit {
         }
       }).then(x => {
 
-
       });
 
-
+    this.getRestaurants();
   }
 
   getDistinct(value, index, self) {
@@ -77,5 +80,10 @@ export class LunchListComponent implements OnInit {
     });
   }
 
+  getRestaurants() {
+    this.adminService.getRestaurants().subscribe((res => {
+      this.restaurants.next(res);
+    }))
+  }
 
 }
