@@ -4,6 +4,7 @@
   <form>
     <mat-select
       placeholder="Valitse ravintola"
+      name="restaurant"
       [(ngModel)]="restaurant"
       name="item"
       (selectionChange)="getHandEdited(restaurant)"
@@ -17,11 +18,17 @@
     </mat-select>
 
     <mat-form-field *ngFor="let row of handEditedRows$ | async">
-      <input matInput [(ngModel)]="row.teksti" placeholder="tekstiä" />
+      <input
+        name="text"
+        matInput
+        [(ngModel)]="row.teksti"
+        placeholder="tekstiä"
+      />
     </mat-form-field>
     <mat-form-field>
       <input
         matInput
+        name="apikey"
         [(ngModel)]="apikey"
         type="password"
         placeholder="apikey"

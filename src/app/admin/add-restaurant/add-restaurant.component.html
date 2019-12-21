@@ -2,20 +2,39 @@
 <mat-card-content>
   <form>
     <mat-form-field>
-      <input matInput [(ngModel)]="restaurant.nimi" placeholder="nimi" />
+      <input
+        name="let index"
+        matInput
+        [(ngModel)]="restaurant.nimi"
+        placeholder="nimi"
+      />
     </mat-form-field>
     <mat-form-field>
-      <input matInput [(ngModel)]="restaurant.apiid" placeholder="apiid" />
+      <input
+        name="let index"
+        matInput
+        [(ngModel)]="restaurant.apiid"
+        placeholder="apiid"
+      />
     </mat-form-field>
-    <mat-checkbox class="example-margin" [(ngModel)]="restaurant.tassalista"
+    <mat-checkbox
+      class="example-margin"
+      name="tassalista"
+      [(ngModel)]="restaurant.tassalista"
       >Tässä.fi-lista
     </mat-checkbox>
     <mat-form-field>
-      <input matInput [(ngModel)]="restaurant.linkki" placeholder="linkki" />
+      <input
+        name="let index"
+        matInput
+        [(ngModel)]="restaurant.linkki"
+        placeholder="linkki"
+      />
     </mat-form-field>
     <mat-form-field>
       <input
         matInput
+        name="let index"
         [(ngModel)]="apikey"
         type="password"
         placeholder="apikey"
