@@ -13,7 +13,7 @@
         <mat-form-field>
           <input
             matInput
-            placeholder="Api key"
+            placeholder="Apikey"
             [value]="apikey"
             type="password"
             (keydown.enter)="salamoi(apikey.value)"
@@ -26,6 +26,14 @@
       <button mat-raised-button color="primary" (click)="salamoi(apikey.value)">
         Salamoi
       </button>
+      <a
+        [routerLink]="['/lunchofdaytmp']"
+        routerLinkActive="router-link-active"
+      >
+        <button mat-raised-button color="primary">
+          lunchofdayScores
+        </button></a
+      >
     </mat-card-actions>
   </mat-card>
   <mat-card fxFlex="45%" fxFlex.lt-md="100%">
