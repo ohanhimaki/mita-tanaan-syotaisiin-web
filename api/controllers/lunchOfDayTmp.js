@@ -4,7 +4,7 @@ exports.read = (request, response) => {
   pool.query(
     `SELECT *
  from lunchofdaytmp
- ORDER BY totalscore`,
+ ORDER BY totalscore desc`,
     (error, results) => {
       if (error) {
         throw error;
