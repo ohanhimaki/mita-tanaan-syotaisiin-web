@@ -52,22 +52,31 @@ export class LunchListComponent implements OnInit {
   dateToIntDate(date) {
     return this.datePipe.transform(date, 'yyyyMMdd');
   }
-  getLunchList(date) {
-    console.log(date);
-
-    const params = {
-      paiva: date
-    };
-
-
-
+  getLunchList(date?, restaurantid?) {
+    let params = {};
+    if (date) {
+      params = {
+        paiva: date
+      };
+    }
+    if (restaurantid) {
+      params = {
+        ravintolaid: restaurantid
+      };
+    }
     this.lunchListService.getLunchListRows(params).subscribe((res => {
       this.lunchListRows.next(res);
     }));
   }
+
+  getLunchListRestaurantPicker(event) {
+    const tmpRestaurantID = event.value.ravintolaid;
+    console.log(tmpRestaurantID);
+    this.getLunchList(undefined, tmpRestaurantID);
+  }
+
   getLunchListDatePicker(event) {
     const tmpdate = this.dateToIntDate(event.value);
-    console.log(tmpdate);
     this.getLunchList(tmpdate);
   }
 
@@ -79,6 +88,7 @@ export class LunchListComponent implements OnInit {
 
   getRestaurants() {
     this.adminService.getRestaurants().subscribe((res => {
+      res = res.filter(x => x.tassalista === 1);
       this.restaurants.next(res);
     }));
   }

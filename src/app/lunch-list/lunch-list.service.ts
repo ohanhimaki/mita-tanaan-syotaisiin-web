@@ -17,7 +17,7 @@ export class LunchListService {
 
   constructor(private http: HttpClient) { }
 
-  getLunchListRows(parameters = { paiva: '20191014' }) {
+  getLunchListRows(parameters) {
     const apiurl = environment.apiurl + this.getApiUrl(parameters);
     return this.http.get<Listrow[]>(apiurl);
 

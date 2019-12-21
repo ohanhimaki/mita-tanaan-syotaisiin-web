@@ -35,9 +35,10 @@ r.linkki link
 from kasinpaivitetytlistat kpl
 left join ravintolat r on kpl.ravintolaid = r.ravintolaid
 where r.nimi is not null
+and (kpl.ravintolaid = $3 OR 1= $4)
 group by kpl.ravintolaid, r.nimi, r.linkki
 ) x
-order by date, nimi, restaurantid
+order by date DESC, nimi, restaurantid
 
 
 `,
