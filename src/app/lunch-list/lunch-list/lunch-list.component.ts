@@ -4,6 +4,8 @@ import { LunchListService } from '../lunch-list.service';
 import { DatePipe } from '@angular/common';
 import { Params, ActivatedRoute } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
+import { AdminService } from 'src/app/admin/admin.service';
+import { Restaurant } from 'src/app/shared/models/restaurant';
 
 @Component({
   selector: 'app-lunch-list',
@@ -21,44 +23,20 @@ export class LunchListComponent implements OnInit {
     paiva: null,
     apiid: null
   };
-
-
-  constructor(private lunchListService: LunchListService, private datePipe: DatePipe, private activatedRoute: ActivatedRoute) {
-    this.getRouteParams();
+  private restaurants: BehaviorSubject<Restaurant[]> = new BehaviorSubject(null);
+  restaurants$ = this.restaurants.asObservable();
+  selectedRestaurant: Restaurant;
+  constructor(private lunchListService: LunchListService,
+    private datePipe: DatePipe,
+    private activatedRoute: ActivatedRoute,
+    private adminService: AdminService
+  ) {
   }
 
   ngOnInit() {
-    if (this.routeParams.ravid || this.routeParams.paiva) {
-      const paiva = this.routeParams.paiva ? this.routeParams.paiva : null;
-      const ravid = this.routeParams.ravid ? this.routeParams.ravid : null;
 
-      this.lunchlistparams = {
-        paiva: paiva,
-        apiid: ravid
-      };
-    } else {
-      this.lunchlistparams = {
-        paiva: this.getDateToday(),
-        apiid: null
-      };
-
-    }
-
-
-
-    this.lunchListService
-      .getLunchListRows(this.lunchlistparams)
-      .then((lunchListRows: Listrow[]) => {
-        this.lunchListRows.next(lunchListRows);
-        if (!this.lunchListRows) {
-          return;
-        }
-      }).then(x => {
-
-
-      });
-
-
+    this.getLunchList(this.getDateToday());
+    this.getRestaurants();
   }
 
   getDistinct(value, index, self) {
@@ -68,7 +46,38 @@ export class LunchListComponent implements OnInit {
 
   getDateToday() {
     const date = new Date();
+    return this.dateToIntDate(date);
+  }
+
+  dateToIntDate(date) {
     return this.datePipe.transform(date, 'yyyyMMdd');
+  }
+  getLunchList(date?, restaurantid?) {
+    let params = {};
+    if (date) {
+      params = {
+        paiva: date
+      };
+    }
+    if (restaurantid) {
+      params = {
+        ravintolaid: restaurantid
+      };
+    }
+    this.lunchListService.getLunchListRows(params).subscribe((res => {
+      this.lunchListRows.next(res);
+    }));
+  }
+
+  getLunchListRestaurantPicker(event) {
+    const tmpRestaurantID = event.value.ravintolaid;
+    console.log(tmpRestaurantID);
+    this.getLunchList(undefined, tmpRestaurantID);
+  }
+
+  getLunchListDatePicker(event) {
+    const tmpdate = this.dateToIntDate(event.value);
+    this.getLunchList(tmpdate);
   }
 
   getRouteParams() {
@@ -77,5 +86,11 @@ export class LunchListComponent implements OnInit {
     });
   }
 
+  getRestaurants() {
+    this.adminService.getRestaurants().subscribe((res => {
+      res = res.filter(x => x.tassalista === 1);
+      this.restaurants.next(res);
+    }));
+  }
 
 }

@@ -1,18 +1,43 @@
-<div
-  class="container"
-  fxLayout="row wrap"
-  fxLayoutAlign="space-between stretch center"
-  fxLayoutGap="1rem grid"
-  fxFlex="100%"
-  fxFlex.lt-md="100%"
->
+<div class="container" fxLayout="row wrap" fxFlex="80%" fxFlex.lt-md="100%">
+  <div fxFlex="100%" fxLayout="row wrap" fxLayoutAlign="space-around center">
+    <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%">
+      <mat-select
+        placeholder="Restaurant"
+        [(ngModel)]="selectedRestaurant"
+        (selectionChange)="getLunchListRestaurantPicker($event)"
+      >
+        <mat-option
+          *ngFor="let restaurant of restaurants$ | async"
+          [value]="restaurant"
+          >{{ restaurant?.nimi }}</mat-option
+        >
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%">
+      <input
+        matInput
+        [matDatepicker]="picker"
+        placeholder="Choose a date"
+        (dateChange)="getLunchListDatePicker($event)"
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
   <div
-    *ngFor="let lunchlist of lunchListRows$ | async"
-    fxFlex="24%"
-    fxFlex.lt-lg="32%"
-    fxFlex.lt-md="45%"
-    fxFlex.lt-sm="100%"
+    fxLayout="row wrap"
+    fxLayoutAlign="start stretch center"
+    fxLayoutGap="1rem grid"
+    fxFlex="100%"
   >
-    <app-lunch-details [lunchList]="lunchlist"> </app-lunch-details>
+    <div
+      *ngFor="let lunchlist of lunchListRows$ | async"
+      fxFlex="33%"
+      fxFlex.lt-lg="50%"
+      fxFlex.lt-sm="100%"
+    >
+      <app-lunch-details [lunchList]="lunchlist"> </app-lunch-details>
+    </div>
   </div>
 </div>

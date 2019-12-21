@@ -10,7 +10,7 @@ import { Lunchofdaytmp } from 'src/app/shared/models/lunchofdaytmp';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LunchofdayTmpComponent implements OnInit {
-  displayedColumns: string[] = ['paiva',
+  displayedColumns: string[] = [
     'nimi',
     'restaurantid',
     'randommultiplier',
