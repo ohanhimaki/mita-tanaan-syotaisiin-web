@@ -71,7 +71,6 @@ export class LunchListComponent implements OnInit {
 
   getLunchListRestaurantPicker(event) {
     const tmpRestaurantID = event.value.ravintolaid;
-    console.log(tmpRestaurantID);
     this.getLunchList(undefined, tmpRestaurantID);
   }
 
