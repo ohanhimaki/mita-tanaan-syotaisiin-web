@@ -34,6 +34,14 @@ export class LunchListComponent implements OnInit {
     // private _adapter: DateAdapter<any>
   ) {
   }
+  thisWeekMax(d: Date) {
+    const startDay = new Date('2019-10-20');
+    const now = new Date();
+    const day = now.getDay();
+    const nextsunday = new Date();
+    nextsunday.setDate(now.getDate() + 7 - day);
+    return d.getTime() < nextsunday.getTime() && d.getTime() >= startDay.getTime();
+  }
 
   ngOnInit() {
     // this._adapter.setLocale('fi')
