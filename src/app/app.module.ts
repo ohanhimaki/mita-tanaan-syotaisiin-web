@@ -22,6 +22,8 @@ import { LunchofdayTodayComponent } from './lunchofday/lunchofday-today/lunchofd
 import { LunchofdayHistoryComponent } from './lunchofday/lunchofday-history/lunchofday-history.component';
 import { EditGenreComponent } from './admin/edit-genre/edit-genre.component';
 import { LunchofdayTmpComponent } from './lunchofday-tmp/lunchofday-tmp/lunchofday-tmp.component';
+import { MAT_DATE_LOCALE, DateAdapter } from '@angular/material';
+import { FinnishDateAdapter } from './locale';
 
 
 @NgModule({
@@ -51,7 +53,8 @@ import { LunchofdayTmpComponent } from './lunchofday-tmp/lunchofday-tmp/lunchofd
     HttpClientModule
   ],
   providers: [DatePipe,
-    { provide: APP_BASE_HREF, useValue: '/' }],
+    { provide: APP_BASE_HREF, useValue: '/' },
+    { provide: DateAdapter, useClass: FinnishDateAdapter }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
