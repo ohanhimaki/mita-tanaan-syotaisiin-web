@@ -3,38 +3,42 @@
   <form>
     <mat-form-field>
       <input
-        name="let index"
+        name="name"
         matInput
         [(ngModel)]="restaurant.nimi"
         placeholder="nimi"
       />
     </mat-form-field>
-    <mat-form-field>
-      <input
-        name="let index"
-        matInput
-        [(ngModel)]="restaurant.apiid"
-        placeholder="apiid"
-      />
-    </mat-form-field>
     <mat-checkbox
       class="example-margin"
       name="tassalista"
+      (change)="changeLink($event)"
       [(ngModel)]="restaurant.tassalista"
       >Tässä.fi-lista
     </mat-checkbox>
     <mat-form-field>
       <input
-        name="let index"
+        name="apiid"
+        matInput
+        [(ngModel)]="restaurant.apiid"
+        placeholder="apiid"
+        [readonly]="!restaurant.tassalista"
+        (keyup)="changeLink()"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <input
+        name="link"
         matInput
         [(ngModel)]="restaurant.linkki"
         placeholder="linkki"
+        [readonly]="restaurant.tassalista"
       />
     </mat-form-field>
     <mat-form-field>
       <input
         matInput
-        name="let index"
+        name="apikey"
         [(ngModel)]="apikey"
         type="password"
         placeholder="apikey"
