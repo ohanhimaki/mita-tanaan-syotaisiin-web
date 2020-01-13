@@ -1,4 +1,5 @@
 const { pool } = require("../db/db");
+const datehelper = require("../services/datehelpers");
 
 exports.haeListat = (request, response) => {
   let kaikkiPaivat = 0;
@@ -47,7 +48,19 @@ order by date DESC, nimi, restaurantid
       if (error) {
         throw error;
       }
-      response.status(200).json(results.rows);
+      resultsArray = lunchListDateintToDate(results.rows);
+      response.status(200).json(resultsArray);
     }
   );
 };
+
+function lunchListDateintToDate(results) {
+  resultsArray = [];
+  for (var i in results) {
+    tmp = results[i];
+    tmp.date = datehelper.dateintToDate(tmp.date);
+
+    resultsArray.push(tmp);
+  }
+  return resultsArray;
+}

@@ -1,5 +1,5 @@
 export class Listrow {
-  date: number;
+  date: string;
   restaurantid: number;
   nimi: string;
   lunch: string;
