@@ -17,7 +17,7 @@ CREATE TABLE lunchlist
 (
     date integer,
     restaurantid integer,
-    lunch varchar(700)
+    lunch varchar(1400)
 );
 
 
@@ -25,7 +25,7 @@ CREATE TABLE lunchofday
 (
     paiva numeric,
     nimi VARCHAR(100),
-    string_agg varchar(700),
+    string_agg varchar(1400),
     restaurantid integer
 );
 
