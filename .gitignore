@@ -103,3 +103,6 @@ public
 # Build dir
 dist/
 .vscode/settings.json
+
+# Docker dev-db datastorage
+.docker/tmp/

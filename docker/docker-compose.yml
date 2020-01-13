@@ -5,5 +5,8 @@ services:
     image: postgres
     ports:
       - "127.0.0.1:5432:5432"
+    environment:
+      PGDATA: /tmp
     volumes:
       - ../db/tablescripts:/docker-entrypoint-initdb.d
+      - ./tmp/data:/var/lib/postgresql/data
