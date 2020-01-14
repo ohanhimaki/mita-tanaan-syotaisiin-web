@@ -4,8 +4,9 @@
     <mat-card>
       <mat-card-header>
         <mat-card-title>
-          <a [href]="(lunchofday$ | async)?.link"></a>
-          {{ (lunchofday$ | async)?.nimi }}
+          <a [href]="(lunchofday$ | async)?.link">
+            {{ (lunchofday$ | async)?.nimi }}</a
+          >
         </mat-card-title>
 
         <mat-card-subtitle

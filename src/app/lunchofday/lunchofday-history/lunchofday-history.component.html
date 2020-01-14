@@ -4,7 +4,9 @@
     <mat-card>
       <ng-container *ngFor="let lunch of lunchofdayHistory$ | async">
         <mat-card-header>
-          <mat-card-title>{{ lunch.nimi }} </mat-card-title>
+          <mat-card-title>
+            <a href="lunch.link"> {{ lunch.nimi }}</a>
+          </mat-card-title>
 
           <mat-card-subtitle
             >{{ lunch.paiva | date: "dd.MM.yyyy" }}
