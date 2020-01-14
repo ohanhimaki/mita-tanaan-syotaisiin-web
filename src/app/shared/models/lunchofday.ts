@@ -5,4 +5,5 @@ export class Lunchofday {
   apiid: number;
   nimi: string;
   string_agg: string;
+  link: string;
 }

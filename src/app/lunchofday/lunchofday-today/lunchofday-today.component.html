@@ -3,7 +3,10 @@
   <div class="mat-elevation-z8">
     <mat-card>
       <mat-card-header>
-        <mat-card-title> {{ (lunchofday$ | async)?.nimi }} </mat-card-title>
+        <mat-card-title>
+          <a [href]="(lunchofday$ | async)?.link"></a>
+          {{ (lunchofday$ | async)?.nimi }}
+        </mat-card-title>
 
         <mat-card-subtitle
           >{{ (lunchofday$ | async)?.paiva | date: "dd.MM.yyyy" }}
