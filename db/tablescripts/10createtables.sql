@@ -53,6 +53,6 @@ CREATE TABLE ravintolat
 
 CREATE TABLE restaurantgenre
 (
-    genreid integer NOT NULL,
+    genreid integer NOT NULL generated ALWAYS AS IDENTITY,
     genrename VARCHAR(100)
 );

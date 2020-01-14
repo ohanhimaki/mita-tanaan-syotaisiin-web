@@ -50,8 +50,14 @@ exports.poistaRavintola = (request, response) => {
 
   const { ravintolaid } = request.body;
 
+  pool.query("DELETE FROM ravintolat WHERE ravintolaid = $1;", [ravintolaid]);
+
+  pool.query("DELETE FROM lunchlist WHERE restaurantid = $1;", [ravintolaid]);
+  pool.query("DELETE FROM kasinpaivitetytlistat where ravintolaid = $1", [
+    ravintolaid
+  ]);
   pool.query(
-    "DELETE FROM ravintolat WHERE ravintolaid = $1;",
+    "DELETE FROM genreofrestaurant where restaurantid = $1",
     [ravintolaid],
     error => {
       if (error) {
@@ -59,7 +65,8 @@ exports.poistaRavintola = (request, response) => {
       }
       response.status(201).json({
         status: "success",
-        message: "Ravintola deleted."
+        message:
+          "Restaurant, lunchlists of restaurant and genres of restaurant deleted"
       });
     }
   );

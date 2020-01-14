@@ -83,7 +83,13 @@ exports.deleteRestaurantGenre = (request, response) => {
   pool.query(
     `DELETE from restaurantgenre
     WHERE GenreID = $1;`,
+    [genreid]
+  );
+  pool.query(
+    `DELETE FROM genreofrestaurant
+      where GenreID = $1;`,
     [genreid],
+
     (error, results) => {
       if (error) {
         throw error;
