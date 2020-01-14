@@ -3,7 +3,7 @@ const datehelper = require("../services/datehelpers");
 
 exports.getLunchOfDay = (request, response) => {
   pool.query(
-    `SELECT distinct l.*, r.linkki
+    `SELECT distinct l.*, r.linkki as link
 from lunchofday l
 left join ravintolat r on l.restaurantid = r.ravintolaid
 where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
@@ -20,8 +20,9 @@ where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
 
 exports.getLunchOfDayHistory = (request, response) => {
   pool.query(
-    `SELECT distinct *
-from lunchofday
+    `SELECT distinct l.*,  r.linkki as link
+from lunchofday l
+left join ravintolat r on l.restaurantid = r.ravintolaid
 where paiva != to_number(to_char(now(), 'YYYYMMDD'), '99999999')
 ORDER BY paiva DESC
 LIMIT 5;`,
