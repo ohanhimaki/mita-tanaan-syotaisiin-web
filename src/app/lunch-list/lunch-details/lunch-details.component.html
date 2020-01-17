@@ -6,7 +6,7 @@
       </a>
     </mat-card-title>
 
-    <mat-card-subtitle>{{
+    <mat-card-subtitle [ngClass]="{ thisday: thisday(lunchList?.date) }">{{
       lunchList?.date | date: "dd.MM.yyyy"
     }}</mat-card-subtitle>
   </mat-card-header>

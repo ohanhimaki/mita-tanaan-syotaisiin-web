@@ -16,4 +16,11 @@ export class LunchDetailsComponent implements OnInit {
   ngOnInit() {
   }
 
+  thisday(date: string) {
+    const datedate = new Date(date);
+    const datetoday = new Date();
+    return datedate.toString().substring(0, 15) === datetoday.toString().substring(0, 15)
+
+  }
+
 }
