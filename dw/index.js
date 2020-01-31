@@ -16,7 +16,6 @@ exports.suoritaDatanLataus = async (request, response) => {
   ravintolat = await haeRavintolat();
   console.log(request, response);
 
-  console.log(await poistaTamaViikko());
   ravintolaData = [];
   ravintolat.forEach((ravintola, i) => {
     ravintolaData.push(haeDatat(ravintola, i));
@@ -37,7 +36,14 @@ function haeRavintolat() {
   return new Promise((resolve, rej) => {
     try {
       pool.query(
-        "SELECT RavintolaID, apiid, Nimi FROM Ravintolat where tassalista = 1;",
+        `SELECT distinct RavintolaID,
+        apiid,
+        Nimi
+        FROM Ravintolat r
+        left join lunchlist lu on lu.restaurantid = r.ravintolaid and date >= $1
+        where tassalista = 1
+        and lu.restaurantid is null;`,
+        [helpers.date.formatDate(thisWeekMonday)],
         (err, res) => {
           if (err) throw err;
           let tmpArray = [];
@@ -53,27 +59,6 @@ function haeRavintolat() {
   });
 }
 
-function poistaTamaViikko() {
-  return new Promise((resolve, reject) => {
-    try {
-      console.log(
-        "Poistetaan listat päiviltä joissa paiva >= " +
-          helpers.date.formatDate(thisWeekMonday)
-      );
-
-      pool.query(
-        "DELETE FROM lunchlist WHERE date >= $1;",
-        [helpers.date.formatDate(thisWeekMonday)],
-        async (err, res) => {
-          if (err) throw err;
-          resolve("Viikot poistettiin");
-        }
-      );
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
 function haeDatat(ravintola, index) {
   return new Promise((resolve, reject) => {
     try {
