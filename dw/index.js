@@ -29,7 +29,9 @@ exports.suoritaDatanLataus = async (request, response) => {
   });
   Promise.all(rowsToInsert).then(x => {
     responsesOfInsert.push(insertLunchLists(x));
-    Promise.all(responsesOfInsert).then(x => {});
+    Promise.all(responsesOfInsert).then(x => {
+      console.log("Ruokalistojen haku suoritettiin");
+    });
   });
 };
 function haeRavintolat() {
