@@ -98,7 +98,16 @@ export class LunchListComponent implements OnInit {
   getRestaurants() {
     this.adminService.getRestaurants().subscribe((res => {
       res = res.filter(x => x.tassalista === 1);
-      this.restaurants.next(res);
+      res.forEach(x => x.nimi = x.nimi.trim())
+      this.restaurants.next(res.sort((a,b) => {
+        if(a.nimi > b.nimi){
+          return 1;
+        }
+        if(a.nimi < b.nimi){
+          return -1;
+        }
+        return 0;
+      }));
     }));
   }
 
