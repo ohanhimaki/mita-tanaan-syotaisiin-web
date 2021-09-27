@@ -20,6 +20,18 @@ where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
 
 exports.getLunchOfDayHistory = (request, response) => {
   console.log('Aloitetaan lounashistorian haku')
+
+
+  pool.query(
+    `SELECT 'test';`,
+    (error, results) => {
+      if (error) {
+        throw error;
+        console.log(error);
+      }
+      console.log('testionnistui', results)
+    });
+
   pool.query(
     `SELECT distinct l.*,  r.linkki as link
 from lunchofday l
