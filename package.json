@@ -2,7 +2,7 @@
   "name": "mita-tanaan-syotaisiin",
   "version": "0.0.0",
   "engines": {
-    "node": "12.14.0"
+    "node": "12.*"
   },
   "scripts": {
     "ng": "ng",
