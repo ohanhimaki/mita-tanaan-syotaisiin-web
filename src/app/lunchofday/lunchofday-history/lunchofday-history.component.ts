@@ -10,8 +10,8 @@ import { Lunchofday } from 'src/app/shared/models/lunchofday';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LunchofdayHistoryComponent implements OnInit {
-  private lunchofdayHistory: BehaviorSubject<Lunchofday> = new BehaviorSubject(null);
-  public lunchofdayHistory$: Observable<Lunchofday> = this.lunchofdayHistory.asObservable();
+  private lunchofdayHistory: BehaviorSubject<Array<Lunchofday>> = new BehaviorSubject(null);
+  public lunchofdayHistory$: Observable<Array<Lunchofday>> = this.lunchofdayHistory.asObservable();
 
   constructor(private _api: LunchofdayService) { }
 
