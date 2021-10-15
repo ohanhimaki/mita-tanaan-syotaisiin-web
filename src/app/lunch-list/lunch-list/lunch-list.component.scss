@@ -11,3 +11,8 @@ body {
   margin: auto;
   min-height: 100%;
 }
+
+
+.lunchListsWeek {
+  flex-direction: row-reverse !important;
+}

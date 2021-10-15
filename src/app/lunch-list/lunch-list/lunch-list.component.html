@@ -1,4 +1,4 @@
-<div class="container" fxLayout="row wrap" fxFlex="80%" fxFlex.lt-md="100%">
+<div class="container" fxLayout="row wrap" fxFlex="100%" fxFlex.lt-md="100%">
   <div fxFlex="100%" fxLayout="row wrap" fxLayoutAlign="space-around center">
     <mat-form-field fxFlex="30%" fxFlex.lt-sm="100%">
       <mat-select
@@ -26,19 +26,48 @@
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
   </div>
-  <div
-    fxLayout="row wrap"
+
+  <ng-container *ngIf="selectedRestaurant != null; else elseBlock"
+  >
+    <div
+    fxLayout="row-reverse wrap"
+    fxLayout.lt-lg="row wrap"
     fxLayoutAlign="start stretch center"
     fxLayoutGap="1rem grid"
     fxFlex="100%"
+    style="flex-direction: row-reverse"
   >
+
+      <div
+        *ngFor="let lunchlist of lunchListRows$ | async"
+        fxFlex="14%"
+        fxFlex.lt-lg="50%"
+        fxFlex.lt-sm="100%"
+      >
+        <app-lunch-details [lunchList]="lunchlist"> </app-lunch-details>
+      </div>
+  </div>
+  </ng-container>
+  <ng-template #elseBlock>
     <div
+      fxLayout="row wrap"
+      fxLayoutAlign="start stretch center"
+      fxLayoutGap="1rem grid"
+      fxFlex="100%"
+      style="flex-direction: row-reverse"
+    >
+
+    <div
+
       *ngFor="let lunchlist of lunchListRows$ | async"
       fxFlex="33%"
       fxFlex.lt-lg="50%"
       fxFlex.lt-sm="100%"
+
     >
       <app-lunch-details [lunchList]="lunchlist"> </app-lunch-details>
     </div>
-  </div>
+
+    </div>
+  </ng-template>
 </div>

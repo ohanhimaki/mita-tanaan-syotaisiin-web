@@ -85,6 +85,7 @@ export class LunchListComponent implements OnInit {
   }
 
   getLunchListDatePicker(event) {
+    this.selectedRestaurant=null;
     const tmpdate = this.dateToIntDate(event.value);
     this.getLunchList(tmpdate);
   }
