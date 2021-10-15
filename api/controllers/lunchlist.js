@@ -18,7 +18,9 @@ exports.haeListat = (request, response) => {
   } else {
     ravintolaid = request.query.ravintolaid;
   }
+  let showHandheldLists = request.query.kasinyp == "1" ? 1 : 0;
 
+console.log(showHandheldLists);
   pool.query(
     `SELECT *
     FROM (SELECT r.date, r.restaurantid, r.lunch, ra.nimi, ra.linkki link
@@ -37,13 +39,16 @@ from kasinpaivitetytlistat kpl
 left join ravintolat r on kpl.ravintolaid = r.ravintolaid
 where r.nimi is not null
 and (kpl.ravintolaid = $3 OR 1= $4)
+and ($5 = 1)
 group by kpl.ravintolaid, r.nimi, r.linkki
 ) x
 order by date DESC, nimi, restaurantid
 
 
 `,
-    [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat],
+
+    // [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat],
+    [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat, showHandheldLists],
     (error, results) => {
       if (error) {
         throw error;

@@ -34,7 +34,12 @@ export class LunchListService {
       return '/api/listat?ravintolaid=' + parameters.ravintolaid;
     } else {
       const date = parameters.paiva ? parameters.paiva : 20191021;
-      return '/api/listat?paiva=' + date;
+
+
+
+      let url = '/api/listat?paiva=' + date + '&kasinyp=' + (parameters.showHandheld ? '1' : '0') ;
+      console.log(parameters.showHandheld);
+      return url;
     }
   }
 
