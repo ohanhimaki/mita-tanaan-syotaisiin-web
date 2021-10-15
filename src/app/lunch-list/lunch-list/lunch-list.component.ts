@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 import { AdminService } from 'src/app/admin/admin.service';
 import { Restaurant } from 'src/app/shared/models/restaurant';
 import { DateAdapter } from '@angular/material';
+import {MatCheckboxChange} from "@angular/material/checkbox";
 
 @Component({
   selector: 'app-lunch-list',
@@ -27,6 +28,8 @@ export class LunchListComponent implements OnInit {
   private restaurants: BehaviorSubject<Restaurant[]> = new BehaviorSubject(null);
   restaurants$ = this.restaurants.asObservable();
   selectedRestaurant: Restaurant;
+  showHandheldLists: boolean = false;
+  selectedDate: any;
   constructor(private lunchListService: LunchListService,
     private datePipe: DatePipe,
     private activatedRoute: ActivatedRoute,
@@ -45,6 +48,7 @@ export class LunchListComponent implements OnInit {
 
   ngOnInit() {
     // this._adapter.setLocale('fi')
+    this.selectedDate = new Date();
     this.getLunchList(this.getDateToday());
     this.getRestaurants();
   }
@@ -62,11 +66,12 @@ export class LunchListComponent implements OnInit {
   dateToIntDate(date) {
     return this.datePipe.transform(date, 'yyyyMMdd');
   }
-  getLunchList(date?, restaurantid?) {
+  getLunchList(date?, restaurantid?, showHandheld?) {
     let params = {};
     if (date) {
       params = {
-        paiva: date
+        paiva: date,
+        showHandheld: showHandheld == null || false ? false : showHandheld
       };
     }
     if (restaurantid) {
@@ -87,7 +92,7 @@ export class LunchListComponent implements OnInit {
   getLunchListDatePicker(event) {
     this.selectedRestaurant=null;
     const tmpdate = this.dateToIntDate(event.value);
-    this.getLunchList(tmpdate);
+    this.getLunchList(tmpdate, undefined, this.showHandheldLists);
   }
 
   getRouteParams() {
@@ -112,4 +117,7 @@ export class LunchListComponent implements OnInit {
     }));
   }
 
+  changeLink($event: MatCheckboxChange) {
+    this.getLunchList(this.dateToIntDate(this.selectedDate), undefined, this.showHandheldLists);
+  }
 }
