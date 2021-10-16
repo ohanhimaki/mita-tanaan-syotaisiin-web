@@ -118,9 +118,9 @@ async function getDateData(promise) {
       tmpArray = [];
       let lunchDescs = cheerio.load("div.lunchDesc", weekData.body);
       for (let i = 0; i < 7; i++) {
+        let tmpDayRows = "";
         if (lunchDescs[i]) {
           childs = lunchDescs[i].children;
-          tmpDayRows = "";
           for (var row in childs) {
             if (childs[row].type === "text") {
               tmpDayRows += childs[row].data + " <br>";
@@ -128,6 +128,7 @@ async function getDateData(promise) {
           }
           tmpDayRows = tmpDayRows.substring(0, tmpDayRows.lastIndexOf(" <br>"));
         }
+        if(tmpDayRows){
 
         tmpArray.push({
           date: helpers.date.formatDate(
@@ -136,6 +137,7 @@ async function getDateData(promise) {
           restaurantData: weekData.ravintola,
           dayData: tmpDayRows
         });
+        }
       }
       resolve(tmpArray);
     } catch (error) {
