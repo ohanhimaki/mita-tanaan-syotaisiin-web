@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const { pool } = require("./config");
 const https = require("https");
-const $ = require("cheerio");
+const cheerio = require("cheerio");
 const format = require("pg-format");
 
 const helpers = require("./helpers");
@@ -116,7 +116,7 @@ async function getDateData(promise) {
   return new Promise((resolve, reject) => {
     try {
       tmpArray = [];
-      let lunchDescs = $("div.lunchDesc", weekData.body);
+      let lunchDescs = cheerio.load("div.lunchDesc", weekData.body);
       for (let i = 0; i < 7; i++) {
         if (lunchDescs[i]) {
           childs = lunchDescs[i].children;
