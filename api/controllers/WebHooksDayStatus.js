@@ -1,12 +1,58 @@
 ﻿const {pool} = require("../db/db");
 const datehelper = require("../services/datehelpers");
+const {sendRequest} = require("../services/webhookrequest");
 
+
+function createPayloadObject(lunchofday, allLunchLists) {
+  let payloadObject = {};
+  payloadObject.embeds = [];
+  if (lunchofday ) {
+    var tmpDesc = lunchofday['string_agg'].replace(/<br\s*\/?>/mg,"\n");
+    var embed = {
+      title: lunchofday.nimi,
+      description: tmpDesc
+    }
+    payloadObject.content = "Päivän lounaspaikka on: " + lunchofday.nimi;
+    payloadObject.embeds.push(embed);
+  }
+
+  for (var lunchList in allLunchLists) {
+    var tmpDesc = allLunchLists[lunchList].lunch.replace(/<br\s*\/?>/mg,"\n");
+    var embed = {
+
+      title: allLunchLists[lunchList].nimi,
+      description: tmpDesc
+    }
+    payloadObject.embeds.push(embed)
+
+  }
+  return payloadObject;
+
+}
+
+async function getWebhookUrls() {
+  let rows = await executeSelectQuery(`
+    SELECT url
+    from webhookSubscriptions l
+    where (webhooksubscriptiontypeid = 1
+        OR webhooksubscriptiontypeid is null)
+    ;`)
+  let urls = [];
+  rows.forEach(x => urls.push(x.url));
+  return urls;
+}
 
 exports.sendDayStatuses = async (request, response) => {
-  // const lunchofday = getLunchOfDay();
+  const lunchofday = await getLunchOfDay();
   const allLunchLists = await lunchListsByParameters(datehelper.dateToDateInt(new Date()), undefined, false);
-  // const allLunchLists = await lunchListsByParameters("20211016", "123123123", 2);
-  console.log('ruokalsitat', allLunchLists.length)
+
+  var payloadObject = createPayloadObject(lunchofday, allLunchLists);
+
+  const webhookUrls = await getWebhookUrls();
+  for (const webhookUrlsKey in webhookUrls) {
+    sendRequest(payloadObject, webhookUrls[webhookUrlsKey])
+  }
+
 
 
   response.status(200).json({
@@ -15,26 +61,18 @@ exports.sendDayStatuses = async (request, response) => {
   });
 };
 
-function getLunchOfDay() {
 
-  pool.query(
-    `
-      SELECT distinct l.*, r.linkki as link
-      from lunchofday l
-             left join ravintolat r on l.restaurantid = r.ravintolaid
-      where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
-      ;`,
-    (error, results) => {
-      // console.log('results',results.rows)
-      // console.log('error',error)
-      if (error) {
-        throw error;
-      }
-      resultsArray = lunchofDayDateintToDate(results.rows);
-      return resultsArray;
-    }
-  );
-  return null;
+
+async function getLunchOfDay() {
+   var rows = await executeSelectQuery(`
+    SELECT distinct l.*, r.linkki as link
+    from lunchofday l
+           left join ravintolat r on l.restaurantid = r.ravintolaid
+    where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
+    ;`)
+
+  return rows[0];
+
 }
 
 function lunchofDayDateintToDate(results) {
@@ -98,7 +136,7 @@ r.linkki link
 
 
     `,
-      [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat, showHandheldLists]
+    [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat, showHandheldLists]
   );
 
 }
