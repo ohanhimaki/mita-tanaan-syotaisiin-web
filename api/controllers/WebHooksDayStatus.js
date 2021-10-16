@@ -1,34 +1,43 @@
 ﻿const { pool } = require("../db/db");
 const datehelper = require("../services/datehelpers");
-const datehelper2 = require("../../dw/helpers/datehelpers");
 
 exports.sendDayStatuses = (request, response) => {
-  const lunchofday = getLunchOfDay();
-  const allLunchLists = lunchListsByParameters(datehelper2(new Date(), undefined, false))
+  // const lunchofday = getLunchOfDay();
+  const allLunchLists = lunchListsByParameters(datehelper.dateToDateInt(new Date()), undefined, false);
+  console.log(allLunchLists)
 
 
+  response.status(200).json({
+    status: "Success",
+    message: ""
+  });
 };
 
 function getLunchOfDay() {
 
   pool.query(
-    `SELECT distinct l.*, r.linkki as link
+    `
+SELECT distinct l.*, r.linkki as link
      from lunchofday l
             left join ravintolat r on l.restaurantid = r.ravintolaid
      where paiva = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
     ;`,
     (error, results) => {
+      // console.log('results',results.rows)
+      // console.log('error',error)
       if (error) {
         throw error;
       }
       resultsArray = lunchofDayDateintToDate(results.rows);
-      response.status(200).json(resultsArray);
+      return resultsArray;
     }
   );
+  return null;
 }
 
 function lunchofDayDateintToDate(results) {
   resultsArray = [];
+  let tmp;
   for (var i in results) {
     tmp = results[i];
     tmp.paiva = datehelper.dateintToDate(tmp.paiva);
@@ -48,7 +57,7 @@ function lunchListsByParameters (dateInt, restaurantId, showHandheld){
     paiva = 0;
     kaikkiPaivat = 1;
   } else {
-    paiva = request.query.paiva;
+    paiva = dateInt
   }
   if (!restaurantId) {
     ravintolaid = 0;
@@ -58,7 +67,6 @@ function lunchListsByParameters (dateInt, restaurantId, showHandheld){
   }
   let showHandheldLists = showHandheld ? 1 : 0;
 
-  console.log(showHandheldLists);
   pool.query(
     `SELECT *
     FROM (SELECT r.date, r.restaurantid, r.lunch, ra.nimi, ra.linkki link
@@ -87,14 +95,17 @@ order by date DESC, nimi, restaurantid
 
     [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat, showHandheldLists],
     (error, results) => {
+      console.log('results',results.rows)
+      console.log('error',error)
       if (error) {
-        throw error;
+        throw error.stack;
       }
       resultsArray = lunchListDateintToDate(results.rows);
       return resultsArray;
     }
   );
-};
+  return null;
+}
 
 function lunchListDateintToDate(results) {
   resultsArray = [];
