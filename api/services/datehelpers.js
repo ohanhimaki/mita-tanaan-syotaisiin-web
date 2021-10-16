@@ -31,7 +31,7 @@ exports.dateToDateInt = function (date) {
   if (month.length < 2) month = "0" + month;
   if (day.length < 2) day = "0" + day;
 
-  return ([year, month, day].join(""))+0;
+  return ([year, month, day].join(""));
 }
 
 exports.addDays = function (start, daysToAdd) {
