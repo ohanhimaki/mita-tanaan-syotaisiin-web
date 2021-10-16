@@ -33,6 +33,10 @@ exports.suoritaDatanLataus = async (request, response) => {
       console.log("Ruokalistojen haku suoritettiin");
     });
   });
+  response.status(200).json({
+    status: "Success",
+    message: "Salamointi suoritetttu"
+  });
 };
 function haeRavintolat() {
   return new Promise((resolve, rej) => {
