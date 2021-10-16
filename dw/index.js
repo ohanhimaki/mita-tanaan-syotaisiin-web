@@ -1,6 +1,6 @@
 const dotenv = require("dotenv");
 dotenv.config();
-const { pool } = require("./config");
+const {pool} = require("./config");
 const https = require("https");
 const cheerio = require("cheerio");
 const format = require("pg-format");
@@ -14,7 +14,7 @@ let responsesOfInsert = [];
 
 exports.suoritaDatanLataus = async (request, response) => {
   ravintolat = await haeRavintolat();
-  console.log(request, response);
+  console.log('ravintolat', ravintolat.length)
 
   ravintolaData = [];
   ravintolat.forEach((ravintola, i) => {
@@ -76,7 +76,7 @@ function haeDatat(ravintola, index) {
         res.on("end", () => {
           if (tmpdata[0] != "<") {
             let tmp = JSON.parse(tmpdata);
-            resolve({ data: tmp, ravintola: ravintola });
+            resolve({data: tmp, ravintola: ravintola});
           } else resolve();
         });
       });
@@ -116,7 +116,8 @@ async function getDateData(promise) {
   return new Promise((resolve, reject) => {
     try {
       tmpArray = [];
-      let lunchDescs = cheerio.load("div.lunchDesc", weekData.body);
+      let $ = cheerio.load(weekData.body);
+      let lunchDescs = $("div.lunchDesc");
       for (let i = 0; i < 7; i++) {
         let tmpDayRows = "";
         if (lunchDescs[i]) {
@@ -125,18 +126,46 @@ async function getDateData(promise) {
             if (childs[row].type === "text") {
               tmpDayRows += childs[row].data + " <br>";
             }
+            if (childs[row].type === "tag" && childs[row].name == "table") {
+              let table = childs[row].children
+              for (var row in table) {
+                let rows = table[row].children
+                for (var cell in rows) {
+                  let rowText = "";
+                  if (rows[cell].type === "tag" && rows[cell].name === "tr") {
+                    let cells = rows[cell].children
+                    for (var texts in cells) {
+                      let cell1 = cells[texts];
+                      // console.log('Tulee tänne', cell1 )
+                      if (cell1.type === "tag" && cell1.name === "td") {
+                        for (var child1 in cell1.children) {
+                          rowText += cell1.children[child1].data;
+                          // console.log(cell1.children[child1].data )
+                        }
+                      }
+                    }
+                  }
+                  // console.log(rowText);
+                  tmpDayRows += rowText + " <br>";
+                }
+
+              }
+
+              tmpDayRows += childs[row].data + " <br>";
+            }
           }
           tmpDayRows = tmpDayRows.substring(0, tmpDayRows.lastIndexOf(" <br>"));
+          console.log(tmpDayRows);
         }
-        if(tmpDayRows){
+        if (tmpDayRows) {
 
-        tmpArray.push({
-          date: helpers.date.formatDate(
-            helpers.date.addDays(thisWeekMonday, i)
-          ),
-          restaurantData: weekData.ravintola,
-          dayData: tmpDayRows
-        });
+          tmpArray.push({
+            date: helpers.date.formatDate(
+              helpers.date.addDays(thisWeekMonday, i)
+            ),
+            restaurantData: weekData.ravintola,
+            dayData: tmpDayRows
+          });
         }
       }
       resolve(tmpArray);
@@ -168,9 +197,10 @@ async function insertLunchLists(promise) {
 
       tehtyKysely = format(
         `INSERT INTO lunchlist (date,
-     restaurantid,
-      lunch)
-      VALUES %L`,
+                                restaurantid,
+                                lunch)
+        VALUES
+        %L`,
         nestedArray
       );
       pool.query(tehtyKysely, (err, res) => {
