@@ -56,3 +56,10 @@ CREATE TABLE restaurantgenre
     genreid integer NOT NULL generated ALWAYS AS IDENTITY,
     genrename VARCHAR(100)
 );
+CREATE TABLE webhookSubscriptions
+(
+    id integer NOT NULL generated ALWAYS AS IDENTITY,
+    Name VARCHAR(100),
+    Url VARCHAR(2048),
+    WebHookSubscriptionTypeId integer
+);
