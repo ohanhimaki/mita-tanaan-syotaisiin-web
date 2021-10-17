@@ -198,6 +198,7 @@ export class LunchListComponent implements OnInit {
 
   getLunchListRestaurantPicker(event) {
     const tmpRestaurantID = event.value.ravintolaid;
+    this.showWholeWeek = false;
     this.getLunchList(undefined, tmpRestaurantID, undefined, this.showWholeWeek);
   }
 
@@ -234,6 +235,7 @@ export class LunchListComponent implements OnInit {
   }
 
   changeWholeWeekToggle($event: MatCheckboxChange) {
+    this.selectedRestaurant = this.showWholeWeek ? undefined : this.selectedRestaurant;
     this.getLunchList(this.dateToIntDate(this.selectedDate), undefined, this.showHandheldLists, this.showWholeWeek);
   }
 }
