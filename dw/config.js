@@ -10,7 +10,9 @@ if (process.env.SSL === "false") {
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: sslfromenv
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 module.exports = {
