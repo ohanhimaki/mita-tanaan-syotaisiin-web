@@ -1,4 +1,4 @@
-<mat-card *ngIf="lunchList" class="ruokalistaKortti">
+<mat-card *ngIf="lunchList" class="ruokalistaKortti" [class.lunchlistNotToday]="!thisday(lunchList?.date)">
   <mat-card-header>
     <mat-card-title>
       <a href="{{ lunchList?.link }}" style="color:inherit"
