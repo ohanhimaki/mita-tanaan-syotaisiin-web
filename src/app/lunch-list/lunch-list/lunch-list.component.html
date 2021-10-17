@@ -34,9 +34,16 @@
       [(ngModel)]="showHandheldLists"
     >Näytä käsinylläpidettävät
     </mat-checkbox>
+    <mat-checkbox
+      class="example-margin"
+      name="wholeWeek"
+      (change)="changeWholeWeekToggle($event)"
+      [(ngModel)]="showWholeWeek"
+    >Näytä koko viikko
+    </mat-checkbox>
   </div>
 
-  <ng-container *ngIf="selectedRestaurant != null; else elseBlock"
+  <ng-container *ngIf="selectedRestaurant != null || showWholeWeek; else elseBlock"
   >
     <div
     fxLayout="row-reverse wrap"
