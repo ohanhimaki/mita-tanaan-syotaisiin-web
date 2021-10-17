@@ -6,11 +6,14 @@ exports.haeListat = (request, response) => {
   let kaikkiRavintolat = 0;
 
   let paiva = 0;
+  let endDate = 0;
   if (!request.query.paiva) {
     paiva = 0;
+    endDate = 0;
     kaikkiPaivat = 1;
   } else {
     paiva = request.query.paiva;
+    endDate = request.query.endDate;
   }
   if (!request.query.ravintolaid) {
     ravintolaid = 0;
@@ -20,13 +23,12 @@ exports.haeListat = (request, response) => {
   }
   let showHandheldLists = request.query.kasinyp == "1" ? 1 : 0;
 
-console.log(showHandheldLists);
   pool.query(
     `SELECT *
     FROM (SELECT r.date, r.restaurantid, r.lunch, ra.nimi, ra.linkki link
 FROM lunchlist r
 left join ravintolat ra on r.restaurantid = ra.ravintolaid
-where (date = $1 OR 1 = $2) AND (ra.ravintolaid = $3  OR 1 = $4)
+where ((date between $1 and $6) OR 1 = $2) AND (ra.ravintolaid = $3  OR 1 = $4)
 
 UNION
 
@@ -46,9 +48,7 @@ order by date DESC, nimi, restaurantid
 
 
 `,
-
-    // [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat],
-    [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat, showHandheldLists],
+    [paiva, kaikkiPaivat, ravintolaid, kaikkiRavintolat, showHandheldLists, endDate],
     (error, results) => {
       if (error) {
         throw error;

@@ -30,6 +30,7 @@ export class LunchListComponent implements OnInit {
   restaurants$ = this.restaurants.asObservable();
   selectedRestaurant: Restaurant;
   showHandheldLists: boolean = false;
+  showWholeWeek: boolean = false;
   selectedDate: any;
   private loadingLunchLists: boolean;
 
@@ -53,7 +54,7 @@ export class LunchListComponent implements OnInit {
   ngOnInit() {
     // this._adapter.setLocale('fi')
     this.selectedDate = new Date();
-    this.getLunchList(this.getDateToday());
+    this.getLunchList(this.getDateToday(), undefined, undefined, this.showWholeWeek);
     this.getRestaurants();
   }
 
@@ -70,6 +71,7 @@ export class LunchListComponent implements OnInit {
   dateToIntDate(date) {
     return this.datePipe.transform(date, 'yyyyMMdd');
   }
+
   dateintToDate = dateint => {
     if (!dateint) {
       return;
@@ -81,11 +83,15 @@ export class LunchListComponent implements OnInit {
 
     return new Date(year, month - 1, day);
   };
-  getLunchList(date?, restaurantid?, showHandheld?) {
+
+  getLunchList(date?, restaurantid?, showHandheld?, showWholeWeek?) {
+    var startDate = showWholeWeek ? this.dateToIntDate(this.getPreviousMonday(this.dateintToDate(date))) : date;
+    var endDate = showWholeWeek ? this.dateToIntDate(this.getNextSunday(this.dateintToDate(date))) : date;
     let params = {};
     if (date) {
       params = {
-        paiva: date,
+        paiva: startDate,
+        end: endDate,
         showHandheld: showHandheld == null || false ? false : showHandheld
       };
     }
@@ -100,45 +106,50 @@ export class LunchListComponent implements OnInit {
   }
 
   private calculateLunchLists(res: Listrow[]) {
-    if (this.selectedRestaurant != null) {
-      var distinctRestaurants = res.map(x =>  ({restaurantid: x.restaurantid, nimi: x.nimi, link: x.link})).filter((value,i,self) => self.findIndex(restr => restr.restaurantid == value.restaurantid) === i);
-      var  datesAsInt = res.map(x => parseInt(this.dateToIntDate(x.date)));
+    if (this.selectedRestaurant != null || this.showWholeWeek) {
+      var distinctRestaurants = res.map(x => ({
+        restaurantid: x.restaurantid,
+        nimi: x.nimi,
+        link: x.link
+      })).filter((value, i, self) => self.findIndex(restr => restr.restaurantid == value.restaurantid) === i);
+      var datesAsInt = res.map(x => parseInt(this.dateToIntDate(x.date)));
       var dateMin = Math.min(...datesAsInt);
 
-      let dateMinTmp = this.getPreviousMonday( this.dateintToDate(dateMin));
+      let dateMinTmp = this.getPreviousMonday(this.dateintToDate(dateMin));
       dateMin = parseInt(this.dateToIntDate(dateMinTmp));
 
 
       var dateMax = Math.max(...datesAsInt);
-      let dateMaxTmp = this.getNextSunday( this.dateintToDate(dateMax));
+      let dateMaxTmp = this.getNextSunday(this.dateintToDate(dateMax));
       dateMax = parseInt(this.dateToIntDate(dateMaxTmp));
 
       console.log(dateMin, dateMax)
       var datesBetween = this.getDatesBetween(this.dateintToDate(dateMin), this.dateintToDate(dateMax));
-      // console.log(datesBetween);
 
-      var datesWithList = res.map(x => x.date)
-      var datesMissingList = datesBetween.filter(x =>
-        {
-          return datesWithList.find(y => {
-           return this.dateToIntDate(x) === this.dateToIntDate(y)
-          }) === undefined
-        }
-      );
-      console.log(datesBetween.length, datesWithList.length, datesMissingList.length);
+
+      var rowsForMissing = [];
       for (const key in distinctRestaurants) {
-        var rowsForMissing = datesMissingList.map(x => ({
+
+        var datesWithList = res.filter(x => x.restaurantid == distinctRestaurants[key].restaurantid).map(x => x.date)
+        var datesMissingList = datesBetween.filter(x => {
+            return datesWithList.find(y => {
+              return this.dateToIntDate(x) === this.dateToIntDate(y)
+            }) === undefined
+          }
+        );
+        var rowsForMissingTmp = datesMissingList.map(x => ({
           date: x,
           restaurantid: distinctRestaurants[key].restaurantid,
           nimi: distinctRestaurants[key].nimi,
           lunch: 'Ei saatavilla',
           link: distinctRestaurants[key].link
-        }) )
-
+        }))
+        console.log(distinctRestaurants[key].nimi, rowsForMissingTmp.length)
+        rowsForMissing.push(...rowsForMissingTmp);
       }
 
       console.log(rowsForMissing);
-      this.lunchListRows.next(res.concat(rowsForMissing).sort((a,b) => parseInt( this.dateToIntDate(b.date))- parseInt(this.dateToIntDate(a.date))));
+      this.lunchListRows.next(res.concat(rowsForMissing).sort((a, b) => parseInt(this.dateToIntDate(a.date)) - parseInt(this.dateToIntDate(b.date))).sort((a, b) => a.nimi > b.nimi ? 1 : -1));
 
     } else {
       this.lunchListRows.next(res);
@@ -147,7 +158,7 @@ export class LunchListComponent implements OnInit {
 
   }
 
-  getPreviousMonday =  (date) => {
+  getPreviousMonday = (date: Date) => {
     var day = date.getDay();
     var prevMonday;
     if (day === 0) {
@@ -158,7 +169,7 @@ export class LunchListComponent implements OnInit {
 
     return prevMonday;
   }
-  getNextSunday =  (date) => {
+  getNextSunday = (date) => {
     var day = date.getDay();
     var nextSunday;
     if (day === 0) {
@@ -169,15 +180,17 @@ export class LunchListComponent implements OnInit {
 
     return nextSunday;
   }
+
   private addDays(date, daysToAdd) {
     date.setDate(date.getDate() + daysToAdd);
     return date;
   }
+
   getDatesBetween(startDate, stopDate) {
     var dateArray = new Array();
     var currentDate = startDate;
     while (currentDate <= stopDate) {
-      dateArray.push(new Date (currentDate));
+      dateArray.push(new Date(currentDate));
       currentDate = this.addDays(currentDate, 1);
     }
     return dateArray;
@@ -185,13 +198,14 @@ export class LunchListComponent implements OnInit {
 
   getLunchListRestaurantPicker(event) {
     const tmpRestaurantID = event.value.ravintolaid;
-    this.getLunchList(undefined, tmpRestaurantID);
+    this.showWholeWeek = false;
+    this.getLunchList(undefined, tmpRestaurantID, undefined, this.showWholeWeek);
   }
 
   getLunchListDatePicker(event) {
     this.selectedRestaurant = null;
     const tmpdate = this.dateToIntDate(event.value);
-    this.getLunchList(tmpdate, undefined, this.showHandheldLists);
+    this.getLunchList(tmpdate, undefined, this.showHandheldLists, this.showWholeWeek);
   }
 
   getRouteParams() {
@@ -217,6 +231,11 @@ export class LunchListComponent implements OnInit {
   }
 
   changeLink($event: MatCheckboxChange) {
-    this.getLunchList(this.dateToIntDate(this.selectedDate), undefined, this.showHandheldLists);
+    this.getLunchList(this.dateToIntDate(this.selectedDate), undefined, this.showHandheldLists, this.showWholeWeek);
+  }
+
+  changeWholeWeekToggle($event: MatCheckboxChange) {
+    this.selectedRestaurant = this.showWholeWeek ? undefined : this.selectedRestaurant;
+    this.getLunchList(this.dateToIntDate(this.selectedDate), undefined, this.showHandheldLists, this.showWholeWeek);
   }
 }
