@@ -1,6 +1,6 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Mitäs tänään syötäisiin",
+    "short_name": "MTS",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
