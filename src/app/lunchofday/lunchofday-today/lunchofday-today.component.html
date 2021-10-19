@@ -1,4 +1,4 @@
-<mat-card *ngIf="lunchofday$ | async">
+<div *ngIf="lunchofday$ | async">
   <mat-card-title>Päivän lounaspaikka on:</mat-card-title>
   <div class="mat-elevation-z8">
     <mat-card>
@@ -21,7 +21,7 @@
       <mat-card-actions> </mat-card-actions>
     </mat-card>
   </div>
-</mat-card>
+</div>
 
 <mat-card *ngIf="!(lunchofday$ | async)">
   <mat-card-content>
