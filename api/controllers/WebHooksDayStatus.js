@@ -3,30 +3,37 @@ const datehelper = require("../services/datehelpers");
 const {sendRequest} = require("../services/webhookrequest");
 
 
-function createPayloadObject(lunchofday, allLunchLists) {
-  let payloadObject = {};
-  payloadObject.embeds = [];
-  if (lunchofday ) {
-    var tmpDesc = lunchofday['string_agg'].replace(/<br\s*\/?>/mg,"\n");
-    var embed = {
-      title: lunchofday.nimi,
-      description: tmpDesc
+function createPayloadObjects(lunchofday, allLunchLists) {
+  let payloadObjects = [];
+  let lunchlistCounter = 0;
+  while (1 + (payloadObjects.length * 9) <= allLunchLists.length) {
+    let payloadObject = {};
+    payloadObject.content = "Päivän lounaspaikka on: "
+    +   lunchofday.nimi + ((allLunchLists.length > 8) ? " (" + (payloadObjects.length+1).toString() + "/" + (Math.ceil(allLunchLists.length/8)).toString() +")" : "" ) ;
+    payloadObject.embeds = [];
+    if (lunchofday && payloadObjects.length === 0) {
+      var tmpDesc = lunchofday['string_agg'].replace(/<br\s*\/?>/mg, "\n");
+      var embed = {
+        title: lunchofday.nimi,
+        description: tmpDesc
+      }
+      payloadObject.embeds.push(embed);
     }
-    payloadObject.content = "Päivän lounaspaikka on: " + lunchofday.nimi;
-    payloadObject.embeds.push(embed);
+
+    for (let i = 0; i < 8 && lunchlistCounter < allLunchLists.length ; i++) {
+      var tmpDesc = allLunchLists[lunchlistCounter].lunch.replace(/<br\s*\/?>/mg, "\n");
+      var embed = {
+
+        title: allLunchLists[lunchlistCounter].nimi,
+        description: tmpDesc
+      }
+      payloadObject.embeds.push(embed)
+      lunchlistCounter++;
+    }
+    payloadObjects.push(payloadObject)
   }
 
-  for (var lunchList in allLunchLists) {
-    var tmpDesc = allLunchLists[lunchList].lunch.replace(/<br\s*\/?>/mg,"\n");
-    var embed = {
-
-      title: allLunchLists[lunchList].nimi,
-      description: tmpDesc
-    }
-    payloadObject.embeds.push(embed)
-
-  }
-  return payloadObject;
+  return payloadObjects;
 
 }
 
@@ -35,7 +42,7 @@ async function getWebhookUrls() {
     SELECT url
     from webhookSubscriptions l
     where (webhooksubscriptiontypeid = 1
-        OR webhooksubscriptiontypeid is null)
+      OR webhooksubscriptiontypeid is null)
     ;`)
   let urls = [];
   rows.forEach(x => urls.push(x.url));
@@ -46,13 +53,15 @@ exports.sendDayStatuses = async (request, response) => {
   const lunchofday = await getLunchOfDay();
   const allLunchLists = await lunchListsByParameters(datehelper.dateToDateInt(new Date()), undefined, false);
 
-  var payloadObject = createPayloadObject(lunchofday, allLunchLists);
-
+  const timer = ms => new Promise(res => setTimeout(res, ms))
+  var payloadObjects = createPayloadObjects(lunchofday, allLunchLists);
   const webhookUrls = await getWebhookUrls();
-  for (const webhookUrlsKey in webhookUrls) {
-    sendRequest(payloadObject, webhookUrls[webhookUrlsKey])
+  for (const webhookUrl of webhookUrls) {
+    for (const payloadObject of payloadObjects) {
+         sendRequest(payloadObject, webhookUrl);
+         await timer(1200);
+    }
   }
-
 
 
   response.status(200).json({
@@ -62,9 +71,8 @@ exports.sendDayStatuses = async (request, response) => {
 };
 
 
-
 async function getLunchOfDay() {
-   var rows = await executeSelectQuery(`
+  var rows = await executeSelectQuery(`
     SELECT distinct l.*, r.linkki as link
     from lunchofday l
            left join ravintolat r on l.restaurantid = r.ravintolaid
