@@ -9,7 +9,7 @@ function createPayloadObjects(lunchofday, allLunchLists) {
   while (1 + (payloadObjects.length * 9) <= allLunchLists.length) {
     let payloadObject = {};
     payloadObject.content = "Päivän lounaspaikka on: "
-    +   lunchofday.nimi + ((allLunchLists.length > 8) ? " (" + (payloadObjects.length+1).toString() + "/" + (Math.ceil(allLunchLists.length/8)).toString() +")" : "" ) ;
+      + lunchofday.nimi + ((allLunchLists.length > 8) ? " (" + (payloadObjects.length + 1).toString() + "/" + (Math.ceil(allLunchLists.length / 8)).toString() + ")" : "");
     payloadObject.embeds = [];
     if (lunchofday && payloadObjects.length === 0) {
       var tmpDesc = lunchofday['string_agg'].replace(/<br\s*\/?>/mg, "\n");
@@ -20,7 +20,7 @@ function createPayloadObjects(lunchofday, allLunchLists) {
       payloadObject.embeds.push(embed);
     }
 
-    for (let i = 0; i < 8 && lunchlistCounter < allLunchLists.length ; i++) {
+    for (let i = 0; i < 8 && lunchlistCounter < allLunchLists.length; i++) {
       var tmpDesc = allLunchLists[lunchlistCounter].lunch.replace(/<br\s*\/?>/mg, "\n");
       var embed = {
 
@@ -43,30 +43,48 @@ async function getWebhookUrls() {
     from webhookSubscriptions l
     where (webhooksubscriptiontypeid = 1
       OR webhooksubscriptiontypeid is null)
+      and (lastCall <  now() - INTERVAL '12 hour' OR lastcall is null)
     ;`)
   let urls = [];
   rows.forEach(x => urls.push(x.url));
   return urls;
 }
+function updateWebhookCalledAfterSuccess(url) {
+
+  pool.query(
+    `UPDATE webhookSubscriptions
+      SET lastCall = now()
+    WHERE url = $1;`,
+    [url],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+    }
+  );
+}
 
 exports.sendDayStatuses = async (request, response) => {
+  const webhookUrls = await getWebhookUrls();
+
   const lunchofday = await getLunchOfDay();
   const allLunchLists = await lunchListsByParameters(datehelper.dateToDateInt(new Date()), undefined, false);
 
   const timer = ms => new Promise(res => setTimeout(res, ms))
   var payloadObjects = createPayloadObjects(lunchofday, allLunchLists);
-  const webhookUrls = await getWebhookUrls();
   for (const webhookUrl of webhookUrls) {
     for (const payloadObject of payloadObjects) {
-         sendRequest(payloadObject, webhookUrl);
-         await timer(1200);
+      sendRequest(payloadObject, webhookUrl);
+
+      updateWebhookCalledAfterSuccess(webhookUrl);
+      await timer(1200);
     }
   }
 
 
   response.status(200).json({
     status: "Success",
-    message: "Lounaslistoja: " + allLunchLists.length
+    message: "Lounaslistoja: " + allLunchLists.length + " WebHookkeja: " + webhookUrls.length
   });
 };
 
