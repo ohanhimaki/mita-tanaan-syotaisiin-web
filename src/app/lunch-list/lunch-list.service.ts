@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Listrow } from '../shared/models/listrow';
 import { Http, Response } from '@angular/http';
 import { environment } from '../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Restaurant} from "../shared/models/restaurant";
 
 @Injectable({
   providedIn: 'root'
@@ -44,4 +45,11 @@ export class LunchListService {
     }
   }
 
+  UpvoteLunch(restaurantid: number, date: string) {
+
+      const apiurl = environment.apiurl + '/api/upvotelunch';
+      return this.http.put(apiurl, {restaurantid, date} ).toPromise();
+
+
+  }
 }
