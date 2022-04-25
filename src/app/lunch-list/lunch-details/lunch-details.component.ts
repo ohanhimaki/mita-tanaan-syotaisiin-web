@@ -10,11 +10,20 @@ import {LunchListService} from "../lunch-list.service";
 })
 export class LunchDetailsComponent implements OnInit {
   @Input() lunchList: Listrow;
+  allowedToVoteOnLoad = true;
 
 
   constructor(private lunchListService: LunchListService) { }
 
   ngOnInit() {
+    this.allowedToVoteOnLoad = this.getCurrentValue()<3;
+  }
+
+  private getCurrentValue():int {
+    var localstrgValue = localStorage.getItem('votes'+this.lunchList.date);
+    var currentValue = localstrgValue == null ? 0 : parseInt( localstrgValue );
+    return currentValue;
+
   }
 
   thisday(date: string) {
@@ -25,6 +34,12 @@ export class LunchDetailsComponent implements OnInit {
   }
   voteThis(){
 
+    if (this.getCurrentValue() >=3) {
+      alert("Saat äänestää vain kolmea kohdetta per päivä")
+      return;
+    }
+    localStorage.setItem('votes'+this.lunchList.date, this.getCurrentValue()+1)
+
 
     const vastaus = this.lunchListService.UpvoteLunch(this.lunchList.restaurantid, this.lunchList.date);
     vastaus.catch(x => {
@@ -32,7 +47,9 @@ export class LunchDetailsComponent implements OnInit {
       alert('Error ' + x.status + ' ' + x.statusText);
     });
     vastaus.then(() => {
-      alert('Hurray äänestys onnistui');
+      // alert('Hurray äänestys onnistui');
+      this.lunchList.votes++;
+      this.ngOnInit();
     });
   }
 
