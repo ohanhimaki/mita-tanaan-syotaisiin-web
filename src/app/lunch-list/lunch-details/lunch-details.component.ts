@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Listrow } from '../../shared/models/listrow';
 import {LunchListService} from "../lunch-list.service";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: 'app-lunch-details',
@@ -12,14 +13,18 @@ export class LunchDetailsComponent implements OnInit {
   @Input() lunchList: Listrow;
   allowedToVoteOnLoad = true;
 
+  lunchlistToTemplate: BehaviorSubject<Listrow> = new BehaviorSubject<Listrow>(null);
+  lunchlistToTemplate$ = this.lunchlistToTemplate.asObservable();
+
 
   constructor(private lunchListService: LunchListService) { }
 
   ngOnInit() {
     this.allowedToVoteOnLoad = this.getCurrentValue()<3;
+    this.lunchlistToTemplate.next(this.lunchList);
   }
 
-  private getCurrentValue():int {
+  private getCurrentValue() {
     var localstrgValue = localStorage.getItem('votes'+this.lunchList.date);
     var currentValue = localstrgValue == null ? 0 : parseInt( localstrgValue );
     return currentValue;
@@ -36,9 +41,10 @@ export class LunchDetailsComponent implements OnInit {
 
     if (this.getCurrentValue() >=3) {
       alert("Saat äänestää vain kolmea kohdetta per päivä")
+      this.allowedToVoteOnLoad = false;
       return;
     }
-    localStorage.setItem('votes'+this.lunchList.date, this.getCurrentValue()+1)
+    localStorage.setItem('votes'+this.lunchList.date, (this.getCurrentValue()+1).toString())
 
 
     const vastaus = this.lunchListService.UpvoteLunch(this.lunchList.restaurantid, this.lunchList.date);
