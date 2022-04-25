@@ -21,16 +21,17 @@ function luoLunchofdayTmp(request, response) {
   pool.query(
     `
       insert into lunchofdaytmp (paiva, restaurantid, nimi, string_agg, totalscore, randommultiplier,
-                                 restaurantMultiplier, genreMultiplier, usermultiplier)
+                                 restaurantMultiplier, genreMultiplier, usermultiplier, votes)
       SELECT date,
              restaurantid,
              nimi,
              lunch,
-             kerroin as totalscore,
+             (case when coalesce(votes, 0) > 0 then 1 else 0 end + kerroin ) * 1 + (0.10* coalesce(votes,0)) as totalscore,
              randommultiplier,
              restaurantMultiplier,
              genreMultiplier,
-             usermultiplier
+             usermultiplier,
+             votes
 
       FROM (
              SELECT x.date,
@@ -46,25 +47,28 @@ function luoLunchofdayTmp(request, response) {
                     (1 - AVG(CASE WHEN historykerroin is null then 0 else historykerroin end))    as restaurantMultiplier,
                     (1 - AVG(
                       CASE WHEN genrehistorykerroin is null then 0 else genrehistorykerroin end)) as genreMultiplier,
-                    1                                                                             as usermultiplier
+                    1                                                                             as usermultiplier,
+                    votes
              from (
 
 --Haetaan listat ravintoloille joilla automaattilistat
-                    SELECT r.date, ra.apiid, 1 as rivi, r.lunch, ra.nimi, ra.ravintolaid restaurantid, random() kerroin
+                    SELECT r.date, ra.apiid, 1 as rivi, r.lunch, ra.nimi, ra.ravintolaid restaurantid, random() kerroin,
+                           votes
                     FROM lunchlist r
                            left join ravintolat ra on r.restaurantid = ra.ravintolaid
-                    where date = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
+                    where date = to_number(to_char(now() + interval '1 day', 'YYYYMMDD'), '99999999')
 
                     UNION
 
 --Haetaan listat ravintoloille joilla käsinpäivitetytlistat
-                    SELECT to_number(to_char(now(), 'YYYYMMDD'), '99999999') date,
+                    SELECT to_number(to_char(now() + interval '1 day', 'YYYYMMDD'), '99999999') date,
                            0 as                                              apiid,
                            kpl.rivi                                          rivi,
                            string_agg(kpl.teksti, ' <br>')                   lunch,
                            r.nimi                                            nimi,
                            r.ravintolaid                                     restaurantid,
-                           random()                                          kerroin
+                           random()                                          kerroin,
+                           0 as votes
                     from kasinpaivitetytlistat kpl
                            left join ravintolat r on kpl.ravintolaid = r.ravintolaid
                     where r.nimi is not null
@@ -75,7 +79,7 @@ function luoLunchofdayTmp(request, response) {
 --Haetaan historiakertaimet ravintolakohtaisen historian mukaan
                     left join (
                select *,
-                      1 / (DATE_PART('day', date(now())) -
+                      1 / (DATE_PART('day', date( now() + interval '1 day')) -
                            DATE_PART('day', to_date(to_char(paiva, '99999999'), 'YYYYMMDD'))) historykerroin
                from lunchofday
                order by paiva desc
@@ -83,21 +87,21 @@ function luoLunchofdayTmp(request, response) {
              ) history on history.restaurantid = x.restaurantid
 --Haetaan historiakertoimset genrekohtaisen historian mukaan
                     left join (
-               SELECT 0.8 / (DATE_PART('day', date(now())) -
+               SELECT 0.8 / (DATE_PART('day', date(now() + interval '1 day')) -
                              DATE_PART('day', to_date(to_char(paiva, '99999999'), 'YYYYMMDD'))) genrehistorykerroin,
                       gor.genreid,
                       gor2.restaurantid
                from lunchofday lod
                       left join genreofrestaurant gor on lod.restaurantid = gor.restaurantid
                       left join genreofrestaurant gor2 on gor.genreid = gor2.genreid
-               where DATE_PART('day', date(now())) -
+               where DATE_PART('day', date(now() + interval '1 day')) -
                      DATE_PART('day', to_date(to_char(paiva, '99999999'), 'YYYYMMDD')) between 1 and 5
                order by paiva DESC
              ) genrehistory on genrehistory.restaurantid = x.restaurantid
              where l.paiva is NULL
-             group by x.date, x.restaurantid, x.nimi, x.lunch
+             group by x.date, x.restaurantid, x.nimi, x.lunch, x.votes
            ) y
-      order by kerroin DESC;
+      order by 5 DESC;
 
     `,
     (error, results) => {
