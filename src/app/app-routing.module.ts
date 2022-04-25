@@ -8,10 +8,10 @@ import { LunchofdayTmpComponent } from './lunchofday-tmp/lunchofday-tmp/lunchofd
 const routes: Routes = [
   {
     path: '',
-    component: LunchofdayComponent
-  }, {
-    path: 'lista',
     component: LunchListComponent
+  }, {
+    path: 'lunchoftheday',
+    component: LunchofdayComponent
   }, {
     path: 'lista/ravintola/:ravid',
     component: LunchListComponent
