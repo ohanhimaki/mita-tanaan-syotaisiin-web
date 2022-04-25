@@ -8,8 +8,8 @@
 
     <mat-card-subtitle [ngClass]="{ thisday: thisday(lunchList?.date) }">{{
       lunchList?.date | date: "dd.MM.yyyy"
-    }} {{lunchList?.votes >= 0 ? '- ' + lunchList.votes : ''}} </mat-card-subtitle>
-    <mat-icon (click)="voteThis()"  aria-hidden="false" aria-label="Example home icon" >thumb_up</mat-icon>
+    }} {{(lunchList?.votes != null && lunchList?.votes > 0) ? '- ' + lunchList.votes : ''}} </mat-card-subtitle>
+    <mat-icon *ngIf="lunchList.votes != null" (click)="voteThis()"  aria-hidden="false" aria-label="Example home icon" >thumb_up</mat-icon>
   </mat-card-header>
   <mat-card-content class="card-content-size">
     <span [innerHtml]="lunchList.lunch"></span>
