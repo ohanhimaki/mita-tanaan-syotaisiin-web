@@ -30,7 +30,7 @@ export class LunchListComponent implements OnInit {
   restaurants$ = this.restaurants.asObservable();
   selectedRestaurant: Restaurant;
   showHandheldLists: boolean = false;
-  showWholeWeek: boolean = false;
+  showWholeWeek: boolean = true;
   selectedDate: any;
   private loadingLunchLists: boolean;
 
