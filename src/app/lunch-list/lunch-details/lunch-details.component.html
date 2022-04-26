@@ -12,7 +12,7 @@
     <mat-card-subtitle [ngClass]="{ thisday: thisday((lunchlistToTemplate$ | async).date) }">{{
       (lunchlistToTemplate$ | async).date | date: "dd.MM.yyyy"
     }} {{((lunchlistToTemplate$ | async).votes != null && (lunchlistToTemplate$ | async).votes > 0) ? '- ' + (lunchlistToTemplate$ | async).votes : ''}} </mat-card-subtitle>
-    <mat-icon style="cursor:pointer" *ngIf="(lunchlistToTemplate$ | async).votes != null && allowedToVoteOnLoad" (click)="voteThis()"  aria-hidden="false" aria-label="Example home icon" >thumb_up</mat-icon>
+    <mat-icon style="cursor:pointer" *ngIf=" allowedToVoteOnLoad" (click)="voteThis()"  aria-hidden="false" aria-label="Example home icon" >thumb_up</mat-icon>
   </mat-card-header>
   <mat-card-content class="card-content-size">
     <span [innerHtml]="(lunchlistToTemplate$ | async).lunch"></span>

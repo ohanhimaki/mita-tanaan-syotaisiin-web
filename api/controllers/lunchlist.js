@@ -32,18 +32,19 @@ where ((date between $1 and $6) OR 1 = $2) AND (ra.ravintolaid = $3  OR 1 = $4)
 
 UNION
 
-SELECT CASE WHEN 0 = 1 then 20191201 else $1 end date,
+SELECT CASE WHEN 0 = 1 then 20191201 else coalesce(llv.dateid, $1) end date,
 kpl.ravintolaid as restaurantid,
 string_agg(kpl.teksti, ' <br>') lunch,
 r.nimi nimi,
 r.linkki link,
-       null votes
+            sum(coalesce(llv.votes , 0)) votes
 from kasinpaivitetytlistat kpl
 left join ravintolat r on kpl.ravintolaid = r.ravintolaid
+left join lunchlistvotes llv on llv.restaurantid = r.ravintolaid and llv.dateid between $1 and $6
 where r.nimi is not null
 and (kpl.ravintolaid = $3 OR 1= $4)
 and ($5 = 1)
-group by kpl.ravintolaid, r.nimi, r.linkki
+group by kpl.ravintolaid, r.nimi, r.linkki, llv.dateid
 ) x
 order by date DESC, nimi, restaurantid
 
