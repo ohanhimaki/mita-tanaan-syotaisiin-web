@@ -56,12 +56,12 @@ function luoLunchofdayTmp(request, response) {
                            votes
                     FROM lunchlist r
                            left join ravintolat ra on r.restaurantid = ra.ravintolaid
-                    where date = to_number(to_char(now() + interval '1 day', 'YYYYMMDD'), '99999999')
+                    where date = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
 
                     UNION
 
 --Haetaan listat ravintoloille joilla käsinpäivitetytlistat
-                    SELECT to_number(to_char(now() + interval '1 day', 'YYYYMMDD'), '99999999') date,
+                    SELECT to_number(to_char(now(), 'YYYYMMDD'), '99999999') date,
                            0 as                                              apiid,
                            kpl.rivi                                          rivi,
                            string_agg(kpl.teksti, ' <br>')                   lunch,
@@ -79,7 +79,7 @@ function luoLunchofdayTmp(request, response) {
 --Haetaan historiakertaimet ravintolakohtaisen historian mukaan
                     left join (
                select *,
-                      1 / (DATE_PART('day', date( now() + interval '1 day')) -
+                      1 / (DATE_PART('day', date( now())) -
                            DATE_PART('day', to_date(to_char(paiva, '99999999'), 'YYYYMMDD'))) historykerroin
                from lunchofday
                order by paiva desc
@@ -87,14 +87,14 @@ function luoLunchofdayTmp(request, response) {
              ) history on history.restaurantid = x.restaurantid
 --Haetaan historiakertoimset genrekohtaisen historian mukaan
                     left join (
-               SELECT 0.8 / (DATE_PART('day', date(now() + interval '1 day')) -
+               SELECT 0.8 / (DATE_PART('day', date(now())) -
                              DATE_PART('day', to_date(to_char(paiva, '99999999'), 'YYYYMMDD'))) genrehistorykerroin,
                       gor.genreid,
                       gor2.restaurantid
                from lunchofday lod
                       left join genreofrestaurant gor on lod.restaurantid = gor.restaurantid
                       left join genreofrestaurant gor2 on gor.genreid = gor2.genreid
-               where DATE_PART('day', date(now() + interval '1 day')) -
+               where DATE_PART('day', date(now())) -
                      DATE_PART('day', to_date(to_char(paiva, '99999999'), 'YYYYMMDD')) between 1 and 5
                order by paiva DESC
              ) genrehistory on genrehistory.restaurantid = x.restaurantid
