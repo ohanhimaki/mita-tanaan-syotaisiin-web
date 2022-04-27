@@ -68,9 +68,10 @@ function luoLunchofdayTmp(request, response) {
                            r.nimi                                            nimi,
                            r.ravintolaid                                     restaurantid,
                            random()                                          kerroin,
-                           0 as votes
+                           llv.votes as votes
                     from kasinpaivitetytlistat kpl
                            left join ravintolat r on kpl.ravintolaid = r.ravintolaid
+                    left join lunchlistvotes llv on llv.restaurantid = kpl.ravintolaid and dateid = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
                     where r.nimi is not null
                     group by kpl.rivi, r.nimi, r.ravintolaid
                   ) x
