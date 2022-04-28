@@ -68,11 +68,12 @@ function luoLunchofdayTmp(request, response) {
                            r.nimi                                            nimi,
                            r.ravintolaid                                     restaurantid,
                            random()                                          kerroin,
-                           llv.votes as votes
+                           sum(llv.votes) as votes
                     from kasinpaivitetytlistat kpl
                            left join ravintolat r on kpl.ravintolaid = r.ravintolaid
                     left join lunchlistvotes llv on llv.restaurantid = kpl.ravintolaid and dateid = to_number(to_char(now(), 'YYYYMMDD'), '99999999')
                     where r.nimi is not null
+                    and kpl.rivi = 0
                     group by kpl.rivi, r.nimi, r.ravintolaid
                   ) x
 --Tarkastetaan löytyykö tällepvlle jo lounas, myöhemmin rajaat is null l.paiva
