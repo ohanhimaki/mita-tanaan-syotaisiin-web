@@ -190,7 +190,8 @@ export class LunchListComponent implements OnInit {
     var dateArray = new Array();
     var currentDate = startDate;
     while (currentDate <= stopDate) {
-      dateArray.push(new Date(currentDate));
+      var day = new Date(currentDate);
+      dateArray.push((day.setHours(6)));
       currentDate = this.addDays(currentDate, 1);
     }
     return dateArray;
