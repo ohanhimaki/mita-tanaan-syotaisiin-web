@@ -26,7 +26,7 @@ function luoLunchofdayTmp(request, response) {
              restaurantid,
              nimi,
              lunch,
-             (case when coalesce(votes, 0) > 0 then 1 else 0 end + kerroin ) * 1 + (0.10* coalesce(votes,0)) as totalscore,
+             coalesce(votes, 0)  + kerroin  as totalscore,
              randommultiplier,
              restaurantMultiplier,
              genreMultiplier,
