@@ -39,10 +39,11 @@ function luoLunchofdayTmp(request, response) {
                     x.nimi,
                     x.lunch,
 --1-(1/datediff) painotukseksi ravintolakohtaisen historian mukaan(viim 5 pv)
-                    (1 - AVG(CASE WHEN historykerroin is null then 0 else historykerroin end))
+                    -- (1 - AVG(CASE WHEN historykerroin is null then 0 else historykerroin end))
 --1-(0.8/datediff) painotukseksi genrekohtaisen historian mukaan(viim 5 pv)
-                      * (1 - AVG(CASE WHEN genrehistorykerroin is null then 0 else genrehistorykerroin end))
-                      * avg(kerroin)                                                                 kerroin,
+                      --* (1 - AVG(CASE WHEN genrehistorykerroin is null then 0 else genrehistorykerroin end))
+                    --  *
+                    avg(kerroin)                                                                 kerroin,
                     avg(kerroin)                                                                  as randommultiplier,
                     (1 - AVG(CASE WHEN historykerroin is null then 0 else historykerroin end))    as restaurantMultiplier,
                     (1 - AVG(
