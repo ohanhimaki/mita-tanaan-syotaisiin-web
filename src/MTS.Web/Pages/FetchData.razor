@@ -1,5 +1,8 @@
 ﻿@page "/fetchdata"
+@using MTS.Application.LunchList.Queries
+@using MediatR
 @inject HttpClient Http
+@inject IMediator Mediator
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -25,13 +28,13 @@ else
     </tr>
     </thead>
     <tbody>
-    @foreach (var forecast in forecasts)
+    @foreach (var forecast in LunchListRows)
     {
       <tr>
-        <td>@forecast.Date.ToShortDateString()</td>
-        <td>@forecast.TemperatureC</td>
-        <td>@forecast.TemperatureF</td>
-        <td>@forecast.Summary</td>
+        <td>@forecast.nimi</td>
+        <td>@forecast.lunch</td>
+        <td>@forecast.restaurantid</td>
+        <td>@forecast.link</td>
       </tr>
     }
     </tbody>
@@ -44,7 +47,12 @@ else
   protected override async Task OnInitializedAsync()
   {
     forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+    // LunchListRows = await Http.GetFromJsonAsync<LunchListRow[]>("http://localhost:3002/api/listat?paiva=20221023&endDate=20221030");
+    LunchListRows = (await Mediator.Send(new GetLunchListQuery())).ToList();
   }
+
+  public List<LunchListRow>? LunchListRows { get; set; }
+
 
   public class WeatherForecast
   {
@@ -56,5 +64,16 @@ else
 
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
   }
+
+  // public class LunchListRow
+  // {
+  //
+  //   public string date { get; set; }
+  //   public int restaurantid { get; set; }
+  //   public int   votes { get; set; }
+  //   public string nimi { get; set; }
+  //   public string lunch { get; set; }
+  //   public string link { get; set; }
+  // }
 
 }
