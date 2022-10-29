@@ -1,0 +1,11 @@
+﻿@using MTS.Application.LunchList.Queries
+
+<MudCardContent>
+  <MudText >@LunchListRow.date</MudText>
+  @LunchListRow.lunch
+</MudCardContent>
+
+@code {
+  [Parameter]
+  public LunchListRow LunchListRow { get; set; }
+}

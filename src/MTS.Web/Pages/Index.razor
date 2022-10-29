@@ -1,9 +1,86 @@
 ﻿@page "/"
+@inject IMediator Mediator
+@using MTS.Application.LunchList.Queries
+@using MediatR
 
-<PageTitle>Index</PageTitle>
+<MudPaper>
+  <MudDatePicker Label="StartDate" @bind-Date="StartDate" />
+  <MudDatePicker Label="EndDate" @bind-Date="EndDate" />
+  <MudGrid
+  >
+    @if (LunchListRows is null)
+    {
+      <MudText>Ladataan</MudText>
+    }
+    else
+    {
+      foreach (var lunchListRow in LunchListRows.Where(x => x is not null))
+      {
+        <MudItem>
+          <LunchListItem LunchListRow="lunchListRow">
 
-<h1>Hello, world!</h1>
+          </LunchListItem>
 
-Welcome to your new app.
+          ></MudItem>
 
-<SurveyPrompt Title="How is Blazor working for you?"/>
+      }
+    }
+  </MudGrid>
+</MudPaper>
+
+
+@code {
+
+  protected override async Task OnInitializedAsync()
+  {
+    try
+    {
+
+      await RefreshLunchList();
+      await base.OnInitializedAsync();
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine(e);
+      throw;
+    }
+  }
+
+  private async Task RefreshLunchList()
+  {
+      LunchListRows = (await Mediator.Send(new GetLunchListQuery
+      {
+        StartDate = _startDate.Value.Year*10000 + _startDate.Value.Month*100 + _startDate.Value.Day,
+        EndDate = _endDate.Value.Year*10000 + _endDate.Value.Month*100 + _endDate.Value.Day
+      }))
+        .OrderBy(x => x.restaurantid)
+        .ThenBy(x => x.date)
+        .ToList();
+  }
+
+  public List<LunchListRow> LunchListRows { get; set; }
+
+  public DateTime? StartDate
+  {
+    get => _startDate;
+    set
+    {
+      _startDate = value;
+      RefreshLunchList();
+    }
+  }
+
+  public DateTime? EndDate
+  {
+    get => _endDate;
+    set
+    {
+      _endDate = value;
+      RefreshLunchList();
+    }
+  }
+
+
+  private DateTime? _startDate = DateTime.Now.AddDays(-1 * (((int)DateTime.Now.DayOfWeek+6) % 7));
+  private DateTime? _endDate = DateTime.Now.AddDays((6-(((int)DateTime.Now.DayOfWeek+6) % 7)));
+}
