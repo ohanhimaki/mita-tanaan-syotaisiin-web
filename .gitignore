@@ -106,3 +106,6 @@ dist/
 
 # Docker dev-db datastorage
 .docker/tmp/
+
+# Local Netlify folder
+.netlify
