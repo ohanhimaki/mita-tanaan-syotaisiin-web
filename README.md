@@ -2,6 +2,8 @@
 
 ## Developing
 
+HUOM, jotain ongelmaa, lisää: $env:NODE_OPTIONS="--openssl-legacy-provider"
+
 1. Create .env file.
 
    .Env file contains postgres connectionstring and apikey. you can copy example.env.
