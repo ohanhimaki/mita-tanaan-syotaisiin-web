@@ -11,30 +11,46 @@ const client = new Client({
 })
 
 const handler = async () => {
+  const dontAllowRun = true;
+  const filepath = 'C:/MTSDataBackup/restaurantGenre.json';
+  const tableName = "RestaurantGenre";
   console.log('Sync started')
+  if (dontAllowRun) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify(rowsJson),
+    }
+  }
 // get restaurants from api https://mita-tanaan-syotaisiin.herokuapp.com/api/ravintolat
 
-  var restaurants = await fetch('https://mita-tanaan-syotaisiin.herokuapp.com/api/ravintolat');
+  // var restaurants = await fetch('https://mita-tanaan-syotaisiin.herokuapp.com/api/ravintolat');
 
-  //log restaurant data
+  // read data from json file
+  var fs = require('fs');
+  var fileSync = fs.readFileSync(filepath);
 
-  console.log(restaurants);
+
+
 
   //convert to json
+  var rows = JSON.parse(fileSync);
 
-  var restaurantsJson = await restaurants.json();
+  console.log(rows);
+
+  // var rowsJson = await rows.json();
+  var rowsJson = rows;
 
   //log json
 
-  console.log(restaurantsJson);
+  console.log(rowsJson);
 
   //loop through json
 
-  for (var i = 0; i < restaurantsJson.length; i++) {
+  for (var i = 0; i < rowsJson.length; i++) {
     //write item to fauna
 
       try {
-        const response = await client.query(query.Create(query.Collection('Restaurants'), { data: restaurantsJson[i] }))
+        const response = await client.query(query.Create(query.Collection(tableName), { data: rowsJson[i] }))
         console.log('success', response)
       }
       catch (error) {
@@ -46,7 +62,7 @@ const handler = async () => {
 
   return {
     statusCode: 200,
-    body: JSON.stringify(restaurantsJson),
+    body: JSON.stringify(rowsJson),
   }
 
 }
