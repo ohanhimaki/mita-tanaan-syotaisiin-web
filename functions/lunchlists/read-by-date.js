@@ -9,6 +9,7 @@ const client = new Client({
 
 const handler = async (date) => {
   console.log('Function `read-all` invoked')
+  console.log(date)
 
   try {
     const response = await client

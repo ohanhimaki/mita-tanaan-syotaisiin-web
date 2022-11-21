@@ -23,6 +23,22 @@ export class LunchListService {
     return this.http.get<Listrow[]>(apiurl);
 
   }
+  getLunchListRowsNew(parameters) {
+
+    //get lunchlistrows from faunadb api
+
+    if(parameters.ravintolaid) {
+      const apiurl = environment.functionsapiurl + '/lunchlists/' + parameters.ravintolaid;
+      return this.http.get<Listrow[]>(apiurl);
+
+    }
+    if(!parameters.ravintolaid) {
+      const apiurl = environment.functionsapiurl + '/lunchlists/' + 12;
+      return this.http.get<Listrow[]>(apiurl, {params: parameters});
+
+    }
+
+  }
 
   private handleError(error: any) {
     const errMsg = (error.message) ? error.message :

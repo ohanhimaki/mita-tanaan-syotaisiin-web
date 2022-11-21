@@ -100,7 +100,7 @@ export class LunchListComponent implements OnInit {
         ravintolaid: restaurantid
       };
     }
-    this.lunchListService.getLunchListRows(params).subscribe((res => {
+    this.lunchListService.getLunchListRowsNew(params).subscribe((res => {
       this.calculateLunchLists(res);
     }));
   }
@@ -216,7 +216,7 @@ export class LunchListComponent implements OnInit {
   }
 
   getRestaurants() {
-    this.adminService.getRestaurants().subscribe((res => {
+    this.adminService.getRestaurantsNew().subscribe((res => {
       res = res.filter(x => x.tassalista === 1);
       res.forEach(x => x.nimi = x.nimi.trim())
       this.restaurants.next(res.sort((a, b) => {

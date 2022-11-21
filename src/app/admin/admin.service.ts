@@ -6,6 +6,7 @@ import { Restaurant } from '../shared/models/restaurant';
 import { Handeditedrow } from '../shared/models/handeditedrow';
 import { Restaurantgenre } from '../shared/models/restaurantgenre';
 import { Genreofrestaurant } from '../shared/models/genreofrestaurant';
+import {Listrow} from "../shared/models/listrow";
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,10 @@ export class AdminService {
   }
   getRestaurants() {
     const apiurl = environment.apiurl + '/api/ravintolat';
+    return this.http.get<Restaurant[]>(apiurl);
+  }
+  getRestaurantsNew() {
+    const apiurl = environment.functionsapiurl + '/restaurants';
     return this.http.get<Restaurant[]>(apiurl);
   }
   getRestaurantGenres() {

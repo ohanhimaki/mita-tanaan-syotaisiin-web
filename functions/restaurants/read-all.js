@@ -1,7 +1,7 @@
 /* Import faunaDB sdk */
 const process = require('process')
 
-const { Client, query } = require('faunadb')
+const {Client, query} = require('faunadb')
 
 const client = new Client({
   secret: process.env.FAUNADB_SERVER_SECRET,
@@ -17,9 +17,22 @@ const handler = async () => {
     const getAllItemsDataQuery = itemRefs.map((ref) => query.Get(ref))
     // then query the refs
     const ret = await client.query(getAllItemsDataQuery)
+
+    const restaurants = ret.map((responserow) => {
+
+      const restaurant = {
+        ravintolaid: responserow.data.ravintolaid,
+        apiid: responserow.data.apiid,
+        nimi: responserow.data.nimi,
+        tassalista: responserow.data.tassalista,
+        linkki: responserow.data.linkki
+      }
+      return restaurant
+    })
+
     return {
       statusCode: 200,
-      body: JSON.stringify(ret),
+      body: JSON.stringify(restaurants),
     }
   } catch (error) {
     console.log('error', error)
@@ -30,4 +43,4 @@ const handler = async () => {
   }
 }
 
-module.exports = { handler }
+module.exports = {handler}
