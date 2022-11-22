@@ -22,6 +22,9 @@ const handler = async (event, context) => {
         console.log("test", ret)
         return {
           statusCode: 200,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
           body: JSON.stringify(ret),
         }
       })

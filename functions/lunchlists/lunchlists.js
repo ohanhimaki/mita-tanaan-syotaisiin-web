@@ -6,9 +6,6 @@ const handler = async (event, context) => {
   const path = event.path.replace(/\.netlify\/functions\/[^/]+/, '')
   const segments = path.split('/').filter(Boolean)
 
-  console.log("tulee tänne")
-
-  console.log("ei saisi tulla tänne")
   switch (event.httpMethod) {
     case 'GET':
       // e.g. GET /.netlify/functions/fauna-crud/123456
