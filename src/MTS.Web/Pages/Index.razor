@@ -2,31 +2,35 @@
 @inject IMediator Mediator
 @using MTS.Application.LunchList.Queries
 @using MediatR
+@using MTS.Application.LunchList
 
-<MudPaper>
-  <MudDatePicker Label="StartDate" @bind-Date="StartDate" />
-  <MudDatePicker Label="EndDate" @bind-Date="EndDate" />
-  <MudGrid
-  >
-    @if (LunchListRows is null)
-    {
-      <MudText>Ladataan</MudText>
-    }
-    else
-    {
-      foreach (var lunchListRow in LunchListRows.Where(x => x is not null))
+<MudContainer>
+
+  <MudPaper>
+    <MudDatePicker Label="StartDate" @bind-Date="StartDate"/>
+    <MudDatePicker Label="EndDate" @bind-Date="EndDate"/>
+    <MudGrid
+    >
+      @if (LunchListRows is null)
       {
-        <MudItem>
-          <LunchListItem LunchListRow="lunchListRow">
-
-          </LunchListItem>
-
-          ></MudItem>
-
+        <MudText>Ladataan</MudText>
       }
-    }
-  </MudGrid>
-</MudPaper>
+      else
+      {
+        foreach (var lunchListRow in LunchListRows.Where(x => x is not null))
+        {
+          <MudItem>
+            <LunchListItem LunchListRow="lunchListRow">
+
+            </LunchListItem>
+
+            >
+          </MudItem>
+        }
+      }
+    </MudGrid>
+  </MudPaper>
+</MudContainer>
 
 
 @code {
@@ -35,7 +39,6 @@
   {
     try
     {
-
       await RefreshLunchList();
       await base.OnInitializedAsync();
     }
@@ -48,17 +51,17 @@
 
   private async Task RefreshLunchList()
   {
-      LunchListRows = (await Mediator.Send(new GetLunchListQuery
-      {
-        StartDate = _startDate.Value.Year*10000 + _startDate.Value.Month*100 + _startDate.Value.Day,
-        EndDate = _endDate.Value.Year*10000 + _endDate.Value.Month*100 + _endDate.Value.Day
-      }))
-        .OrderBy(x => x.restaurantid)
-        .ThenBy(x => x.date)
-        .ToList();
+    LunchListRows = (await Mediator.Send(new GetLunchListQuery
+    {
+      StartDate = _startDate.Value.Year * 10000 + _startDate.Value.Month * 100 + _startDate.Value.Day,
+      EndDate = _endDate.Value.Year * 10000 + _endDate.Value.Month * 100 + _endDate.Value.Day
+    }))
+      .OrderBy(x => x.data.restaurantData.nimi)
+      .ThenBy(x => x.data.date)
+      .ToList();
   }
 
-  public List<LunchListRow> LunchListRows { get; set; }
+  public List<LunchListResponse> LunchListRows { get; set; }
 
   public DateTime? StartDate
   {
@@ -81,6 +84,6 @@
   }
 
 
-  private DateTime? _startDate = DateTime.Now.AddDays(-1 * (((int)DateTime.Now.DayOfWeek+6) % 7));
-  private DateTime? _endDate = DateTime.Now.AddDays((6-(((int)DateTime.Now.DayOfWeek+6) % 7)));
+  private DateTime? _startDate = DateTime.Now.AddDays(-1 * (((int)DateTime.Now.DayOfWeek + 6) % 7));
+  private DateTime? _endDate = DateTime.Now.AddDays((6 - (((int)DateTime.Now.DayOfWeek + 6) % 7)));
 }

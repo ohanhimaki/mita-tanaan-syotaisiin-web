@@ -48,7 +48,7 @@ else
   {
     forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
     // LunchListRows = await Http.GetFromJsonAsync<LunchListRow[]>("http://localhost:3002/api/listat?paiva=20221023&endDate=20221030");
-    LunchListRows = (await Mediator.Send(new GetLunchListQuery())).ToList();
+    // LunchListRows = (await Mediator.Send(new GetLunchListQuery())).ToList();
   }
 
   public List<LunchListRow>? LunchListRows { get; set; }
