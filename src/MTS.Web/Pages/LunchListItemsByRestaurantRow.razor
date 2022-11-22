@@ -1,0 +1,20 @@
+﻿@using MTS.Application.LunchList
+
+    <div class="d-flex flex-row  flex-grow-1 gap-4">
+  @foreach (var lunchListResponse in LunchListRowGroupedByRestaurant)
+  {
+
+
+
+      <LunchListItem LunchListRow="lunchListResponse">
+
+      </LunchListItem>
+  }
+    </div>
+
+
+@code {
+  [Parameter]
+  public List<LunchListResponse> LunchListRowGroupedByRestaurant { get; set; }
+
+}

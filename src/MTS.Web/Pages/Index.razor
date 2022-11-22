@@ -6,30 +6,26 @@
 
 <MudContainer>
 
-  <MudPaper>
     <MudDatePicker Label="StartDate" @bind-Date="StartDate"/>
     <MudDatePicker Label="EndDate" @bind-Date="EndDate"/>
-    <MudGrid
+    <div style="overflow-x:scroll; overflow-y: hidden">
+
+    <div
+        style="max-width: 9999px; min-width: 100%"
     >
-      @if (LunchListRows is null)
+      @if (LunchListRowsGroupedByRestaurant is null)
       {
         <MudText>Ladataan</MudText>
       }
       else
       {
-        foreach (var lunchListRow in LunchListRows.Where(x => x is not null))
+        foreach (var lunchListRow in LunchListRowsGroupedByRestaurant.Where(x => x is not null))
         {
-          <MudItem>
-            <LunchListItem LunchListRow="lunchListRow">
-
-            </LunchListItem>
-
-            >
-          </MudItem>
+          <LunchListItemsByRestaurantRow LunchListRowGroupedByRestaurant="@lunchListRow.ToList()"/>
         }
       }
-    </MudGrid>
-  </MudPaper>
+    </div>
+    </div>
 </MudContainer>
 
 
@@ -51,7 +47,7 @@
 
   private async Task RefreshLunchList()
   {
-    LunchListRows = (await Mediator.Send(new GetLunchListQuery
+     var lunchListResponses = (await Mediator.Send(new GetLunchListQuery
     {
       StartDate = _startDate.Value.Year * 10000 + _startDate.Value.Month * 100 + _startDate.Value.Day,
       EndDate = _endDate.Value.Year * 10000 + _endDate.Value.Month * 100 + _endDate.Value.Day
@@ -59,9 +55,13 @@
       .OrderBy(x => x.data.restaurantData.nimi)
       .ThenBy(x => x.data.date)
       .ToList();
+
+    // group by restaurant
+    LunchListRowsGroupedByRestaurant = lunchListResponses.GroupBy(x => x.data.restaurantData.nimi);
+    await InvokeAsync(StateHasChanged);
   }
 
-  public List<LunchListResponse> LunchListRows { get; set; }
+  public IEnumerable<IGrouping<string, LunchListResponse>> LunchListRowsGroupedByRestaurant { get; set; }
 
   public DateTime? StartDate
   {

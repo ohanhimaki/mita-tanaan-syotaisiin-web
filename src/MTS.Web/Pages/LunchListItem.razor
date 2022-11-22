@@ -1,12 +1,26 @@
 ﻿@using MTS.Application.LunchList.Queries
 @using MTS.Application.LunchList
 
-<MudCardContent>
-  <MudText >@LunchListRow.data.date</MudText>
-  @LunchListRow.data.dayData
+<MudCardContent >
+  @{
+    var style = LunchListRow.data.date == _currentDayString ? Theme.Palette.GrayLight : "";
+  }
+  <MudPaper
+    Class="pa-4"
+    Style="@($"background: {style}")"
+    Width="300px">
+
+    <MudText >@LunchListRow.data.date</MudText>
+    <MudText >@LunchListRow.data.restaurantData.nimi</MudText>
+    @((MarkupString)LunchListRow.data.dayData)
+  </MudPaper>
 </MudCardContent>
 
 @code {
   [Parameter]
   public LunchListResponse LunchListRow { get; set; }
+
+
+  private MudTheme Theme = new MudTheme();
+  private string _currentDayString = (DateTime.Now.Year * 10000 + DateTime.Now.Month * 100 + DateTime.Now.Day).ToString();
 }
