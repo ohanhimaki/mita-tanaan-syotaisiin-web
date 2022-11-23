@@ -1,6 +1,6 @@
 ﻿
-const readAllRestaurants = require('./read-all.js')
-const insertLunchLists = require('../lunchLists/create-from-response.js')
+const readAllRestaurants = require('./restaurants-read-all.js')
+const insertLunchLists = require('./lunchlist-create-from-response.js')
 
 
 const { Client, query } = require('faunadb')

@@ -1,6 +1,4 @@
-const readbydate = require('./read-by-date.js')
 const readbydaterange = require('./read-by-date-range.js')
-const readbyrestaurantid = require('./read-by-restaurant.js')
 
 const handler = async (event, context) => {
   const path = event.path.replace(/\.netlify\/functions\/[^/]+/, '')
