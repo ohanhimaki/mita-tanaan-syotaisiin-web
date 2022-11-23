@@ -33,7 +33,7 @@ public class GetLunchListQueryHandler : IRequestHandler<GetLunchListQuery, IEnum
     // if (request.HandHeld is not null)
     //   queryString.Add("kasinyp",request.EndDate.ToString());
 
-    var query = "http://localhost:8888/.netlify/functions/lunchlists?";
+    var query = "/.netlify/functions/lunchlists?";
     query += queryString.ToString();
     var lunchListRows = await _http.GetFromJsonAsync<LunchListResponse[]>(query);
     return lunchListRows;
