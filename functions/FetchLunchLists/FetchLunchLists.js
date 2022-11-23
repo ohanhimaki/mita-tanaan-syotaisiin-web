@@ -1,5 +1,5 @@
 ﻿
-const readAllRestaurants = require('../restaurants/read-all.js')
+const readAllRestaurants = require('./read-all.js')
 const insertLunchLists = require('../lunchLists/create-from-response.js')
 
 
