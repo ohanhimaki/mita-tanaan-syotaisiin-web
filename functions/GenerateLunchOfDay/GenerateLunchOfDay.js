@@ -1,4 +1,4 @@
-﻿const readLunchListsByDate = require('../LunchLists/read-by-date')
+﻿const readLunchListsByDate = require('./lunchlist-read-by-date')
 
 /* Import faunaDB sdk */
 const process = require('process')
