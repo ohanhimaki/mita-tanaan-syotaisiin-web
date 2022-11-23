@@ -5,7 +5,6 @@ const readLunchListsByDate = require('../LunchLists/read-by-date')
 const process = require('process')
 
 const {Client, query} = require('faunadb')
-const {LUN} = require("pg-format/lib/reserved");
 
 const handler = async () => {
 

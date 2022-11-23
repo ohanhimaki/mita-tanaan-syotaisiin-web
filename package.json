@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
     "faunadb": "^4.7.1",
     "netlify-cli": "^12.2.6",
     "netlify-lambda": "^2.0.15"

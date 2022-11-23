@@ -2,12 +2,9 @@
 const readAllRestaurants = require('../Restaurants/read-all.js')
 const insertLunchLists = require('../LunchLists/create-from-response.js')
 
-/* Import faunaDB sdk */
-const process = require('process')
 
 const { Client, query } = require('faunadb')
 const { haeDatat, haeDatat2, getDateData } = require('./helpers.js')
-const {LUN} = require("pg-format/lib/reserved");
 
 const handler = async () => {
   // ravintolat = await haeRavintolat();

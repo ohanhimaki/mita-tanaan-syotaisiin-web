@@ -1,11 +1,9 @@
 const dotenv = require("dotenv");
 dotenv.config();
-const {pool} = require("../../dw/config");
 const https = require("https");
 const cheerio = require("cheerio");
-const format = require("pg-format");
 
-const helpers = require("../../dw/helpers");
+const helpers = require("../../Scripts/helpers");
 
 let thisWeekMonday = new Date(helpers.date.getPreviousMonday());
 let ravintolat = [];
