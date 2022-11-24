@@ -28,7 +28,6 @@ const handler = async (data) => {
         )
       )
     )
-    console.log('response3', response3)
     // delete LunchList items by restaurant id and date
     const response2 = await client.query
     (
@@ -52,7 +51,6 @@ const handler = async (data) => {
     )
 
     const response = await client.query(query.Create(query.Collection('LunchLists'), item))
-    console.log('success', response)
     /* Success! return the response with statusCode 200 */
     return {
       statusCode: 200,

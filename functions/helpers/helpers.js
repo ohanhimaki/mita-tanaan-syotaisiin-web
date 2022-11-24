@@ -3,7 +3,7 @@ dotenv.config();
 const https = require("https");
 const cheerio = require("cheerio");
 
-const helpers = require("../../Scripts/helpers");
+const helpers = require("./index.js");
 
 let thisWeekMonday = new Date(helpers.date.getPreviousMonday());
 let ravintolat = [];

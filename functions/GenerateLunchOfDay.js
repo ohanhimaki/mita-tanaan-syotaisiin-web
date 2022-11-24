@@ -1,4 +1,4 @@
-﻿const readLunchListsByDate = require('./lunchlist-read-by-date')
+﻿const readLunchListsByDate = require('./lunchlists/read-by-date')
 
 /* Import faunaDB sdk */
 const process = require('process')
@@ -8,6 +8,7 @@ const {Client, query} = require('faunadb')
 const handler = async () => {
 
   var dateString = "20221125";
+
 
   const client = new Client({
     secret: process.env.FAUNADB_SERVER_SECRET,
@@ -36,9 +37,12 @@ const handler = async () => {
     }
   }
   }
+  const clientNew = new Client({
+    secret: process.env.FAUNADB_SERVER_SECRET,
+  })
   if(!lunchOfDay) {
     try {
-      const response = await client.query
+      const response = await clientNew.query
       (query.Paginate(query.Match(query.Index('all_LunchOfDayTemp'))))
       const itemRefs = response ? response.data : []
       // create new query out of item refs. http://bit.ly/2LG3MLg
@@ -46,7 +50,7 @@ const handler = async () => {
       // then query the refs
       const ret
         = await
-        client
+        clientNew
           .query
           (deleteAllItemsDataQuery)
     } catch (error) {
@@ -56,9 +60,14 @@ const handler = async () => {
     // get all restaurants
     // const restaurants = await readAllRestaurants.handler()
 
-    const lunchLists = (await readLunchListsByDate.handler(dateString)).body;
-
-    const lunchListsParsed = JSON.parse(lunchLists);
+    const lunchLists = JSON.parse((await readLunchListsByDate.handler(dateString)).body);
+    if(lunchLists.length === 0) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify("Lounaslistoja ei löytynyt"),
+      }
+    }
+    const lunchListsParsed = lunchLists;
     //sort by data.votes
     const sortedLunchLists = lunchListsParsed.sort((a, b) => {
       // votes can be undefined
@@ -69,17 +78,17 @@ const handler = async () => {
 
     // insert sortedLunchLists into collection LunchOfDayTemp
     let i = 0;
+    let lunchofday_by_day;
     for (const lunchList of sortedLunchLists) {
       try {
-        const response = await client.query
+        const response = await clientNew.query
         (query.Create(query.Collection('LunchOfDayTemp'), {
           data:  lunchList.data ,
         }))
         if (i ===0) {
           // check if lunchofday_by_day retuns any
-          let lunchofday_by_day;
           try {
-          lunchofday_by_day = await client.query(
+          lunchofday_by_day = await clientNew.query(
             query.Get(
               query.Match(
                 query.Index('lunchofday_by_day'),
@@ -101,9 +110,9 @@ const handler = async () => {
             }
 }
 
-
+console.log('lunchofday_by_day', lunchofday_by_day)
           if (!lunchofday_by_day) {
-            const response2 = await client.query
+            const response2 = await clientNew.query
             (query.Create(query.Collection('LunchOfDay'), {
               data: lunchList.data,
             }))
@@ -114,7 +123,10 @@ const handler = async () => {
         console.log('error', error)
       }
     }
-    lunchOfDay = await client.query(
+    const clientNew2 = new Client({
+      secret: process.env.FAUNADB_SERVER_SECRET,
+    })
+    lunchOfDay = await clientNew2.query(
       query.Get(
         query.Match(
           query.Index('lunchofday_by_day'),

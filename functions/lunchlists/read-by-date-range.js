@@ -19,7 +19,6 @@ const handler = async (event, context) => {
       query.Call('lunchListsByDateRange', startdate, enddate)
     )
       .then((ret) => {
-        console.log("test", ret)
         return {
           statusCode: 200,
           headers: {
