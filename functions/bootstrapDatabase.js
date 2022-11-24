@@ -9,12 +9,12 @@ const client = new Client({
   secret: process.env.FAUNADB_SERVER_SECRET,
 })
 
-async function createIndex(indexName, collectionName, values){
+async function createIndex(indexName, collectionName, values, terms){
   //check if index already exists
   const indexExists = await client.query
   (query.Exists(query.Index(indexName)))
     .then((ret) => {
-      console.log("indexExists", ret)
+      console.log("indexExists - " + indexName, ret)
       return ret
     })
     .catch((err) => console.error(
@@ -32,6 +32,7 @@ async function createIndex(indexName, collectionName, values){
         name: indexName,
         source: query.Collection(collectionName),
         values: values,
+        terms: terms
       })
     )
       .then((ret) => console.log(ret))
@@ -52,7 +53,7 @@ async function createFunction(functionName, functionBody) {
     checkFunction = await client.query(
       query.Exists(query.Function(functionName))
     );
-    console.log("Function already exists? ", checkFunction)
+    console.log("Function already exists? - " + functionName, checkFunction)
   } catch (error){
     console.log("Function does not exist, creating it")
 
