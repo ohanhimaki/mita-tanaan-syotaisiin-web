@@ -9,12 +9,10 @@ const client = new Client({
   secret: process.env.FAUNADB_SERVER_SECRET,
 })
 
-const handler = async () => {
-  console.log("Creating database")
-
+async function createIndex(indexName, collectionName, values){
   //check if index already exists
   const indexExists = await client.query
-    (query.Exists(query.Index('lunchlists_refs_by_date')))
+  (query.Exists(query.Index(indexName)))
     .then((ret) => {
       console.log("indexExists", ret)
       return ret
@@ -27,16 +25,13 @@ const handler = async () => {
     ))
 
   if (!indexExists) {
-console.log("Creating index", "lunchlists_refs_by_date")
+    console.log("Creating index", indexName)
 
     client.query(
       query.CreateIndex({
-        name: 'lunchlists_refs_by_date',
-        source: query.Collection('LunchLists'),
-        values: [
-          {field: ['data', 'date']},
-          {field: ['ref']},
-        ],
+        name: indexName,
+        source: query.Collection(collectionName),
+        values: values,
       })
     )
       .then((ret) => console.log(ret))
@@ -48,12 +43,14 @@ console.log("Creating index", "lunchlists_refs_by_date")
       ))
 
   }
+}
 
-  //check if function already exists
+
+async function createFunction(functionName, functionBody) {
   let checkFunction;
   try {
     checkFunction = await client.query(
-      query.Exists(query.Function("lunchListsByDateRange"))
+      query.Exists(query.Function(functionName))
     );
     console.log("Function already exists? ", checkFunction)
   } catch (error){
@@ -65,25 +62,8 @@ console.log("Creating index", "lunchlists_refs_by_date")
     try {
       const createFunction = await client.query(
         query.CreateFunction({
-          name: "lunchListsByDateRange",
-          body: query.Query(
-            query.Lambda(
-              ["start", "end"],
-              query.Map(
-                query.Select(
-                  ['data'],
-                  query.Paginate(
-                    query.Range(
-                      query.Match(query.Index('lunchlists_refs_by_date')),
-                      query.Var('start'),
-                      query.Var('end')
-                    )
-                  )
-                ),
-                query.Lambda(['date', 'ref'], query.Get(query.Var('ref')))
-              )
-            )
-          ),
+          name: functionName,
+          body: functionBody
         }),
       )
         .then((ret) => {
@@ -97,12 +77,62 @@ console.log("Creating index", "lunchlists_refs_by_date")
     }
   }
 
+}
+
+const handler = async () => {
+  console.log("Creating database")
+
+  await createIndex("lunchlists_by_date", "lunchlists", [
+    { field: ["data", "date"] },
+    { field: ['ref']},
+  ])
+  //check if function already exists
+  await createFunction("lunchListsByDateRange",
+    query.Query(
+      query.Lambda(
+        ["start", "end"],
+        query.Map(
+          query.Select(
+            ['data'],
+            query.Paginate(
+              query.Range(
+                query.Match(query.Index('lunchlists_refs_by_date')),
+                query.Var('start'),
+                query.Var('end')
+              )
+            )
+          ),
+          query.Lambda(['date', 'ref'], query.Get(query.Var('ref')))
+        )
+      )
+    )
+  );
 
 
-
-
-
-
+  await createIndex("lunchofday_by_day", "lunchofday", [
+    { field: ["data", "date"] },
+    { field: ['ref']},
+  ])
+  await createFunction("lunchOfDayByDateRange",
+    query.Query(
+      query.Lambda(
+        ["start", "end"],
+        query.Map(
+          query.Select(
+            ['data'],
+            query.Paginate(
+              query.Range(
+                query.Match(query.Index('lunchofday_by_day')),
+                query.Var('start'),
+                query.Var('end')
+              )
+            )
+          ),
+          query.Lambda(['date', 'ref'], query.Get(query.Var('ref')))
+        )
+      )
+    )
+  );
 
   return {
     statusCode: 200,
