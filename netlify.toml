@@ -7,5 +7,8 @@
   status = 200
 
 [dev]
+# local dev command directory
+  port = 8888
+
   # Local dev command. A.k.a npm start
-  command = "dotnet watch run"
+  command = "dotnet watch run --project ./src/mts.web/mts.web.csproj"
