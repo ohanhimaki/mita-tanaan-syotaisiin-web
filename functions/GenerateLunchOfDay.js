@@ -1,4 +1,5 @@
 ﻿const readLunchListsByDate = require('./lunchlists/read-by-date')
+const readLunchOfDay = require('./lunchofday/lunchofday')
 
 /* Import faunaDB sdk */
 const process = require('process')
@@ -7,7 +8,14 @@ const {Client, query} = require('faunadb')
 
 const handler = async () => {
 
-  var dateString = "20221125";
+  //get date as string yyyymmdd
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const dateString = year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
+
+
 
 
   const client = new Client({
@@ -16,14 +24,8 @@ const handler = async () => {
   let lunchOfDay;
   try {
 
-    lunchOfDay = await client.query(
-      query.Get(
-        query.Match(
-          query.Index('lunchofday_by_day'),
-          dateString
-        )
-      )
-    );
+    lunchOfDay = await JSON.parse((await readLunchOfDay.handler({queryStringParameters:{date:dateString},
+      httpMethod:"GET"})).body);
   } catch (error) {
     // if errorType: NotFound its ok
     if (error.requestResult.statusCode === 404) {
@@ -40,7 +42,8 @@ const handler = async () => {
   const clientNew = new Client({
     secret: process.env.FAUNADB_SERVER_SECRET,
   })
-  if(!lunchOfDay) {
+  if(lunchOfDay.length ===0) {
+    console.log('lunchOfDay', lunchOfDay);
     try {
       const response = await clientNew.query
       (query.Paginate(query.Match(query.Index('all_LunchOfDayTemp'))))
@@ -80,6 +83,7 @@ const handler = async () => {
     let i = 0;
     let lunchofday_by_day;
     for (const lunchList of sortedLunchLists) {
+      console.log(i);
       try {
         const response = await clientNew.query
         (query.Create(query.Collection('LunchOfDayTemp'), {
@@ -88,17 +92,12 @@ const handler = async () => {
         if (i ===0) {
           // check if lunchofday_by_day retuns any
           try {
-          lunchofday_by_day = await clientNew.query(
-            query.Get(
-              query.Match(
-                query.Index('lunchofday_by_day'),
-                dateString
-              )
-            )
-          );
+          lunchofday_by_day = await (await readLunchOfDay.handler({queryStringParameters:{date:dateString},
+          httpMethod:"GET"})).body;
+          console.log("lunchofday_by_day", lunchofday_by_day);
           } catch (error) {
             // if errorType: NotFound its ok
-            if (error.requestResult.statusCode === 404) {
+            if (error.requestResult?.statusCode === 404) {
               console.log('LunchOfDay not found, creating new one')
             } else {
 
@@ -109,13 +108,18 @@ const handler = async () => {
               }
             }
 }
-
+console.log("TULEE TÄHÄN")
 console.log('lunchofday_by_day', lunchofday_by_day)
-          if (!lunchofday_by_day) {
+          if (JSON.parse(lunchofday_by_day).length === 0) {
+            try {
+
             const response2 = await clientNew.query
             (query.Create(query.Collection('LunchOfDay'), {
               data: lunchList.data,
             }))
+            } catch (error) {
+              console.log('error', error)
+            }
           }
         }
         i++;
@@ -126,14 +130,10 @@ console.log('lunchofday_by_day', lunchofday_by_day)
     const clientNew2 = new Client({
       secret: process.env.FAUNADB_SERVER_SECRET,
     })
-    lunchOfDay = await clientNew2.query(
-      query.Get(
-        query.Match(
-          query.Index('lunchofday_by_day'),
-          dateString
-        )
-      )
-    )
+    lunchOfDay = await (await readLunchOfDay.handler({queryStringParameters:{date:dateString},
+      httpMethod:"GET"
+    })).body;
+    console.log('lunchOfDay', lunchOfDay)
     console.log("Luotiin uusi")
   }
 

@@ -2,6 +2,7 @@ const readbydaterange = require('./read-by-date-range.js')
 
 const handler = async (event, context) => {
 
+  console.log('Function `read-by-date-range` invoked', event)
   switch (event.httpMethod) {
     case 'GET':
       // e.g. GET /.netlify/functions/fauna-crud/123456

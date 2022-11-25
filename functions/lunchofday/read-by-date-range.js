@@ -15,7 +15,6 @@ const handler = async (event, context) => {
   const enddate = event.queryStringParameters.enddate;
 
   try {
-    console.log(startdate, enddate, startdate+enddate);
     var result = await client.query(
       query.Call('lunchOfDayByDateRange', startdate, enddate)
     )
