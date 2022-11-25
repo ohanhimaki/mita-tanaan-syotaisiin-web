@@ -6,8 +6,7 @@
 
 <MudContainer>
 
-    <MudDatePicker Label="StartDate" @bind-Date="StartDate"/>
-    <MudDatePicker Label="EndDate" @bind-Date="EndDate"/>
+    <MudDatePicker Label="Päivä" @bind-Date="StartDate"/>
     <div style="overflow-x:scroll; overflow-y: hidden">
 
     <div
@@ -69,6 +68,8 @@
     set
     {
       _startDate = value;
+      if (_startDate is null) return;
+      _endDate = _startDate.Value.AddDays(7);
       RefreshLunchList();
     }
   }
