@@ -52,16 +52,16 @@
       StartDate = _startDate.Value.Year * 10000 + _startDate.Value.Month * 100 + _startDate.Value.Day,
       EndDate = _endDate.Value.Year * 10000 + _endDate.Value.Month * 100 + _endDate.Value.Day
     }))
-      .OrderBy(x => x.data.restaurantData.nimi)
-      .ThenBy(x => x.data.date)
+      .OrderBy(x => x.Restaurant.nimi)
+      .ThenBy(x => x.DateString)
       .ToList();
 
     // group by restaurant
-    LunchListRowsGroupedByRestaurant = lunchListResponses.GroupBy(x => x.data.restaurantData.nimi);
+    LunchListRowsGroupedByRestaurant = lunchListResponses.GroupBy(x => x.Restaurant.nimi);
     await InvokeAsync(StateHasChanged);
   }
 
-  public IEnumerable<IGrouping<string, LunchListResponse>> LunchListRowsGroupedByRestaurant { get; set; }
+  public IEnumerable<IGrouping<string, LunchListVm>> LunchListRowsGroupedByRestaurant { get; set; }
 
   public DateTime? StartDate
   {
@@ -84,6 +84,6 @@
   }
 
 
-  private DateTime? _startDate = DateTime.Now.AddDays(-1 * (((int)DateTime.Now.DayOfWeek + 6) % 7));
-  private DateTime? _endDate = DateTime.Now.AddDays((6 - (((int)DateTime.Now.DayOfWeek + 6) % 7)));
+  private DateTime? _startDate = DateTime.Now;
+  private DateTime? _endDate = DateTime.Now.AddDays(6);
 }

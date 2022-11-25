@@ -1,4 +1,5 @@
 ﻿@using MTS.Application.LunchList
+@using MTS.Application.LunchList.Queries
 
     <div class="d-flex flex-row  flex-grow-1 gap-4">
   @foreach (var lunchListResponse in LunchListRowGroupedByRestaurant)
@@ -15,6 +16,6 @@
 
 @code {
   [Parameter]
-  public List<LunchListResponse> LunchListRowGroupedByRestaurant { get; set; }
+  public List<LunchListVm> LunchListRowGroupedByRestaurant { get; set; }
 
 }

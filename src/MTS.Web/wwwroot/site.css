@@ -1,0 +1,5 @@
+﻿.lunchOfDay {
+  -webkit-animation: breathing 2s ease-out infinite normal;
+  animation: breathing 2s ease-out infinite normal;
+  -webkit-font-smoothing: antialiased;
+}

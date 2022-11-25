@@ -1,24 +1,51 @@
 ﻿@using MTS.Application.LunchList.Queries
 @using MTS.Application.LunchList
 
+
 <MudCardContent >
   @{
-    var style = LunchListRow.data.date == _currentDayString ? Theme.Palette.GrayLight : "";
+    var style = LunchListRow.DateString != _currentDayString ? Theme.Palette.GrayLight : "";
   }
   <MudPaper
     Class="pa-4"
-    Style="@($"background: {style}")"
+    Style="@($"background: {style}" + "; height: 100%;")"
     Width="300px">
+    <MudGrid Justify="Justify.SpaceBetween">
+      <MudItem xs="8">
+        <MudGrid >
+          <MudItem xs="12">
+            <MudText >@LunchListRow.DateString</MudText>
 
-    <MudText >@LunchListRow.data.date</MudText>
-    <MudText >@LunchListRow.data.restaurantData.nimi</MudText>
-    @((MarkupString)LunchListRow.data.dayData)
+          </MudItem>
+          <MudItem xs="12">
+          <MudText >@LunchListRow.Restaurant.nimi</MudText>
+          </MudItem>
+
+        </MudGrid>
+      </MudItem>
+      <MudItem xs="2">
+        @if (LunchListRow.LunchOfDay)
+        {
+          <MudImage
+            Class="lunchOfDay"
+            Height="32"
+            Src="./gold-medal.png">
+          </MudImage>
+        }
+      </MudItem>
+      <MudItem xs="12">
+    @((MarkupString)LunchListRow.Lunch)
+
+      </MudItem>
+    </MudGrid>
+
   </MudPaper>
 </MudCardContent>
 
 @code {
+
   [Parameter]
-  public LunchListResponse LunchListRow { get; set; }
+  public LunchListVm LunchListRow { get; set; }
 
 
   private MudTheme Theme = new MudTheme();

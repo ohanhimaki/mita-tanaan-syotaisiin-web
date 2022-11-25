@@ -11,4 +11,4 @@
   port = 8888
 
   # Local dev command. A.k.a npm start
-  command = "dotnet watch run --project ./src/mts.web/mts.web.csproj"
+  #command = "dotnet watch run --project ./src/mts.web/mts.web.csproj"
