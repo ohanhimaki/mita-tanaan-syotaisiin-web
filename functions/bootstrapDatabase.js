@@ -27,20 +27,30 @@ async function createIndex(indexName, collectionName, values, terms){
   if (!indexExists) {
     console.log("Creating index", indexName)
 
+    const basicInfos = {
+      name: indexName,
+      source: query.Collection(collectionName),
+    }
+
+    const params ={
+      ... basicInfos,
+      ...(values && values.length>0 && {values: values}),
+      ...(terms && terms.length>0 && {terms: terms})
+    } ;
+    console.log(params);
+
     client.query(
-      query.CreateIndex({
-        name: indexName,
-        source: query.Collection(collectionName),
-        values: values,
-        terms: terms
-      })
+      query.CreateIndex(
+        params
+         )
     )
       .then((ret) => console.log(ret))
       .catch((err) => console.error(
-        'Error: [%s] %s: %s',
+        'Error: [%s] %s: %s - %s',
         err.name,
         err.message,
         err.errors()[0].description,
+        indexName,
       ))
 
   }
@@ -110,7 +120,7 @@ const handler = async () => {
   );
 
 
-  await createIndex("lunchofday_by_day", "lunchofday", [
+  await createIndex("lunchofday_by_day", "LunchOfDay", [
     { field: ["data", "date"] },
     { field: ['ref']},
   ])
