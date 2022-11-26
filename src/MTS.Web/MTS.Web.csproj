@@ -18,4 +18,10 @@
       <ProjectReference Include="..\MTS.Application\MTS.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="wwwroot\gold-medal.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

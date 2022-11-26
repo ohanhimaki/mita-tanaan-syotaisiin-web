@@ -1,26 +1,101 @@
 ﻿@using MTS.Application.LunchList.Queries
 @using MTS.Application.LunchList
+@using MTS.Application.LunchList.Commands
+@using MediatR
+@inject IMediator Mediator
+@inject UserVoteService UserVoteService
+
 
 <MudCardContent >
   @{
-    var style = LunchListRow.data.date == _currentDayString ? Theme.Palette.GrayLight : "";
+    var style = LunchListRow.DateString != _currentDayString ? Theme.Palette.GrayLight : "";
   }
   <MudPaper
     Class="pa-4"
-    Style="@($"background: {style}")"
+    Style="@($"background: {style}" + "; height: 100%;")"
     Width="300px">
+    <MudGrid Justify="Justify.SpaceBetween">
+      <MudItem xs="8">
+        <MudGrid >
+          <MudItem xs="12">
+            <MudText >@LunchListRow.DateString</MudText>
 
-    <MudText >@LunchListRow.data.date</MudText>
-    <MudText >@LunchListRow.data.restaurantData.nimi</MudText>
-    @((MarkupString)LunchListRow.data.dayData)
+          </MudItem>
+          <MudItem xs="12">
+          <MudText >@LunchListRow.Restaurant.nimi</MudText>
+          </MudItem>
+
+        </MudGrid>
+      </MudItem>
+      <MudItem xs="2">
+        @if (LunchListRow.LunchOfDay)
+        {
+          <MudImage
+            Class="lunchOfDay"
+            Height="32"
+            Src="./gold-medal.png">
+          </MudImage>
+        }
+        @if(UserVoteService.IsUserVoted(LunchListRow))
+        {
+          //Mudblazor checkmark icon
+          <MudIcon Icon="@Icons.Filled.Check" />
+
+        }
+        else
+        {
+          if (UserVoteService.AllowedToVote(LunchListRow))
+          {
+            <MudIcon
+              Style="cursor: pointer"
+              Icon="@Icons.Filled.ThumbUp"
+            @onclick="() => VoteUp(LunchListRow)"
+                     />
+          }
+        }
+        <MudText>@(LunchListRow.Votes != 0 ? LunchListRow.Votes : "")</MudText>
+      </MudItem>
+      <MudItem xs="12">
+    @((MarkupString)LunchListRow.Lunch)
+
+      </MudItem>
+    </MudGrid>
+
   </MudPaper>
 </MudCardContent>
 
 @code {
+
   [Parameter]
-  public LunchListResponse LunchListRow { get; set; }
+  public LunchListVm LunchListRow { get; set; }
 
 
   private MudTheme Theme = new MudTheme();
   private string _currentDayString = (DateTime.Now.Year * 10000 + DateTime.Now.Month * 100 + DateTime.Now.Day).ToString();
+
+  private void VoteUp(LunchListVm lunchListVm)
+  {
+    Console.WriteLine(lunchListVm);
+    var result = new VoteUpLunchListCommand(){LunchListRef = lunchListVm.RefString};
+    Mediator.Send(result);
+    lunchListVm.Votes++;
+    RegisterVoteAsync(lunchListVm);
+  }
+
+  protected override void OnAfterRender(bool firstRender)
+  {
+    UserVoteService.UserVotesStateChanged += UserVoteServiceUserVotesStateChanged;
+    base.OnAfterRender(firstRender);
+  }
+
+  private void UserVoteServiceUserVotesStateChanged(object? sender, EventArgs e)
+  {
+    InvokeAsync(StateHasChanged);
+  }
+
+  private async Task RegisterVoteAsync(LunchListVm lunchListVm)
+  {
+    UserVoteService.AddVote(lunchListVm.DateString, lunchListVm.Restaurant.ravintolaid);
+  }
+
 }

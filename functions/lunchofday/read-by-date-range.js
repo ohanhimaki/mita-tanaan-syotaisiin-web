@@ -16,7 +16,7 @@ const handler = async (event, context) => {
 
   try {
     var result = await client.query(
-      query.Call('lunchListsByDateRange', startdate, enddate)
+      query.Call('lunchOfDayByDateRange', startdate, enddate)
     )
       .then((ret) => {
         return {

@@ -9,14 +9,12 @@ const client = new Client({
 
 const handler = async (date) => {
   console.log('Function `read-all` invoked')
-  console.log(date)
 
   try {
     const response = await client
-      .query(query.Paginate(query.Match(query.Index('lunchlists_refs_by_date'),
+      .query(query.Paginate(query.Match(query.Index('lunchlists_by_date'),
         date
       )))
-
     //get all lunchlists by refs
     const lunchlistsRefs = response.data
     const getAllLunchlistsDataQuery = lunchlistsRefs.map((ref) => query.Get(ref))
