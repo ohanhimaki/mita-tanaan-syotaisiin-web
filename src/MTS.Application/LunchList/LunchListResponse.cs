@@ -21,6 +21,8 @@ namespace MTS.Application.LunchList;
 
         [JsonPropertyName("dayData")]
         public string dayData { get; set; }
+        [JsonPropertyName("votes")]
+        public int votes { get; set; }
     }
 
     public class Ref

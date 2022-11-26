@@ -51,6 +51,8 @@ public class GetLunchListQueryHandler : IRequestHandler<GetLunchListQuery, IEnum
       query2 += queryString.ToString();
       var lunchOfDays = await _http.GetFromJsonAsync<LunchOfDayResponse[]>(query2);
 
+      Console.WriteLine(JsonSerializer.Serialize(lunchOfDays));
+
       var lunchList = lunchListRows.Select(x => new LunchListVm(x,
         lunchOfDays.Any(y =>
           y.data.date == x.data.date && y.data.restaurantData.ravintolaid == x.data.restaurantData.ravintolaid)));
@@ -74,13 +76,14 @@ public class LunchListVm
     DateString = lunchListResponse.data.date;
     Lunch = lunchListResponse.data.dayData;
     LunchOfDay = lunchOfDay;
+    Votes = lunchListResponse.data.votes;
   }
 
   public string RefString { get; set; }
 
 
   public bool LunchOfDay { get; set; }
-  public bool Votes { get; set; }
+  public int Votes { get; set; }
 
   public string Lunch { get; set; }
 

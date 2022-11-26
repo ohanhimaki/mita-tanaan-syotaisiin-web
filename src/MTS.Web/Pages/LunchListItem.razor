@@ -3,6 +3,7 @@
 @using MTS.Application.LunchList.Commands
 @using MediatR
 @inject IMediator Mediator
+@inject UserVoteService UserVoteService
 
 
 <MudCardContent >
@@ -36,8 +37,8 @@
           </MudImage>
         }
         <MudButton
-          OnClick="() => VoteUp(LunchListRow.RefString)">äänestä</MudButton>
-        <MudText>@LunchListRow.Votes</MudText>
+          OnClick="() => VoteUp(LunchListRow)">äänestä</MudButton>
+        <MudText>@(LunchListRow.Votes != 0 ? LunchListRow.Votes : "")</MudText>
       </MudItem>
       <MudItem xs="12">
     @((MarkupString)LunchListRow.Lunch)
@@ -57,11 +58,18 @@
   private MudTheme Theme = new MudTheme();
   private string _currentDayString = (DateTime.Now.Year * 10000 + DateTime.Now.Month * 100 + DateTime.Now.Day).ToString();
 
-  private void VoteUp(string refString)
+  private void VoteUp(LunchListVm lunchListVm)
   {
-    Console.WriteLine(refString);
-    var result = new VoteUpLunchListCommand(){LunchListRef = refString};
+    Console.WriteLine(lunchListVm);
+    var result = new VoteUpLunchListCommand(){LunchListRef = lunchListVm.RefString};
     Mediator.Send(result);
+    lunchListVm.Votes++;
+    RegisterVoteAsync(lunchListVm);
+  }
+
+  private async Task RegisterVoteAsync(LunchListVm lunchListVm)
+  {
+    UserVoteService.AddVote(lunchListVm.DateString, lunchListVm.Restaurant.ravintolaid);
   }
 
 }
