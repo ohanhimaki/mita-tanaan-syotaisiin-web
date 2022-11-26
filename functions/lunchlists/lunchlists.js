@@ -7,6 +7,13 @@ const handler = async (event, context) => {
 
   console.log(event.httpMethod)
   switch (event.httpMethod) {
+    case 'OPTIONS':
+      const corsHeaders = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      }
+      return { statusCode: 204, headers: corsHeaders }
     case 'GET':
       // e.g. GET /.netlify/functions/fauna-crud/123456
       if (event.queryStringParameters.startdate && event.queryStringParameters.enddate) {
@@ -23,10 +30,11 @@ const handler = async (event, context) => {
         body: 'too many segments in GET request, must be either /.netlify/functions/fauna-crud or /.netlify/functions/fauna-crud/123456',
       }
 
-    case 'OPTIONS':
+    case 'PUT':
       if(event.queryStringParameters.lunchlistref && event.queryStringParameters.vote ){
         return await voteup.handler(event, context);
       }
+      console.log("Eikai tänne tuu?")
       return {
         statusCode: 500,
         body: 'too many segments in GET request, must be either /.netlify/functions/fauna-crud or /.netlify/functions/fauna-crud/123456',
