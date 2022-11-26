@@ -28,34 +28,41 @@ const handler = async (data) => {
         )
       )
     )
-    // delete LunchList items by restaurant id and date
-    const response2 = await client.query
-    (
-      query.Map
+    // if lunchlist exists, update it
+    if (response3.data.length > 0) {
+      const lunchlistRef = response3.data[0];
+      const response4 = await client.query
       (
-        query.Paginate
+        query.Update
         (
-          query.Match
-          (
-            query.Index('lunchlists_refs_by_restaurant_and_date'),
-            data.restaurantData.ravintolaid,
-            data.date,
-          )
-        ),
-        query.Lambda
-        (
-          'X',
-          query.Delete(query.Var('X'))
+          lunchlistRef,
+          {
+            data: {
+              dayData: data.dayData,
+            }
+          }
         )
-      )
-    )
+      );
+      console.log('Päivitettiin', data.restaurantData.ravintolaid, data.date)
+      return {
+        statusCode: 200,
+        body: JSON.stringify(response4),
+      }
+    } else {
+      const response = await client.query(query.Create(query.Collection('LunchLists'), item))
+      /* Success! return the response with statusCode 200 */
+      console.log('Lisättiin', data.restaurantData.ravintolaid, data.date)
+      return {
+        statusCode: 200,
+        body: JSON.stringify(response),
+      }
 
-    const response = await client.query(query.Create(query.Collection('LunchLists'), item))
-    /* Success! return the response with statusCode 200 */
-    return {
-      statusCode: 200,
-      body: JSON.stringify(response),
     }
+
+
+
+
+
   } catch (error) {
     console.log('error', error)
     /* Error! return the error with statusCode 400 */
