@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.JSInterop;
+using MTS.Application.LunchList.Queries;
 
 namespace MTS.Web;
 
@@ -24,11 +25,25 @@ public class UserVoteService
     var currentDay = DateTime.Now.ToString("yyyyMMdd");
 
     var userVote = await _ijsRuntime.InvokeAsync<string>("localStorage.getItem", "userVote");
-    var userVoteObject = JsonSerializer.Deserialize<UserVotesLocalStorage>(userVote);
-    UserVotes = userVoteObject ?? new UserVotesLocalStorage();
-  }
+    if (string.IsNullOrWhiteSpace(userVote) )
+    {
+      UserVotes = new UserVotesLocalStorage();
+    }
+    else
+    {
+      var userVoteObject = JsonSerializer.Deserialize<UserVotesLocalStorage>(userVote);
+      UserVotes = userVoteObject ?? new UserVotesLocalStorage();
 
-  private UserVotesLocalStorage UserVotes { get; set; }
+    }
+
+    //Make event to update UI
+
+    UserVotesStateChanged?.Invoke(this, EventArgs.Empty);
+  }
+  // Event to update UI
+  public event EventHandler UserVotesStateChanged;
+
+  private UserVotesLocalStorage? UserVotes { get; set; }
 
   public async void AddVote(string dateKey, int restaurantId)
   {
@@ -45,12 +60,46 @@ public class UserVoteService
       {
         date.RestaurantIds.Add(restaurantId);
       }
+      UserVotesStateChanged?.Invoke(this, EventArgs.Empty);
       SaveUserVotes();
   }
 
   private async void SaveUserVotes()
   {
       await _ijsRuntime.InvokeVoidAsync("localStorage.setItem", "userVote", JsonSerializer.Serialize(UserVotes));
+  }
+
+  public bool IsUserVoted(LunchListVm lunchListRow)
+  {
+    if (UserVotes is null)
+    {
+      return false;
+    }
+
+    var day = UserVotes?.Days?
+      .SingleOrDefault(x => x.DateKey == lunchListRow.DateString);
+    if (day is null)
+    {
+      return false;
+    }
+     return day.RestaurantIds.Contains(lunchListRow.Restaurant.ravintolaid);
+  }
+
+  public bool AllowedToVote(LunchListVm lunchListRow)
+  {
+    if (UserVotes is null)
+    {
+      return false;
+    }
+
+    var day = UserVotes?.Days?
+      .SingleOrDefault(x => x.DateKey == lunchListRow.DateString);
+    if (day is null)
+    {
+      return true;
+    }
+      return day.RestaurantIds.Count < 3;
+
   }
 }
 

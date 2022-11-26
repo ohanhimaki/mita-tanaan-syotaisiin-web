@@ -36,8 +36,23 @@
             Src="./gold-medal.png">
           </MudImage>
         }
-        <MudButton
-          OnClick="() => VoteUp(LunchListRow)">äänestä</MudButton>
+        @if(UserVoteService.IsUserVoted(LunchListRow))
+        {
+          //Mudblazor checkmark icon
+          <MudIcon Icon="@Icons.Filled.Check" />
+
+        }
+        else
+        {
+          if (UserVoteService.AllowedToVote(LunchListRow))
+          {
+            <MudIcon
+              Style="cursor: pointer"
+              Icon="@Icons.Filled.ThumbUp"
+            @onclick="() => VoteUp(LunchListRow)"
+                     />
+          }
+        }
         <MudText>@(LunchListRow.Votes != 0 ? LunchListRow.Votes : "")</MudText>
       </MudItem>
       <MudItem xs="12">
@@ -65,6 +80,17 @@
     Mediator.Send(result);
     lunchListVm.Votes++;
     RegisterVoteAsync(lunchListVm);
+  }
+
+  protected override void OnAfterRender(bool firstRender)
+  {
+    UserVoteService.UserVotesStateChanged += UserVoteServiceUserVotesStateChanged;
+    base.OnAfterRender(firstRender);
+  }
+
+  private void UserVoteServiceUserVotesStateChanged(object? sender, EventArgs e)
+  {
+    InvokeAsync(StateHasChanged);
   }
 
   private async Task RegisterVoteAsync(LunchListVm lunchListVm)
