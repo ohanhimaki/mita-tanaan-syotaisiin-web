@@ -145,6 +145,20 @@ const handler = async () => {
     )
   );
 
+  await createFunction("voteLunchList",
+    query.Query(
+      query.Lambda(['lunchListRefId'],
+        query.Let(
+          {
+            lunchListRef: query.Ref(query.Collection("LunchLists"), query.Var("lunchListRefId")),
+            lunchList: query.Get(query.Var("lunchListRef")),
+            lunchListVotes: query.Select(["data", "votes"], query.Var("lunchList"), 0)
+          },
+          query.Update(query.Var('lunchListRef'),{data:{votes:query.Add(query.Var('lunchListVotes'),1)}})
+        )
+      )
+    )
+  );
   return {
     statusCode: 200,
     body: JSON.stringify("Done"),
