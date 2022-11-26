@@ -1,6 +1,7 @@
 ﻿using System.Collections.Specialized;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 
@@ -68,13 +69,18 @@ public class LunchListVm
 {
   public LunchListVm(LunchListResponse lunchListResponse, bool lunchOfDay)
   {
+    RefString = lunchListResponse.@ref.@ref.id;
     Restaurant = lunchListResponse.data.restaurantData;
     DateString = lunchListResponse.data.date;
     Lunch = lunchListResponse.data.dayData;
     LunchOfDay = lunchOfDay;
   }
 
+  public string RefString { get; set; }
+
+
   public bool LunchOfDay { get; set; }
+  public bool Votes { get; set; }
 
   public string Lunch { get; set; }
 

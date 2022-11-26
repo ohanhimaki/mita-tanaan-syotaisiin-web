@@ -1,5 +1,8 @@
 ﻿@using MTS.Application.LunchList.Queries
 @using MTS.Application.LunchList
+@using MTS.Application.LunchList.Commands
+@using MediatR
+@inject IMediator Mediator
 
 
 <MudCardContent >
@@ -32,6 +35,9 @@
             Src="./gold-medal.png">
           </MudImage>
         }
+        <MudButton
+          OnClick="() => VoteUp(LunchListRow.RefString)">äänestä</MudButton>
+        <MudText>@LunchListRow.Votes</MudText>
       </MudItem>
       <MudItem xs="12">
     @((MarkupString)LunchListRow.Lunch)
@@ -50,4 +56,12 @@
 
   private MudTheme Theme = new MudTheme();
   private string _currentDayString = (DateTime.Now.Year * 10000 + DateTime.Now.Month * 100 + DateTime.Now.Day).ToString();
+
+  private void VoteUp(string refString)
+  {
+    Console.WriteLine(refString);
+    var result = new VoteUpLunchListCommand(){LunchListRef = refString};
+    Mediator.Send(result);
+  }
+
 }
