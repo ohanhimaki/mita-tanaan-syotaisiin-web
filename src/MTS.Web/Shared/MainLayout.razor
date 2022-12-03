@@ -13,9 +13,28 @@
       Src="./android-chrome-192x192.png"
       Style="max-width: 4rem"
       ></MudImage>
-    <MudText Typo="Typo.h5" Class="ml-3">MTS</MudText>
+    <MudText Typo="Typo.h5" Class="ml-3">Mitäs tänään syötäisiin?</MudText>
     <MudSpacer/>
-    <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End"/>
+
+  @* <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" /> *@
+
+    @* https://github.com/ohanhimaki/mita-tanaan-syotaisiin-web *@
+    <MudMenu  Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit">
+      <MudMenuItem Icon="@Icons.Custom.Brands.GitHub"
+                   Href="https://github.com/ohanhimaki/mita-tanaan-syotaisiin-web"
+                   Target="_blank"
+      >GitHub</MudMenuItem>
+      <MudMenuItem Icon="@Icons.Custom.Brands.GitHub"
+                   Href="https://github.com/ohanhimaki/mita-tanaan-syotaisiin-web/issues/new"
+                   Target="_blank"
+      >Report bug or feature request</MudMenuItem>
+      <MudMenuItem Icon="@Icons.Material.Filled.Settings"
+                   Href="/"
+      >Admin</MudMenuItem>
+
+
+
+    </MudMenu >
   </MudAppBar>
     <MudMainContent>
         @Body
