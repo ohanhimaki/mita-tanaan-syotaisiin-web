@@ -2,7 +2,7 @@
 @inject IMediator Mediator
 @using MTS.Application.LunchList.Queries
 @using MediatR
-@using MTS.Application.LunchList
+@using MTS.Web.Shared.Data
 
 <MudContainer
   MaxWidth="MaxWidth.ExtraLarge">
@@ -30,9 +30,12 @@
 
 
 @code {
+  [CascadingParameter]
+    public bool? IsMobile { get; set; }
 
   protected override async Task OnInitializedAsync()
   {
+      Console.WriteLine("Tulee index");
     try
     {
       await RefreshLunchList();
@@ -47,10 +50,33 @@
 
   private async Task RefreshLunchList()
   {
+    //Startdate is monday of current week as yyyyMMdd
+      int startDate;
+      int endDate;
+    if (!IsMobile ?? false)
+    {
+      startDate = _startDate.Value.DateOfWeek(DayOfWeek.Monday).ToInt();
+      endDate = _startDate.Value.DateOfWeek(DayOfWeek.Friday).ToInt();
+
+    }
+    else
+    {
+      if (_startDate is null || _startDate.Value.ToInt() == DateTime.Today.ToInt())
+      {
+        startDate = DateTime.Today.ToInt();
+      }
+      else
+      {
+        startDate = _startDate.Value.DateOfWeek(DayOfWeek.Monday).ToInt();
+      }
+      endDate = _startDate.Value.DateOfWeek(DayOfWeek.Friday).ToInt();
+    }
+
+
      var lunchListResponses = (await Mediator.Send(new GetLunchListQuery
     {
-      StartDate = _startDate.Value.Year * 10000 + _startDate.Value.Month * 100 + _startDate.Value.Day,
-      EndDate = _endDate.Value.Year * 10000 + _endDate.Value.Month * 100 + _endDate.Value.Day
+      StartDate = startDate,
+      EndDate = endDate
     }))
       .OrderBy(x => x.Restaurant.nimi)
       .ThenBy(x => x.DateString)
@@ -70,22 +96,11 @@
     {
       _startDate = value;
       if (_startDate is null) return;
-      _endDate = _startDate.Value.AddDays(7);
       RefreshLunchList();
     }
   }
 
-  public DateTime? EndDate
-  {
-    get => _endDate;
-    set
-    {
-      _endDate = value;
-      RefreshLunchList();
-    }
-  }
 
 
   private DateTime? _startDate = DateTime.Now;
-  private DateTime? _endDate = DateTime.Now.AddDays(6);
 }
