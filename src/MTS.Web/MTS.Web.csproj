@@ -32,6 +32,9 @@
       <Content Update="wwwroot\manifest.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Update="wwwroot\browserservice.js">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
 
     </ItemGroup>
 
