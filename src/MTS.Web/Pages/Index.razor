@@ -69,21 +69,29 @@
       int startDate;
       int endDate;
 
-      Console.WriteLine("IsMobile: " + IsMobile);
     if (!IsMobile)
     {
-      Console.WriteLine("Haetaan listat desktopille");
       startDate = _startDate.Value.DateOfWeek(DayOfWeek.Monday).ToInt();
       endDate = _startDate.Value.DateOfWeek(DayOfWeek.Friday).ToInt();
 
     }
     else
     {
-      Console.WriteLine("Haetaan listat puhelimelle");
       if (_startDate is null || _startDate.Value.ToInt() == DateTime.Today.ToInt())
       {
+        if (DateTime.Today.DayOfWeek == DayOfWeek.Saturday ||
+            DateTime.Today.DayOfWeek == DayOfWeek.Sunday)
+        {
+          startDate = DateTime.Today.DateOfWeek(DayOfWeek.Monday).ToInt();
+          endDate = DateTime.Today.DateOfWeek(DayOfWeek.Friday).ToInt();
+
+        }
+        else
+        {
+
         startDate = DateTime.Today.ToInt();
         endDate = _startDate.Value.DateOfWeek(DayOfWeek.Friday).ToInt();
+        }
       }
       else
       {
