@@ -2,7 +2,7 @@
 @inject IMediator Mediator
 @using MTS.Application.LunchList.Queries
 @using MediatR
-@using MTS.Application.LunchList
+@using MTS.Web.Shared.Data
 
 <MudContainer
   MaxWidth="MaxWidth.ExtraLarge">
@@ -31,26 +31,80 @@
 
 @code {
 
-  protected override async Task OnInitializedAsync()
+  [Inject]
+  protected IJSRuntime _JS { get; set; }
+  public bool IsMobile { get; set; } = false;
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
   {
-    try
-    {
-      await RefreshLunchList();
-      await base.OnInitializedAsync();
-    }
-    catch (Exception e)
-    {
-      Console.WriteLine(e);
-      throw;
-    }
+        Console.WriteLine("tulee tähän: " + IsMobile);
+      if (firstRender)
+      {
+        try
+        {
+          int innerWidth = await BrowserService.GetInnerWidth(_JS);
+
+          Console.WriteLine("InnerWidth: " + innerWidth);
+          if (innerWidth < 480)
+             IsMobile = true;
+         else
+             IsMobile = false;
+
+        Console.WriteLine("IsMobile: " + IsMobile);
+
+
+        }
+        catch (Exception e)
+        {
+          Console.WriteLine(e);
+          throw;
+        }
+        RefreshLunchList();
+      }
   }
 
   private async Task RefreshLunchList()
   {
+    //Startdate is monday of current week as yyyyMMdd
+      int startDate;
+      int endDate;
+
+    if (!IsMobile)
+    {
+      startDate = _startDate.Value.DateOfWeek(DayOfWeek.Monday).ToInt();
+      endDate = _startDate.Value.DateOfWeek(DayOfWeek.Friday).ToInt();
+
+    }
+    else
+    {
+      if (_startDate is null || _startDate.Value.ToInt() == DateTime.Today.ToInt())
+      {
+        if (DateTime.Today.DayOfWeek == DayOfWeek.Saturday ||
+            DateTime.Today.DayOfWeek == DayOfWeek.Sunday)
+        {
+          startDate = DateTime.Today.DateOfWeek(DayOfWeek.Monday).ToInt();
+          endDate = DateTime.Today.DateOfWeek(DayOfWeek.Friday).ToInt();
+
+        }
+        else
+        {
+
+        startDate = DateTime.Today.ToInt();
+        endDate = _startDate.Value.DateOfWeek(DayOfWeek.Friday).ToInt();
+        }
+      }
+      else
+      {
+        startDate = _startDate.Value.ToInt();
+        endDate = _startDate.Value.ToInt();
+      }
+    }
+
+
      var lunchListResponses = (await Mediator.Send(new GetLunchListQuery
     {
-      StartDate = _startDate.Value.Year * 10000 + _startDate.Value.Month * 100 + _startDate.Value.Day,
-      EndDate = _endDate.Value.Year * 10000 + _endDate.Value.Month * 100 + _endDate.Value.Day
+      StartDate = startDate,
+      EndDate = endDate
     }))
       .OrderBy(x => x.Restaurant.nimi)
       .ThenBy(x => x.DateString)
@@ -70,22 +124,11 @@
     {
       _startDate = value;
       if (_startDate is null) return;
-      _endDate = _startDate.Value.AddDays(7);
       RefreshLunchList();
     }
   }
 
-  public DateTime? EndDate
-  {
-    get => _endDate;
-    set
-    {
-      _endDate = value;
-      RefreshLunchList();
-    }
-  }
 
 
   private DateTime? _startDate = DateTime.Now;
-  private DateTime? _endDate = DateTime.Now.AddDays(6);
 }
