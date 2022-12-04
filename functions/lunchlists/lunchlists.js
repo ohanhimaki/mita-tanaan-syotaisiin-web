@@ -25,10 +25,15 @@ const handler = async (event, context) => {
       //   event.id = id
       //   return readbyrestaurantid.handler(event, context)
       // }
-      return {
-        statusCode: 500,
-        body: 'too many segments in GET request, must be either /.netlify/functions/fauna-crud or /.netlify/functions/fauna-crud/123456',
-      }
+
+      const date = new Date();
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const dateString = year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
+      event.queryStringParameters.startdate = dateString;
+      event.queryStringParameters.enddate = dateString;
+      return await readbydaterange.handler(event, context);
 
     case 'PUT':
       if(event.queryStringParameters.lunchlistref && event.queryStringParameters.vote ){
