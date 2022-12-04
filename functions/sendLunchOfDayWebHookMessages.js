@@ -59,7 +59,7 @@ function createPayloadObjects(lunchofday, allLunchLists) {
   let lunchlistCounter = 0;
   while (1 + (payloadObjects.length * 9) <= allLunchLists.length) {
     let payloadObject = {};
-    payloadObject.content = "Päivän lounaspaikka on: "
+    payloadObject.content = "Päivän lounaspaikka on: \n  https://www.mitastanaansyotaisiin.fi/"
       + lunchofday.data.restaurantData.nimi + ((allLunchLists.length > 8) ? " (" + (payloadObjects.length + 1).toString() + "/" + (Math.ceil(allLunchLists.length / 8)).toString() + ")" : "");
     payloadObject.embeds = [];
     if (lunchofday && payloadObjects.length === 0) {
