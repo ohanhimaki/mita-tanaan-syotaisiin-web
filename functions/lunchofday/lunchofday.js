@@ -4,6 +4,10 @@ const handler = async (event, context) => {
 
   switch (event.httpMethod) {
     case 'GET':
+      console.log("event.queryStringParameters", event.queryStringParameters)
+      if(event.queryStringParameters === undefined) {
+        event.queryStringParameters = {};
+      }
       // e.g. GET /.netlify/functions/fauna-crud/123456
       if(event.queryStringParameters.startdate && event.queryStringParameters.enddate) {
           return await readbydaterange.handler(event, context);

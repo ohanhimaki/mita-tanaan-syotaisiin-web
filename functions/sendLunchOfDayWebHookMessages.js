@@ -15,15 +15,18 @@ function updateWebhookCalledAfterSuccess(hook) {
 const timer = ms => new Promise(res => setTimeout(res, ms))
 
 // see: https://ntl.fyi/sched-func
-exports.sendLunchOfDayWebHookMessages =  async (event, context) => {
+exports.sendLunchOfDayWebHookMessages =  async () => {
   // console.log(`Next function run at ${eventBody.next_run}.`)
-  var result = JSON.parse((await getWebHooks.handler(event)).body);
+  var result = JSON.parse((await getWebHooks.handler()).body);
 
 var lunchOfDayDiscordHooks = result.filter(x => x.data.WebHookSubscriptionTypeId === WebHookTypes.LunchOfDayDiscord );
 
 // lunchOfDayDiscordHooks foreach
 
 
+  var event = {
+    httpMethod: 'GET'
+  }
   var lunchOfDay = JSON.parse((await getLunchOfDay.handler(event)).body);
 
   var lunchListsOfToday = JSON.parse((await lunchListsByParameters.handler(event)).body)

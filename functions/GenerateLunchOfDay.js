@@ -5,15 +5,16 @@ const readLunchOfDay = require('./lunchofday/lunchofday')
 const process = require('process')
 
 const {Client, query} = require('faunadb')
+const {sendLunchOfDayWebHookMessages} = require("./sendLunchOfDayWebHookMessages");
 
 const handler = async () => {
 
   //get date as string yyyymmdd
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const dateString = year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
+  // const date = new Date();
+  // const year = date.getFullYear();
+  // const month = date.getMonth() + 1;
+  // const day = date.getDate();
+  // const dateString = year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
 
 
 
@@ -24,11 +25,13 @@ const handler = async () => {
   let lunchOfDay;
   try {
 
-    lunchOfDay = await JSON.parse((await readLunchOfDay.handler({queryStringParameters:{date:dateString},
+    console.log("readLunchListsByDate");
+    lunchOfDay = await JSON.parse((await readLunchOfDay.handler({
       httpMethod:"GET"})).body);
   } catch (error) {
     // if errorType: NotFound its ok
-    if (error.requestResult.statusCode === 404) {
+    console.log("error", error);
+    if (error?.requestResult?.statusCode === 404) {
       console.log('LunchOfDay not found, creating new one')
     } else {
 
@@ -136,6 +139,7 @@ console.log('lunchofday_by_day', lunchofday_by_day)
     console.log('lunchOfDay', lunchOfDay)
     console.log("Luotiin uusi")
   }
+  var result = await sendLunchOfDayWebHookMessages();
 
   return {
     statusCode: 200,
