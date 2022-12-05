@@ -15,15 +15,18 @@ function updateWebhookCalledAfterSuccess(hook) {
 const timer = ms => new Promise(res => setTimeout(res, ms))
 
 // see: https://ntl.fyi/sched-func
-exports.sendLunchOfDayWebHookMessages =  async (event, context) => {
+exports.sendLunchOfDayWebHookMessages =  async () => {
   // console.log(`Next function run at ${eventBody.next_run}.`)
-  var result = JSON.parse((await getWebHooks.handler(event)).body);
+  var result = JSON.parse((await getWebHooks.handler()).body);
 
 var lunchOfDayDiscordHooks = result.filter(x => x.data.WebHookSubscriptionTypeId === WebHookTypes.LunchOfDayDiscord );
 
 // lunchOfDayDiscordHooks foreach
 
 
+  var event = {
+    httpMethod: 'GET'
+  }
   var lunchOfDay = JSON.parse((await getLunchOfDay.handler(event)).body);
 
   var lunchListsOfToday = JSON.parse((await lunchListsByParameters.handler(event)).body)
@@ -59,8 +62,10 @@ function createPayloadObjects(lunchofday, allLunchLists) {
   let lunchlistCounter = 0;
   while (1 + (payloadObjects.length * 9) <= allLunchLists.length) {
     let payloadObject = {};
-    payloadObject.content = "Päivän lounaspaikka on: \n  https://www.mitastanaansyotaisiin.fi/"
-      + lunchofday.data.restaurantData.nimi + ((allLunchLists.length > 8) ? " (" + (payloadObjects.length + 1).toString() + "/" + (Math.ceil(allLunchLists.length / 8)).toString() + ")" : "");
+    payloadObject.content = "Päivän lounaspaikka on: " +
+       lunchofday.data.restaurantData.nimi
+      +"\n  https://www.mitastanaansyotaisiin.fi/"
+      + ((allLunchLists.length > 8) ? " (" + (payloadObjects.length + 1).toString() + "/" + (Math.ceil(allLunchLists.length / 8)).toString() + ")" : "");
     payloadObject.embeds = [];
     if (lunchofday && payloadObjects.length === 0) {
       var tmpDesc = lunchofday.data.dayData.replace(/<br\s*\/?>/mg, "\n");

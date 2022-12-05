@@ -2,8 +2,6 @@ const readbydaterange = require('./read-by-date-range.js')
 const voteup = require('./vote-up.js')
 
 const handler = async (event, context) => {
-  const path = event.path.replace(/\.netlify\/functions\/[^/]+/, '')
-  const segments = path.split('/').filter(Boolean)
 
   console.log(event.httpMethod)
   switch (event.httpMethod) {

@@ -1,16 +1,16 @@
 const { schedule } = require('@netlify/functions')
 const generateLunchOfDay = require('./GenerateLunchOfDay')
-const {sendLunchOfDayWebHookMessages} = require("./sendLunchOfDayWebHookMessages");
 
 // To learn about scheduled functions and supported cron extensions,
 // see: https://ntl.fyi/sched-func
 module.exports.handler = schedule("45 8 * * *", async (event) => {
   const eventBody = JSON.parse(event.body)
-  console.log(`Next function run at ${eventBody.next_run}.`)
-  sendLunchOfDayWebHookMessages(event, null);
-  return await generateLunchOfDay.handler(event);
+
+  console.log("Calling generateLunchOfDay ");
+  return await generateLunchOfDay.handler();
 
   return {
     statusCode: 200,
+    body: JSON.stringify({ message: 'Lunch of day is generating on background' }),
   }
 })
