@@ -10,11 +10,11 @@ const {sendLunchOfDayWebHookMessages} = require("./sendLunchOfDayWebHookMessages
 const handler = async () => {
 
   //get date as string yyyymmdd
-  // const date = new Date();
-  // const year = date.getFullYear();
-  // const month = date.getMonth() + 1;
-  // const day = date.getDate();
-  // const dateString = year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
+   const date = new Date();
+   const year = date.getFullYear();
+   const month = date.getMonth() + 1;
+   const day = date.getDate();
+   const dateString = year + (month < 10 ? '0' : '') + month + (day < 10 ? '0' : '') + day;
 
 
 
