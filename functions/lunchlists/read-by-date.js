@@ -14,7 +14,9 @@ const handler = async (date) => {
     const response = await client
       .query(query.Paginate(query.Match(query.Index('lunchlists_by_date'),
         date
-      )))
+      )),
+{size: 1000}
+        )
     //get all lunchlists by refs
     const lunchlistsRefs = response.data
     const getAllLunchlistsDataQuery = lunchlistsRefs.map((ref) => query.Get(ref))
