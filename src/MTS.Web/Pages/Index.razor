@@ -2,16 +2,19 @@
 @inject IMediator Mediator
 @using MTS.Application.LunchList.Queries
 @using MediatR
+@using MTS.Application.HandHeldLists.Queries
+@using MTS.Application.Restaurants.Queries
 @using MTS.Web.Shared.Data
+@using mtshome.web.Datas.Models
 
 <MudContainer
   MaxWidth="MaxWidth.ExtraLarge">
 
-    <MudDatePicker Label="Päivä" @bind-Date="StartDate"/>
-    <div style="overflow-x:scroll; overflow-y: hidden">
+  <MudDatePicker Label="Päivä" @bind-Date="StartDate"/>
+  <div style="overflow-x:scroll; overflow-y: hidden">
 
     <div
-        style="max-width: 9999px; min-width: 100%"
+      style="max-width: 9999px; min-width: 100%"
     >
       @if (LunchListRowsGroupedByRestaurant is null)
       {
@@ -24,8 +27,19 @@
           <LunchListItemsByRestaurantRow LunchListRowGroupedByRestaurant="@lunchListRow.ToList()"/>
         }
       }
+      @if (RestaurantsWithHandHeld is null)
+      {
+        <MudText>Ladataan</MudText>
+      }
+      else
+      {
+        foreach (var lunchListRow in RestaurantsWithHandHeld)
+        {
+          <LunchListItemsByRestaurantRow HandHeldContainer="@lunchListRow"/>
+        }
+      }
     </div>
-    </div>
+  </div>
 </MudContainer>
 
 
@@ -37,37 +51,37 @@
 
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
-        Console.WriteLine("tulee tähän: " + IsMobile);
-      if (firstRender)
+    Console.WriteLine("tulee tähän: " + IsMobile);
+    if (firstRender)
+    {
+      try
       {
-        try
-        {
-          int innerWidth = await BrowserService.GetInnerWidth(_JS);
+        int innerWidth = await BrowserService.GetInnerWidth(_JS);
 
-          Console.WriteLine("InnerWidth: " + innerWidth);
-          if (innerWidth < 480)
-             IsMobile = true;
-         else
-             IsMobile = false;
+        Console.WriteLine("InnerWidth: " + innerWidth);
+        if (innerWidth < 480)
+          IsMobile = true;
+        else
+          IsMobile = false;
 
         Console.WriteLine("IsMobile: " + IsMobile);
 
 
-        }
-        catch (Exception e)
-        {
-          Console.WriteLine(e);
-          throw;
-        }
-        RefreshLunchList();
       }
+      catch (Exception e)
+      {
+        Console.WriteLine(e);
+        throw;
+      }
+      RefreshLunchList();
+    }
   }
 
   private async Task RefreshLunchList()
   {
-    //Startdate is monday of current week as yyyyMMdd
-      int startDate;
-      int endDate;
+  //Startdate is monday of current week as yyyyMMdd
+    int startDate;
+    int endDate;
 
     if (!IsMobile)
     {
@@ -89,8 +103,8 @@
         else
         {
 
-        startDate = DateTime.Today.ToInt();
-        endDate = _startDate.Value.DateOfWeek(DayOfWeek.Friday).ToInt();
+          startDate = DateTime.Today.ToInt();
+          endDate = _startDate.Value.DateOfWeek(DayOfWeek.Friday).ToInt();
         }
       }
       else
@@ -101,7 +115,7 @@
     }
 
 
-     var lunchListResponses = (await Mediator.Send(new GetLunchListQuery
+    var lunchListResponses = (await Mediator.Send(new GetLunchListQuery
     {
       StartDate = startDate,
       EndDate = endDate
@@ -110,10 +124,24 @@
       .ThenBy(x => x.DateString)
       .ToList();
 
-    // group by restaurant
+    var handHeldLists = (await Mediator.Send(new GetHandHeldListsQuery()));
+    var restaurants = (await Mediator.Send(new GetRestaurantsQuery()));
+
+    var restaurantsWithHandHeld = restaurants.Where(x => x.data.tassalista == 0
+                                                         && handHeldLists.Any(y => y.data.ravintolaid == x.data.ravintolaid.ToString())).ToList();
+
+    RestaurantsWithHandHeld =  restaurantsWithHandHeld.Select(x => new HandHeldContainer(x, startDate.ToDate(), endDate.ToDate(), handHeldLists.Where(x => x.data.ravintolaid == x.data.ravintolaid.ToString()).ToList())).ToList();
+  // group by restaurant
     LunchListRowsGroupedByRestaurant = lunchListResponses.GroupBy(x => x.Restaurant.nimi);
+
     await InvokeAsync(StateHasChanged);
   }
+
+  public record HandHeldContainer(Data<Restaurant> data, DateTime toDate, DateTime startDate, List<Data<HandHeldList>> toList);
+
+
+  public List<HandHeldContainer>? RestaurantsWithHandHeld { get; set; }
+
 
   public IEnumerable<IGrouping<string, LunchListVm>> LunchListRowsGroupedByRestaurant { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.JSInterop;
 using MTS.Application.LunchList.Queries;
+using MTS.Web.Shared.Data;
 
 namespace MTS.Web;
 
@@ -47,26 +48,26 @@ public class UserVoteService
 
   public async void AddVote(string dateKey, int restaurantId)
   {
-      var date = UserVotes.Days.SingleOrDefault(x => x.DateKey == dateKey);
-      if (date is null)
+    var date = UserVotes.Days.SingleOrDefault(x => x.DateKey == dateKey);
+    if (date is null)
+    {
+      UserVotes.Days.Add(new Day()
       {
-        UserVotes.Days.Add(new Day()
-        {
-          DateKey = dateKey,
-          RestaurantIds = new List<int>(){restaurantId}
-        });
-      }
-      else
-      {
-        date.RestaurantIds.Add(restaurantId);
-      }
-      UserVotesStateChanged?.Invoke(this, EventArgs.Empty);
-      SaveUserVotes();
+        DateKey = dateKey,
+        RestaurantIds = new List<int>(){restaurantId}
+      });
+    }
+    else
+    {
+      date.RestaurantIds.Add(restaurantId);
+    }
+    UserVotesStateChanged?.Invoke(this, EventArgs.Empty);
+    SaveUserVotes();
   }
 
   private async void SaveUserVotes()
   {
-      await _ijsRuntime.InvokeVoidAsync("localStorage.setItem", "userVote", JsonSerializer.Serialize(UserVotes));
+    await _ijsRuntime.InvokeVoidAsync("localStorage.setItem", "userVote", JsonSerializer.Serialize(UserVotes));
   }
 
   public bool IsUserVoted(LunchListVm lunchListRow)
@@ -82,7 +83,7 @@ public class UserVoteService
     {
       return false;
     }
-     return day.RestaurantIds.Contains(lunchListRow.Restaurant.ravintolaid);
+    return day.RestaurantIds.Contains(lunchListRow.Restaurant.ravintolaid);
   }
 
   public bool AllowedToVote(LunchListVm lunchListRow)
@@ -98,8 +99,40 @@ public class UserVoteService
     {
       return true;
     }
-      return day.RestaurantIds.Count < 3;
+    return day.RestaurantIds.Count < 3;
 
+  }
+
+  public bool IsUserVoted(int ravintolaid, DateTime date)
+  {
+    if (UserVotes is null)
+    {
+      return false;
+    }
+
+    var day = UserVotes?.Days?
+      .SingleOrDefault(x => x.DateKey == date.ToInt().ToString());
+    if (day is null)
+    {
+      return false;
+    }
+    return day.RestaurantIds.Contains(ravintolaid);
+  }
+
+  public bool AllowedToVote(int lunchListRow, DateTime date)
+  {
+    if (UserVotes is null)
+    {
+      return false;
+    }
+
+    var day = UserVotes?.Days?
+      .SingleOrDefault(x => x.DateKey == date.ToInt().ToString());
+    if (day is null)
+    {
+      return true;
+    }
+    return day.RestaurantIds.Count < 3;
   }
 }
 
@@ -113,4 +146,3 @@ public class Day
   public string DateKey { get; set; }
   public List<int> RestaurantIds { get; set; } = new List<int>();
 }
-

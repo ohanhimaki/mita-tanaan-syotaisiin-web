@@ -8,7 +8,7 @@
 
 <MudCardContent >
   @{
-    var style = LunchListRow.DateString != _currentDayString ? Theme.Palette.GrayLight : "";
+    var style = Date.Date.Equals(DateTime.Today)  ? Theme.Palette.GrayLight : "";
   }
   <MudPaper
     Class="pa-4"
@@ -18,17 +18,17 @@
       <MudItem xs="8">
         <MudGrid >
           <MudItem xs="12">
-            <MudText >@LunchListRow.DateString</MudText>
+            <MudText >@Date.ToShortDateString()</MudText>
 
           </MudItem>
           <MudItem xs="12">
-            <MudText >@LunchListRow.Restaurant.nimi</MudText>
+            <MudText >@HandHeldContainer.data.data.nimi</MudText>
           </MudItem>
 
         </MudGrid>
       </MudItem>
       <MudItem xs="2">
-        @if (LunchListRow.LunchOfDay)
+        @if (false)
         {
           <MudImage
             Class="lunchOfDay"
@@ -36,7 +36,7 @@
             Src="./gold-medal.png">
           </MudImage>
         }
-        @if(UserVoteService.IsUserVoted(LunchListRow))
+        @if(UserVoteService.IsUserVoted(HandHeldContainer.data.data.ravintolaid,Date))
         {
           //Mudblazor checkmark icon
           <MudIcon Icon="@Icons.Filled.Check" />
@@ -44,19 +44,19 @@
         }
         else
         {
-          if (UserVoteService.AllowedToVote(LunchListRow))
+          if (UserVoteService.AllowedToVote(HandHeldContainer.data.data.ravintolaid,Date))
           {
             <MudIcon
               Style="cursor: pointer"
               Icon="@Icons.Filled.ThumbUp"
-              @onclick="() => VoteUp(LunchListRow)"
+              @onclick="() => VoteUp(HandHeldContainer.data.data.ravintolaid,Date)"
             />
           }
         }
-        <MudText>@(LunchListRow.Votes != 0 ? LunchListRow.Votes : "")</MudText>
+        @* <MudText>@(HandHeldContainer != 0 ? LunchListRow.Votes : "")</MudText> *@
       </MudItem>
       <MudItem xs="12">
-        @((MarkupString)LunchListRow.Lunch)
+        @((MarkupString)string.Join(@$"\n", HandHeldContainer.toList.OrderBy(x => x.data.rivi).Select(x => x.data.teksti)))
 
       </MudItem>
     </MudGrid>
@@ -67,7 +67,9 @@
 @code {
 
   [Parameter]
-  public LunchListVm LunchListRow { get; set; }
+  public Index.HandHeldContainer? HandHeldContainer { get; set; }
+  [Parameter]
+  public DateTime Date { get; set; }
 
 
   private MudTheme Theme = new MudTheme();
@@ -96,6 +98,11 @@
   private async Task RegisterVoteAsync(LunchListVm lunchListVm)
   {
     UserVoteService.AddVote(lunchListVm.DateString, lunchListVm.Restaurant.ravintolaid);
+  }
+
+  private void VoteUp(int lunchListVm, DateTime date)
+  {
+    throw new NotImplementedException();
   }
 
 }

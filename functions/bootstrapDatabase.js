@@ -119,6 +119,7 @@ async function createFunction(functionName, functionBody) {
     RestaurantGenre: "RestaurantGenre",
     Restaurants: "Restaurants",
     WebHookSubscriptions: "WebHookSubscriptions",
+    HandHeldLists: "HandHeldLists",
   };
 
   const Indexes = {
@@ -132,19 +133,23 @@ async function createFunction(functionName, functionBody) {
     lunchlists_refs_by_restaurantid: "lunchlists_refs_by_restaurantid",
     lunchofday_by_day: "lunchofday_by_day",
   };
+  const IndexesLoopaple = {
+    all_handheldlists: {name: "all_handheldlists", Collection: Collections.HandHeldLists, values: [],
+      terms: []},
+  }
 
 
 const handler = async () => {
   console.log("Creating database")
 
-  await createCollection(Collections.GenreOfRestaurant);
-  await createCollection(Collections.HandHeldLists);
-  await createCollection(Collections.LunchLists);
-  await createCollection(Collections.LunchOfDay);
-  await createCollection(Collections.LunchOfDayTemp);
-  await createCollection(Collections.RestaurantGenre);
-  await createCollection(Collections.Restaurants);
-  await createCollection(Collections.WebHookSubscriptions);
+
+  for (const collection of Object.keys(Collections)) {
+    await createCollection(Collections[collection]);
+  }
+  for(const key of Object.keys(IndexesLoopaple)){
+    var index = IndexesLoopaple[key];
+    await createIndex(index.name, index.Collection, index.values, index.terms);
+  }
 
   await createIndex(Indexes.all_LunchOfDay, Collections.LunchOfDay, [], []);
   await createIndex(Indexes.all_LunchOfDayTemp, Collections.LunchOfDayTemp, [], []);
@@ -273,4 +278,4 @@ const handler = async () => {
 
 }
 
-module.exports = { handler }
+module.exports = { handler, Collections, Indexes, IndexesLoopaple }

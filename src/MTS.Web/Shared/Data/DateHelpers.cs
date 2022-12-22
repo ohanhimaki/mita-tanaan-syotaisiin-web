@@ -34,6 +34,11 @@ public static class DateHelpers
     return date.Year * 10000 + date.Month * 100 + date.Day;
   }
 
+  public static DateTime ToDate(this int date)
+  {
+    return new DateTime(date / 10000, (date % 10000) / 100, date % 100);
+  }
+
 
 
 

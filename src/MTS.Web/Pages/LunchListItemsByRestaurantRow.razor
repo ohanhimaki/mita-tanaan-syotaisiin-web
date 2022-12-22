@@ -1,21 +1,36 @@
 ﻿@using MTS.Application.LunchList
 @using MTS.Application.LunchList.Queries
 
-    <div style="justify-content: flex-start" class="d-flex flex-row flex-grow-1 gap-4">
-  @foreach (var lunchListResponse in LunchListRowGroupedByRestaurant)
+<div style="justify-content: flex-start" class="d-flex flex-row flex-grow-1 gap-4">
+  @if (LunchListRowGroupedByRestaurant is not null)
   {
 
-
-
+    foreach (var lunchListResponse in LunchListRowGroupedByRestaurant)
+    {
       <LunchListItem LunchListRow="lunchListResponse">
 
       </LunchListItem>
+    }
   }
-    </div>
+  @if (HandHeldContainer is not null)
+  {
+    var startDate = HandHeldContainer.startDate;
+
+    while (startDate <= HandHeldContainer.toDate)
+    {
+      <HandHeldItem HandHeldContainer="HandHeldContainer" Date="startDate">
+
+      </HandHeldItem>
+      startDate = startDate.AddDays(1);
+    }
+  }
+</div>
 
 
 @code {
   [Parameter]
-  public List<LunchListVm> LunchListRowGroupedByRestaurant { get; set; }
+  public List<LunchListVm>? LunchListRowGroupedByRestaurant { get; set; }
+  [Parameter]
+  public Index.HandHeldContainer? HandHeldContainer { get; set; }
 
 }
