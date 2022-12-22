@@ -21,11 +21,9 @@ public class GetLunchListQueryHandler : IRequestHandler<GetLunchListQuery, IEnum
   private readonly HttpClient _http;
   private readonly string? _apiUrl;
 
-  public GetLunchListQueryHandler(HttpClient http,
-  IConfiguration configuration
-  )
+  public GetLunchListQueryHandler(HttpClient http, IApiUrlService apiUrlService)
   {
-      _apiUrl = configuration["ApiUrl"] ?? "";
+    _apiUrl = apiUrlService.ApiUrl;
     _http = http;
   }
 

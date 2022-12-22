@@ -17,11 +17,9 @@ public class VoteUpLunchListCommandHandler : IRequestHandler<VoteUpLunchListComm
   private readonly HttpClient _http;
   private readonly string? _apiUrl;
 
-  public VoteUpLunchListCommandHandler(HttpClient http,
-    IConfiguration configuration
-  )
+  public VoteUpLunchListCommandHandler(HttpClient http, IApiUrlService apiUrlService)
   {
-    _apiUrl = configuration["ApiUrl"] ?? "";
+    _apiUrl = apiUrlService.ApiUrl;
     _http = http;
   }
 
