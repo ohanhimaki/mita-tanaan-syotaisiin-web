@@ -28,8 +28,8 @@ public class GetHandHeldListsQueryHandler : IRequestHandler<GetHandHeldListsQuer
     try
     {
 
-      var result = await _service.GetAll();
-      return result;
+      var result = await _service.GetAll2();
+      return result.SelectMany(x => x.data);
     }
     catch (Exception e)
     {

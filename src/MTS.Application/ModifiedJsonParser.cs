@@ -16,6 +16,15 @@ public static class ModifiedJsonParser
 
     return result;
   }
+  public static async Task<List<Response<T>>> GetFromJsonFaunaAsync2<T>(this HttpClient client, string url)
+  {
+    var jsonString =  await client.GetStringAsync(url);
+    var json = jsonString.ToString()
+      .Replace("\"ref\"", "\"reference\"")
+      .Replace("\"@ref\"", "\"reference\"");
+    var result = JsonConvert.DeserializeObject<List<Response<T>>>(json);
+    return result;
+  }
   public static async Task<ResponseSingleResult<T>> GetFromJsonFaunaSingleAsync<T>(this HttpClient client, string url)
   {
     var jsonString =  await client.GetStringAsync(url);

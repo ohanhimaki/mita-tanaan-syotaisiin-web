@@ -41,8 +41,8 @@ public class GenericCrudService<T>
 
       var url = $"{_apiUrl}/.netlify/functions/{typeof(T).Name}";
       var client = new HttpClient();
-      await client.GetFromJsonFaunaAsync<T>(url);
-      return new List<Response<T>>();
+      return await client.GetFromJsonFaunaAsync2<T>(url);
+
 
     }
     catch (Exception e)

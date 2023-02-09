@@ -49,8 +49,6 @@ public class GetLunchListQueryHandler : IRequestHandler<GetLunchListQuery, IEnum
       query2 += queryString.ToString();
       var lunchOfDays = await _http.GetFromJsonAsync<LunchOfDayResponse[]>(query2);
 
-      Console.WriteLine(JsonSerializer.Serialize(lunchOfDays));
-
       var lunchList = lunchListRows.Select(x => new LunchListVm(x,
         lunchOfDays.Any(y =>
           y.data.date == x.data.date && y.data.restaurantData.ravintolaid == x.data.restaurantData.ravintolaid)));
