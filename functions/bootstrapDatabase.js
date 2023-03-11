@@ -218,6 +218,8 @@ const handler = async () => {
                 query.Var('start'),
                 query.Var('end')
               )
+              ,
+              { size: 1000}
             )
           ),
           query.Lambda(['date', 'ref'], query.Get(query.Var('ref')))
