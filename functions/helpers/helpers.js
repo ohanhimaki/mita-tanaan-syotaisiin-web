@@ -87,7 +87,7 @@ async function getDateData(promise) {
                       // console.log('Tulee tänne', cell1 )
                       if (cell1.type === "tag" && cell1.name === "td") {
                         for (var child1 in cell1.children) {
-                          rowText += cell1.children[child1].data;
+                          rowText += cell1.children[child1].data ?? "";
                           // console.log(cell1.children[child1].data )
                         }
                       }
