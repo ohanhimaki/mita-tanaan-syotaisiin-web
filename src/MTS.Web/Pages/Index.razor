@@ -7,25 +7,43 @@
 <MudContainer
   MaxWidth="MaxWidth.ExtraLarge">
 
-    <MudDatePicker Label="Päivä" @bind-Date="StartDate"/>
-    <div style="overflow-x:scroll; overflow-y: hidden">
+  <MudGrid>
+    <MudItem xs="8">
+      <MudDatePicker Label="Päivä" @bind-Date="StartDate"/>
+    </MudItem >
+    <MudItem xs="4" >
+      <MudSwitch T="bool" @bind-Checked="@ShowOnlyPredictedWinners" ></MudSwitch>
+      <MudImage
+        Class="lunchOfDayMaybe"
+        Height="32"
+        Src="./icon-512.png">
+      </MudImage>
+    </MudItem >
+  </MudGrid>
+  <div style="overflow-x:scroll; overflow-y: hidden">
 
     <div
-        style="max-width: 9999px; min-width: 100%"
-    >
+      style="max-width: 9999px; min-width: 100%">
       @if (LunchListRowsGroupedByRestaurant is null)
       {
         <MudText>Ladataan</MudText>
       }
       else
       {
-        foreach (var lunchListRow in LunchListRowsGroupedByRestaurant.Where(x => x is not null))
+        @if (!ShowOnlyPredictedWinners)
         {
-          <LunchListItemsByRestaurantRow LunchListRowGroupedByRestaurant="@lunchListRow.ToList()"/>
+          foreach (var lunchListRow in LunchListRowsGroupedByRestaurant.Where(x => x is not null))
+          {
+            <LunchListItemsByRestaurantRow LunchListRowGroupedByRestaurant="@lunchListRow.ToList()"/>
+          }
+        }
+        else
+        {
+          <LunchListPredictedWinners LunchLists="@LunchListRowsGroupedByRestaurant.SelectMany(x => x.ToList()).ToList()"/>
         }
       }
     </div>
-    </div>
+  </div>
 </MudContainer>
 
 
@@ -34,6 +52,9 @@
   [Inject]
   protected IJSRuntime _JS { get; set; }
   public bool IsMobile { get; set; } = false;
+
+  public bool ShowOnlyPredictedWinners { get; set; } = false;
+
 
   protected override async Task OnAfterRenderAsync(bool firstRender)
   {
