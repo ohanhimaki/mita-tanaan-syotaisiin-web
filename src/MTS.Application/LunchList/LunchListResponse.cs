@@ -23,6 +23,8 @@ namespace MTS.Application.LunchList;
         public string dayData { get; set; }
         [JsonPropertyName("votes")]
         public int votes { get; set; }
+
+        [JsonPropertyName("predictions")] public decimal? predictions { get; set; } = 0;
     }
 
     public class Ref

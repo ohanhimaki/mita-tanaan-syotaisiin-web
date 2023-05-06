@@ -1,0 +1,41 @@
+﻿@using MTS.Application.LunchList
+@using MTS.Application.LunchList.Queries
+
+<MudGrid >
+  @foreach (var days in GroupedByDays)
+  {
+    <MudItem xs="12" lg="2">
+      @foreach (var lunchList in days.Where(x => x.Predicted))
+      {
+        <LunchListItem LunchListRow="lunchList">
+
+        </LunchListItem>
+      }
+    </MudItem>
+  }
+</MudGrid>
+
+
+@code {
+  [Parameter]
+  public List<LunchListVm> LunchLists { get; set; }
+
+  protected override void OnParametersSet()
+  {
+    // Unique days
+
+    var uniqueDays = LunchLists.Select(x => x.DateString).Distinct().ToList();
+
+    // grouped by days
+
+    var groupedByDays = uniqueDays.Select(x => LunchLists.Where(y => y.DateString == x).ToList()).ToList();
+
+    GroupedByDays = groupedByDays;
+
+
+    base.OnParametersSet();
+  }
+
+  public List<List<LunchListVm>> GroupedByDays { get; set; }
+
+}
