@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 
 from CleanData import clean_data
 
-DRAWING = False
+DRAWING = True
 
 data = pd.read_csv('output.csv')
 
@@ -54,7 +54,7 @@ words = [word for word in words if word not in blackListedWords['word'].values]
 
 from collections import Counter
 
-most_common_words = Counter(words).most_common(60)
+most_common_words = Counter(words).most_common(80)
 
 print(most_common_words)
 

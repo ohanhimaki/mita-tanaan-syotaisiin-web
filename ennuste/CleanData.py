@@ -3,8 +3,8 @@
 
 def clean_data(data):
     # turn date to datetime
-    data['date'] = pd.to_datetime(data['date'], format='%Y%m%d')
-    data['weekdayint'] = data['date'].dt.weekday
+    # data['date'] = pd.to_datetime(data['date'], format='%Y%m%d')
+    # data['weekdayint'] = data['date'].dt.weekday
     # drop date
     data = data.drop(columns=['date'])
 
@@ -18,9 +18,12 @@ def clean_data(data):
     data = data.drop(columns=['dayData'])
 
     # add total_votes to data and drop nimi from data to votes total field
-    total_votes = pd.read_csv('model_TotalVotes.csv')
-    data = pd.merge(data, total_votes, on='nimi')
+    # total_votes = pd.read_csv('model_TotalVotes.csv')
+    # data = pd.merge(data, total_votes, on='nimi')
+    # data = data.rename(columns={'votes_x': 'votes', 'votes_y': 'votes_total'})
+
+    # make uniquehash column of nimi
+    data['uniquehash'] = data['nimi'].apply(lambda x: hash(x))
     data = data.drop(columns=['nimi'])
-    data = data.rename(columns={'votes_x': 'votes', 'votes_y': 'votes_total'})
 
     return data
