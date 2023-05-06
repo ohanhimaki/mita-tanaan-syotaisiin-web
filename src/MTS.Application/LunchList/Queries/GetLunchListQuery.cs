@@ -50,7 +50,8 @@ public class GetLunchListQueryHandler : IRequestHandler<GetLunchListQuery, IEnum
       var lunchOfDays = await _http.GetFromJsonAsync<LunchOfDayResponse[]>(query2);
 
       var topLunchesByDay = lunchListRows.GroupBy(x => x.data.date)
-        .Select(x => x.OrderByDescending(y => y.data.predictions).Take(3));
+        .Select(x => x.Where(z => z.data.predictions > 0).OrderByDescending(y => y.data.predictions)
+          .Take(3));
 
       var lunchList = lunchListRows.Select(x => new LunchListVm(x,
         lunchOfDays.Any(y =>
