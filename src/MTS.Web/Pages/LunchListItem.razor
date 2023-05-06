@@ -15,7 +15,7 @@
     Style="@($"background: {style}" + "; height: 100%;")"
     Width="300px">
     <MudGrid Justify="Justify.SpaceBetween">
-      <MudItem xs="8">
+      <MudItem xs="6">
         <MudGrid >
           <MudItem xs="12">
             <MudText >@LunchListRow.DateString</MudText>
@@ -27,33 +27,61 @@
 
         </MudGrid>
       </MudItem>
-      <MudItem xs="2">
-        @if (LunchListRow.LunchOfDay)
-        {
-          <MudImage
-            Class="lunchOfDay"
-            Height="32"
-            Src="./gold-medal.png">
-          </MudImage>
-        }
-        @if(UserVoteService.IsUserVoted(LunchListRow))
-        {
-          //Mudblazor checkmark icon
-          <MudIcon Icon="@Icons.Filled.Check" />
+      <MudItem xs="4">
+        <MudGrid Justify="Justify.FlexEnd" Spacing="2">
 
-        }
-        else
-        {
-          if (UserVoteService.AllowedToVote(LunchListRow))
+          @if (LunchListRow.LunchOfDay)
           {
-            <MudIcon
-              Style="cursor: pointer"
-              Icon="@Icons.Filled.ThumbUp"
-            @onclick="() => VoteUp(LunchListRow)"
-                     />
+            <MudImage
+              Class="lunchOfDay"
+              Height="32"
+              Src="./gold-medal.png">
+            </MudImage>
           }
-        }
-        <MudText>@(LunchListRow.Votes != 0 ? LunchListRow.Votes : "")</MudText>
+          <MudItem>
+            <MudGrid Justify="Justify.FlexEnd">
+              <MudItem xs="6">
+                <MudText>@(LunchListRow.Predictions != 0 ? LunchListRow.Predictions.ToString("0.##") : "")</MudText>
+              </MudItem>
+              <MudItem xs="6">
+                @{
+                  var style = LunchListRow.Predicted ? "" : "filter: grayscale(100%)";
+                }
+                <MudImage
+                  Style="@style"
+                  Class="lunchOfDayMaybe"
+                  Height="32"
+                  Src="./icon-512.png">
+                </MudImage>
+              </MudItem>
+
+            </MudGrid>
+          </MudItem>
+          <MudItem>
+            <MudGrid Justify="Justify.FlexEnd">
+              <MudItem xs="6">
+                <MudText>@(LunchListRow.Votes != 0 ? LunchListRow.Votes : "")</MudText>
+              </MudItem>
+              <MudItem xs="6">
+                @if (UserVoteService.IsUserVoted(LunchListRow))
+                {
+                  //Mudblazor checkmark icon
+                  <MudIcon Icon="@Icons.Filled.Check"/>
+                }
+                else
+                {
+                  if (UserVoteService.AllowedToVote(LunchListRow))
+                  {
+                    <MudIcon
+                      Style="cursor: pointer"
+                      Icon="@Icons.Filled.ThumbUp"
+                      @onclick="() => VoteUp(LunchListRow)"/>
+                  }
+                }
+              </MudItem>
+            </MudGrid>
+          </MudItem>
+        </MudGrid>
       </MudItem>
       <MudItem xs="12">
     @((MarkupString)LunchListRow.Lunch)

@@ -9,6 +9,7 @@ namespace MTS.Application.LunchList;
         public string date { get; set; }
         public RestaurantData restaurantData { get; set; }
         public string dayData { get; set; }
+        public decimal? predicted { get; set; }
     }
 
 

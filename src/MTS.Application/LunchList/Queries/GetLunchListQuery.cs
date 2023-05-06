@@ -49,11 +49,14 @@ public class GetLunchListQueryHandler : IRequestHandler<GetLunchListQuery, IEnum
       query2 += queryString.ToString();
       var lunchOfDays = await _http.GetFromJsonAsync<LunchOfDayResponse[]>(query2);
 
-      Console.WriteLine(JsonSerializer.Serialize(lunchOfDays));
+      var topLunchesByDay = lunchListRows.GroupBy(x => x.data.date)
+        .Select(x => x.OrderByDescending(y => y.data.predictions).Take(3));
 
       var lunchList = lunchListRows.Select(x => new LunchListVm(x,
         lunchOfDays.Any(y =>
-          y.data.date == x.data.date && y.data.restaurantData.ravintolaid == x.data.restaurantData.ravintolaid)));
+          y.data.date == x.data.date && y.data.restaurantData.ravintolaid == x.data.restaurantData.ravintolaid),
+        topLunchesByDay.Any(y => y.Any(z =>
+          z.data.date == x.data.date && z.data.restaurantData.ravintolaid == x.data.restaurantData.ravintolaid))));
 
       return lunchList;
     }
@@ -67,13 +70,15 @@ public class GetLunchListQueryHandler : IRequestHandler<GetLunchListQuery, IEnum
 
 public class LunchListVm
 {
-  public LunchListVm(LunchListResponse lunchListResponse, bool lunchOfDay)
+  public LunchListVm(LunchListResponse lunchListResponse, bool lunchOfDay, bool predicted)
   {
     RefString = lunchListResponse.@ref.@ref.id;
     Restaurant = lunchListResponse.data.restaurantData;
     DateString = lunchListResponse.data.date;
     Lunch = lunchListResponse.data.dayData;
     LunchOfDay = lunchOfDay;
+    Predicted = predicted;
+    Predictions = lunchListResponse.data.predictions ?? 0;
     Votes = lunchListResponse.data.votes;
   }
 
@@ -81,6 +86,8 @@ public class LunchListVm
 
 
   public bool LunchOfDay { get; set; }
+  public bool Predicted { get; set; }
+  public decimal Predictions { get; set; }
   public int Votes { get; set; }
 
   public string Lunch { get; set; }
