@@ -1,0 +1,7 @@
+﻿
+
+YOUR_FAUNA_SECRET_KEY="secretti"
+YOUR_FAUNA_COLLECTION_NAME="LunchLists"
+
+MODEL_DIRECTORY = 'models/v1/'
+
