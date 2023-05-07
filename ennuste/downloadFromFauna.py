@@ -15,22 +15,26 @@ result = client.query(
   )
 )
 
-df = pd.DataFrame.from_dict([item['data'] for item in result['data']])
+def turnFaunaLunchListToDict(lunchLists):
 
-# make new dataframe with date, restaurantData.ravintolaid, dayData, votes
-df = df[['date', 'restaurantData', 'dayData', 'votes']]
-# if votes empty, set it to 0
-df['votes'] = df['votes'].fillna(0)
-# if votes more than 5 set it to 5
-df['votes'] = df['votes'].apply(lambda x: 5 if x > 5 else x)
-# drop rows without restaurantData.ravintolaid field
-df = df.dropna(subset=['restaurantData'])
-# Pick restaurantData.ravintolaid to ravintolaid field and drop restaurantdata
-df['nimi'] = df['restaurantData'].apply(lambda x: x['nimi'])
-# drop restaurantData field
-df = df.drop(columns=['restaurantData'])
+    df = pd.DataFrame.from_dict([item['data'] for item in lunchLists['data']])
+
+    # make new dataframe with date, restaurantData.ravintolaid, dayData, votes
+    df = df[['date', 'restaurantData', 'dayData', 'votes']]
+    # if votes empty, set it to 0
+    df['votes'] = df['votes'].fillna(0)
+    # if votes more than 5 set it to 5
+    df['votes'] = df['votes'].apply(lambda x: 5 if x > 5 else x)
+    # drop rows without restaurantData.ravintolaid field
+    df = df.dropna(subset=['restaurantData'])
+    # Pick restaurantData.ravintolaid to ravintolaid field and drop restaurantdata
+    df['nimi'] = df['restaurantData'].apply(lambda x: x['nimi'])
+    # drop restaurantData field
+    df = df.drop(columns=['restaurantData'])
+    return df
 
 
+df = turnFaunaLunchListToDict(result)
 df.to_csv('output.csv', index=False)
 
 

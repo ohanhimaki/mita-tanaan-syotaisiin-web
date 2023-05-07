@@ -5,6 +5,7 @@
 import os.path
 
 import CleanData
+import downloadFromFauna
 
 if not os.path.isfile('model.pkl'):
     print("model.pkl not found, run PreProcessData.py")
@@ -58,21 +59,7 @@ result = client.query(
 # exit()
 
 # without index
-df = pd.DataFrame.from_dict([item['data'] for item in result])
-
-
-df = df[['date', 'restaurantData', 'dayData', 'votes']]
-# if votes empty, set it to 0
-df['votes'] = df['votes'].fillna(0)
-# if votes more than 5 set it to 5
-df['votes'] = df['votes'].apply(lambda x: 5 if x > 5 else x)
-# drop rows without restaurantData.ravintolaid field
-df = df.dropna(subset=['restaurantData'])
-# Pick restaurantData.ravintolaid to ravintolaid field and drop restaurantdata
-df['nimi'] = df['restaurantData'].apply(lambda x: x['nimi'])
-# drop restaurantData field
-df = df.drop(columns=['restaurantData'])
-
+df = downloadFromFauna.turnFaunaLunchListToDict(result)
 df = CleanData.clean_data(df)
 
 #remove votes from dataframe
