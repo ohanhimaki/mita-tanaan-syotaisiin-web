@@ -1,4 +1,5 @@
 ﻿import pickle
+from datetime import date
 
 # check if model.pkl exists
 # if not, run PreProcessData.py
@@ -28,9 +29,24 @@ import variables as vars
 # Initialize Fauna client
 client = FaunaClient(secret=vars.YOUR_FAUNA_SECRET_KEY)
 
-# Query the FaunaDB index lunchlists_refs_by_date, call with parameters '20230501', '20230505'
+weeksoffset = 0
+today = date.today()
+
+# add days weekoffset * 7 to today
+tmpDay = today + pd.DateOffset(days=weeksoffset * 7)
+
+# start date is monday of the week of tmpDay
+start_date = tmpDay - pd.DateOffset(days=tmpDay.weekday())
+# end date is sunday of the week of tmpDay
+end_date = start_date + pd.DateOffset(days=6)
+
+
+start_date_string = start_date.strftime('%Y%m%d')
+end_date_string = end_date.strftime('%Y%m%d')
+
+# get data with yyyymmdd end and start dates
 result = client.query(
-  q.call('lunchListsByDateRange', '20230501', '20230505')
+  q.call('lunchListsByDateRange', start_date_string, end_date_string)
 )
 
 df = downloadFromFauna.turnFaunaLunchListToDict(result)
