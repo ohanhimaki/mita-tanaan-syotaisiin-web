@@ -1,4 +1,5 @@
 ﻿import pandas as pd
+import variables
 
 UseWeekDay = True
 UseUniqueHash = False
@@ -12,7 +13,7 @@ def clean_data(data):
     data = data.drop(columns=['date'])
 
     # add column for most common words and set 1 if word is in dayData
-    most_common_words = pd.read_csv('model_MostCommonWords.csv').values
+    most_common_words = pd.read_csv(variables.MODEL_DIRECTORY + 'model_MostCommonWords.csv').values
 
     for word, count in most_common_words:
         data[word] = data['dayData'].str.contains(word).astype(int)
@@ -22,7 +23,7 @@ def clean_data(data):
 
     # add total_votes to data and drop nimi from data to votes total field
     if UseTotalVotes:
-        total_votes = pd.read_csv('model_TotalVotes.csv')
+        total_votes = pd.read_csv(variables.MODEL_DIRECTORY + 'model_TotalVotes.csv')
         data = pd.merge(data, total_votes, on='nimi')
         data = data.rename(columns={'votes_x': 'votes', 'votes_y': 'votes_total'})
 

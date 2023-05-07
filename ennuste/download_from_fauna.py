@@ -2,22 +2,12 @@
 from faunadb import query as q
 from faunadb.client import FaunaClient
 
-import variables as vars
+import variables as variables
 
-# Initialize Fauna client
-client = FaunaClient(secret=vars.YOUR_FAUNA_SECRET_KEY)
 
-# Query the FaunaDB collection vars.YOUR_FAUNA_COLLECTION_NAME
-result = client.query(
-  q.map_(
-    lambda x: q.get(x),
-    q.paginate(q.match(q.index('all_LunchLists')), 100000)
-  )
-)
+def turn_fauna_lunch_list_to_dict(lunchlists):
 
-def turnFaunaLunchListToDict(lunchLists):
-
-    df = pd.DataFrame.from_dict([item['data'] for item in lunchLists['data']])
+    df = pd.DataFrame.from_dict([item['data'] for item in lunchlists])
 
     # make new dataframe with date, restaurantData.ravintolaid, dayData, votes
     df = df[['date', 'restaurantData', 'dayData', 'votes']]
@@ -34,7 +24,21 @@ def turnFaunaLunchListToDict(lunchLists):
     return df
 
 
-df = turnFaunaLunchListToDict(result)
-df.to_csv('output.csv', index=False)
+def download_from_fauna():
+
+    # Initialize Fauna client
+    client = FaunaClient(secret=variables.YOUR_FAUNA_SECRET_KEY)
+
+    # Query the FaunaDB collection variables.YOUR_FAUNA_COLLECTION_NAME
+    result = client.query(
+      q.map_(
+        lambda x: q.get(x),
+        q.paginate(q.match(q.index('all_LunchLists')), 100000)
+      )
+    )
+
+    df = turn_fauna_lunch_list_to_dict(result['data'])
+    df.to_csv('output.csv', index=False)
 
 
+download_from_fauna()
