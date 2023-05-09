@@ -9,7 +9,7 @@ import variables
 from clean_data import clean_data
 from collections import Counter
 
-DRAWING = True
+DRAWING = False
 
 
 def preprocess_data():
@@ -31,10 +31,14 @@ def preprocess_data():
     #replace "(" and ")" with space
     data['dayData'] = data['dayData'].str.replace('(', ' ')
     data['dayData'] = data['dayData'].str.replace(')', ' ')
+    data['dayData'] = data['dayData'].str.replace(':', ' ')
+    data['dayData'] = data['dayData'].str.replace('/', ' ')
     #regex replace all numbers with space
     data['dayData'] = data['dayData'].str.replace('\d+', ' ')
     #replace asterix with space
     data['dayData'] = data['dayData'].str.replace('*', ' ')
+
+
 
     allDayDatas = ''
     for index, row in data.iterrows():
@@ -79,7 +83,7 @@ def preprocess_data():
     X = data.drop(columns=['votes'])
     y = data['votes']
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05)
 
 
     model = RandomForestRegressor(n_estimators=100, max_depth=100, random_state=1)

@@ -1,27 +1,8 @@
-﻿import pandas as pd
-from faunadb import query as q
+﻿from faunadb import query as q
 from faunadb.client import FaunaClient
 
 import variables as variables
-
-
-def turn_fauna_lunch_list_to_dict(lunchlists):
-
-    df = pd.DataFrame.from_dict([item['data'] for item in lunchlists])
-
-    # make new dataframe with date, restaurantData.ravintolaid, dayData, votes
-    df = df[['date', 'restaurantData', 'dayData', 'votes']]
-    # if votes empty, set it to 0
-    df['votes'] = df['votes'].fillna(0)
-    # if votes more than 5 set it to 5
-    df['votes'] = df['votes'].apply(lambda x: 5 if x > 5 else x)
-    # drop rows without restaurantData.ravintolaid field
-    df = df.dropna(subset=['restaurantData'])
-    # Pick restaurantData.ravintolaid to ravintolaid field and drop restaurantdata
-    df['nimi'] = df['restaurantData'].apply(lambda x: x['nimi'])
-    # drop restaurantData field
-    df = df.drop(columns=['restaurantData'])
-    return df
+from turn_fauna_lunch_list_to_dict import turn_fauna_lunch_list_to_dict
 
 
 def download_from_fauna():
@@ -37,7 +18,7 @@ def download_from_fauna():
       )
     )
 
-    df = turn_fauna_lunch_list_to_dict(result['data'])
+    df = turn_fauna_lunch_list_to_dict(result['data'], 'download_from_fauna')
     df.to_csv('output.csv', index=False)
 
 
