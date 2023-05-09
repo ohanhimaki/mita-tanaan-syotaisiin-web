@@ -7,7 +7,7 @@ import os.path
 
 import variables
 import clean_data
-import download_from_fauna
+from turn_fauna_lunch_list_to_dict import turn_fauna_lunch_list_to_dict
 
 
 def make_predictions():
@@ -42,7 +42,7 @@ def make_predictions():
     # start date is monday of the week of tmpDay
     start_date = tmpDay - pd.DateOffset(days=tmpDay.weekday())
     # end date is sunday of the week of tmpDay
-    end_date = start_date + pd.DateOffset(days=6)
+    end_date = start_date + pd.DateOffset(days=4)
 
 
     start_date_string = start_date.strftime('%Y%m%d')
@@ -53,7 +53,11 @@ def make_predictions():
       q.call('lunchListsByDateRange', start_date_string, end_date_string)
     )
 
-    df = download_from_fauna.turn_fauna_lunch_list_to_dict(result)
+    df = turn_fauna_lunch_list_to_dict(result, 'make_predictions')
+
+    # order df by nimi and date
+    dfCopy = df.copy()
+
     df = clean_data.clean_data(df)
 
     #remove votes from dataframe
@@ -65,8 +69,9 @@ def make_predictions():
     # add predictions to dataframe
     df['predictions'] = predictions
 
-    # add ref to dataframe from result by index
-    df['ref'] = [item['ref'].id() for item in result]
+    # add ref to dataframe from dfCopy by index
+    df['ref'] = dfCopy['id']
+    df['nimi'] = dfCopy['nimi']
 
     # update predictions to fauna
     for index, row in df.iterrows():
