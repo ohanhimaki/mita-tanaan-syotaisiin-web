@@ -1,0 +1,36 @@
+﻿@page "/Settings"
+@using MTS.Application.Subscriptions.Commands
+@using MediatR
+@inject IMediator Mediator
+@inject IJSRuntime JSRuntime
+
+<button @onclick="SubscribeToNotifications">Tilaa ilmoitukset päivän lounaasta</button>
+<button @onclick="Unsubscribe">Unsubscribe</button>
+
+@code {
+    private string selectedHour;
+
+    private async Task SubscribeToNotifications()
+    {
+        // Get subscription details using JS Interop
+        var subscriptionDetails = await JSRuntime.InvokeAsync<SubscriptionInformation>("subscribeToNotifications");
+
+      var result = new AddSubscription { subscriptionInformation = subscriptionDetails };
+
+      await Mediator.Send(result);
+
+      // Show a toast notification to the user
+      Console.WriteLine("Done");
+
+
+
+
+
+    }
+
+    private async Task Unsubscribe()
+    {
+        // Call your Netlify function to remove the subscription from FaunaDB
+    }
+}
+
