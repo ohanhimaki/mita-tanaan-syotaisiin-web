@@ -13,7 +13,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.4" PrivateAssets="all" />
         <PackageReference Include="MudBlazor" Version="6.0.17" />
         <PackageReference Include="MudBlazor.ThemeManager" Version="1.0.7" />
-      <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js">
+      <ServiceWorker Include="wwwroot\service-worker.js" >
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </ServiceWorker>
     </ItemGroup>
