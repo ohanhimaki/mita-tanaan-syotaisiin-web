@@ -2,6 +2,7 @@
   "dependencies": {
     "@netlify/functions": "^1.3.0",
     "cheerio": "^1.0.0-rc.12",
-    "faunadb": "^4.7.1"
+    "faunadb": "^4.7.1",
+    "web-push": "^3.6.6"
   }
 }

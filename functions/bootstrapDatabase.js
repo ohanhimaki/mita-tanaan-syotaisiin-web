@@ -119,6 +119,7 @@ async function createFunction(functionName, functionBody) {
     RestaurantGenre: "RestaurantGenre",
     Restaurants: "Restaurants",
     WebHookSubscriptions: "WebHookSubscriptions",
+    Subscriptions: "Subscriptions",
   };
 
   const Indexes = {
@@ -131,6 +132,7 @@ async function createFunction(functionName, functionBody) {
     lunchlists_refs_by_restaurant_and_date: "lunchlists_refs_by_restaurant_and_date",
     lunchlists_refs_by_restaurantid: "lunchlists_refs_by_restaurantid",
     lunchofday_by_day: "lunchofday_by_day",
+    all_Subscriptions: "all_Subscriptions",
   };
 
 
@@ -145,6 +147,7 @@ const handler = async () => {
   await createCollection(Collections.RestaurantGenre);
   await createCollection(Collections.Restaurants);
   await createCollection(Collections.WebHookSubscriptions);
+  await createCollection(Collections.Subscriptions);
 
   await createIndex(Indexes.all_LunchOfDay, Collections.LunchOfDay, [], []);
   await createIndex(Indexes.all_LunchOfDayTemp, Collections.LunchOfDayTemp, [], []);
@@ -196,6 +199,7 @@ const handler = async () => {
       field: ["data", "date"]
     }
   ]);
+  await createIndex(Indexes.all_Subscriptions, Collections.Subscriptions, [], []);
 
 
 

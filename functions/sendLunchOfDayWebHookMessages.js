@@ -2,6 +2,8 @@ const getWebHooks = require('./HookSubscriptions-Get')
 const getLunchOfDay = require('./lunchofday/lunchofday')
 const lunchListsByParameters = require('./lunchlists/lunchlists')
 const {sendRequest} = require("./helpers/webhookrequest");
+const subscriptions = require("./subscriptions");
+const {sendPwaNotifications} = require("./helpers/sendPwaNotification");
 
 //WebHookTypes enum
 const WebHookTypes = {
@@ -47,6 +49,23 @@ var lunchOfDayDiscordHooks = result.filter(x => x.data.WebHookSubscriptionTypeId
     }
 
   }
+
+  console.log("haetaan pwaSubscriptions");
+  var pwaSubscriptions = JSON.parse((await subscriptions.handler({httpMethod: 'GET' })).body);
+  console.log("pwaSubscriptions", pwaSubscriptions);
+  // pwa payloadobject is only lunch of day
+  var pwaPayloadObject = {
+    title: "Päivän lounaspaikka on valittu!",
+    body: lunchOfDay[0].data.restaurantData.nimi,
+
+  }
+  // select subscription data elements to list
+  pwaSubscriptionDatas = pwaSubscriptions.map(x => x.data);
+  // cast payload as array
+  pwaPayloadObjects = [pwaPayloadObject];
+  sendPwaNotifications(pwaSubscriptionDatas, pwaPayloadObjects );
+
+
 
 
   return {
