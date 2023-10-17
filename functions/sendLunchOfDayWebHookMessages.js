@@ -63,7 +63,7 @@ var lunchOfDayDiscordHooks = result.filter(x => x.data.WebHookSubscriptionTypeId
   pwaSubscriptionDatas = pwaSubscriptions.map(x => x.data);
   // cast payload as array
   pwaPayloadObjects = [pwaPayloadObject];
-  sendPwaNotifications(pwaSubscriptionDatas, pwaPayloadObjects );
+  await sendPwaNotifications(pwaSubscriptionDatas, pwaPayloadObjects );
 
 
 
