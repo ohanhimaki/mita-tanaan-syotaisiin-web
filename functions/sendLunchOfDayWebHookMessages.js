@@ -50,20 +50,23 @@ var lunchOfDayDiscordHooks = result.filter(x => x.data.WebHookSubscriptionTypeId
 
   }
 
-  console.log("haetaan pwaSubscriptions");
-  var pwaSubscriptions = JSON.parse((await subscriptions.handler({httpMethod: 'GET' })).body);
-  console.log("pwaSubscriptions", pwaSubscriptions);
-  // pwa payloadobject is only lunch of day
-  var pwaPayloadObject = {
-    title: "Päivän lounaspaikka on valittu!",
-    body: lunchOfDay[0].data.restaurantData.nimi,
+  var today = new Date()
+  if(today.getDay() !== 6 && today.getDay() !== 0) {
+    console.log("haetaan pwaSubscriptions");
+    var pwaSubscriptions = JSON.parse((await subscriptions.handler({httpMethod: 'GET' })).body);
+    console.log("pwaSubscriptions", pwaSubscriptions);
+    // pwa payloadobject is only lunch of day
+    var pwaPayloadObject = {
+      title: "Päivän lounaspaikka on valittu!",
+      body: lunchOfDay[0].data.restaurantData.nimi,
 
+    }
+    // select subscription data elements to list
+    pwaSubscriptionDatas = pwaSubscriptions.map(x => x.data);
+    // cast payload as array
+    pwaPayloadObjects = [pwaPayloadObject];
+    await sendPwaNotifications(pwaSubscriptionDatas, pwaPayloadObjects );
   }
-  // select subscription data elements to list
-  pwaSubscriptionDatas = pwaSubscriptions.map(x => x.data);
-  // cast payload as array
-  pwaPayloadObjects = [pwaPayloadObject];
-  await sendPwaNotifications(pwaSubscriptionDatas, pwaPayloadObjects );
 
 
 
