@@ -14,14 +14,5 @@ builder.Services.AddApplicationServices();
 builder.Services.AddMudServices();
 
 
-if (builder.HostEnvironment.IsDevelopment())
-{
-  Console.WriteLine("Dev dependencies");
-  builder.Services.AddScoped<IApiUrlService, DevelopmentApiUrl>();
-}
-else
-{
-  builder.Services.AddScoped<IApiUrlService, ApiUrlService>();
-}
 
 await builder.Build().RunAsync();
