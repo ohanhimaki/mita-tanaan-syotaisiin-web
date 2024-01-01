@@ -2,7 +2,10 @@
 // https://dba.stackexchange.com/questions/318299/how-to-backup-faunadb-collection
 const process = require('process')
 const { Client, query } = require('faunadb')
-import fs from 'fs'
+// import fs from 'fs'
+const fs = require('fs')
+// import {Collections,createIndex} from '.bootstrapDatabase.js'
+const {Collections, createIndex} = require('./bootstrapDatabase.js')
 const client0 = new Client({
   secret: process.env.FAUNADB_SERVER_SECRET,
 })
@@ -14,9 +17,9 @@ const backupFaunadb = async (indexName, pageSize, noOfPages) => {
     for (let i = 0; i < noOfPages; i++) {
       if (after === undefined) break    // stop after last page
       const result = await client0.query(
-        q.Map(
-          q.Paginate(q.Match(q.Index(indexName)), { size: pageSize, after }),
-          q.Lambda('param1', q.Get(q.Var('param1')))  // here word 'param1' is random-word
+        query.Map(
+          query.Paginate(query.Match(query.Index(indexName)), { size: pageSize, after }),
+          query.Lambda('param1', query.Get(query.Var('param1')))  // here word 'param1' is random-word
         )
       )
       after = result.after
@@ -31,12 +34,47 @@ const backupFaunadb = async (indexName, pageSize, noOfPages) => {
   }
 }
 
-const backupSolanaVault = async () => {
-  const pageSize = 50, noOfPages = 5
+const backupSolanaVault = async (collectionName) => {
+  const pageSize = 1000, noOfPages = 1000
+
+// Create Index for collection with Terms field as empty (so we will get all objects in database without any filtering),
+// and fetch all data inside collection using that index as follows:
+  const indexName = `backup_${collectionName}`
+  const values = []
+  const terms = []
+  await createIndex(indexName, collectionName, values, terms)
+
+
+
   const promisesArr = [
-    backupFaunadb('all_telegraph', pageSize, noOfPages),
+    backupFaunadb(indexName, pageSize, noOfPages),
   ]
   await Promise.all(promisesArr)
 }
 
-backupSolanaVault()
+const backupAllCollections = async () => {
+  // var results = Collections.forEach(async (collectionName) => {
+  //   await backupSolanaVault(collectionName)
+  // });
+
+  const propertiesOfCollections = Object.keys(Collections)
+  return propertiesOfCollections.map(async (collectionName) => {
+    await backupSolanaVault(collectionName)
+  })
+
+
+
+}
+
+const handler = async () => {
+  // wait backup
+  await backupAllCollections();
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify("Backup done"),
+  }
+}
+
+
+module.exports = { handler }
