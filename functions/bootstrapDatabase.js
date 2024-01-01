@@ -279,4 +279,4 @@ const handler = async () => {
 
 }
 
-module.exports = { handler }
+module.exports = { handler, Collections, createIndex }
