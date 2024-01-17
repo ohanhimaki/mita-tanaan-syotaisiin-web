@@ -117,3 +117,5 @@ ennuste/__pycache__
 ennuste/.idea/.idea.ennuste.dir/.idea
 ennuste/output.csv
 ennuste/MTS_ennuste.egg-info
+
+backup*json
