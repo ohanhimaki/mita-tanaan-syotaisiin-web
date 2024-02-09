@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\MTS.FetchData\MTS.FetchData.csproj" />
       <ProjectReference Include="..\MTS.Application\MTS.Application.csproj" />
     </ItemGroup>
 

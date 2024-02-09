@@ -1,0 +1,112 @@
+﻿[
+  {
+    "ravintolaid": 38,
+    "apiid": 955109,
+    "nimi": "Marttilan talli",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/955109",
+    "emoji": "🐴"
+  },
+  {
+    "ravintolaid": 39,
+    "apiid": 981380,
+    "nimi": "Varicko",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/981380",
+    "emoji": "🚜"
+  },
+  {
+    "nimi": "Shi Quan Shi mei",
+    "emoji": "🍜",
+    "list": "Citypihan kiinalainen."
+  },
+  {
+    "ravintolaid": 35,
+    "apiid": 1525495,
+    "nimi": "Wenla Cafe",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/1525495",
+    "emoji": "🍰"
+  },
+  {
+    "ravintolaid": 41,
+    "apiid": 951579,
+    "nimi": "Mangal",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/951579",
+    "emoji": "🍖"
+  },
+  {
+    "ravintolaid": 21,
+    "nimi": "Long Feng",
+    "emoji": "🍚",
+    "list": "Välikiinalainen"
+  },
+  {
+    "ravintolaid": 24,
+    "nimi": "Sofram",
+    "list": "Turkkilaista ruokaa",
+    "emoji": "🥙"
+  },
+  {
+    "ravintolaid": 6,
+    "apiid": 955112,
+    "nimi": " Cafeteria Salotta",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/955112",
+    "emoji": "🍲"
+  },
+  {
+    "ravintolaid": 7,
+    "apiid": 954718,
+    "nimi": "Valkoinen Puu",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/954718",
+    "emoji": "🍰"
+  },
+  {
+    "ravintolaid": 9,
+    "apiid": 995525,
+    "nimi": "Pancho Villa",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/995525",
+    "emoji": "🌮"
+  },
+  {
+    "ravintolaid": 11,
+    "apiid": 954715,
+    "nimi": "El Cebo",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/954715",
+    "emoji": "🍖"
+  },
+  {
+    "ravintolaid": 13,
+    "apiid": 1189178,
+    "nimi": "Holy Smoke",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/1189178",
+    "emoji": "🍔"
+  },
+  {
+    "ravintolaid": 14,
+    "apiid": 954717,
+    "nimi": " Japanilainen Ravintola Juku",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/954717",
+    "emoji": "🍣"
+  },
+  {
+    "ravintolaid": 19,
+    "apiid": 1074455,
+    "nimi": "Olivo",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/1074455",
+    "emoji": "🍝"
+  },
+  {
+    "nimi": "Pizzeria piikki",
+    "list": "Herkullista pizzaa ja kattava salaattipöytä",
+    "emoji": "🍕"
+  }
+]
