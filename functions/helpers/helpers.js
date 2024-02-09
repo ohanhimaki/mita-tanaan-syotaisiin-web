@@ -123,4 +123,22 @@ async function getDateData(promise) {
   });
 }
 
-module.exports = { haeDatat, haeDatat2, getDateData };
+function GetDataByDay(restaurantResult, dayOfWeek) {
+  let $ = cheerio.load(restaurantResult);
+  let dayClassName = "day" + dayOfWeek;
+  let lunchDescs = $("div." + dayClassName);
+  let tmpArray = [];
+  console.log(lunchDescs)
+  for (let i = 0; i < lunchDescs.length; i++){
+
+      var dayData = lunchDescs[i].next();
+      console.log(dayData)
+      tmpArray.push(dayData);
+  }
+  return tmpArray;
+
+
+
+
+}
+module.exports = { haeDatat, haeDatat2, getDateData, GetDataByDay };
