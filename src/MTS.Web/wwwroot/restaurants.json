@@ -86,7 +86,7 @@
     "nimi": "Holy Smoke",
     "tassalista": 1,
     "linkki": "https://tassa.fi/kohde/1189178",
-    "emoji": "🍔"
+    "emoji": "🚬"
   },
   {
     "ravintolaid": 14,
@@ -108,5 +108,10 @@
     "nimi": "Pizzeria piikki",
     "list": "Herkullista pizzaa ja kattava salaattipöytä",
     "emoji": "🍕"
+      },
+  {
+    "nimi": "WeGotBurgers",
+    "apiid": 2062012,
+    "emoji": "🍔"
   }
 ]
