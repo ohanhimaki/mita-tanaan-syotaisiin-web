@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTS.Application", "src\MTS.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTS.Test", "MTS.Test\MTS.Test.csproj", "{BFE3E489-80C1-4011-B688-FA5D7DBB605A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTS.FetchData", "MTS.FetchData\MTS.FetchData.csproj", "{6A453C54-BD79-48CB-9964-F8CFC6B1B4FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{BFE3E489-80C1-4011-B688-FA5D7DBB605A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFE3E489-80C1-4011-B688-FA5D7DBB605A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFE3E489-80C1-4011-B688-FA5D7DBB605A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A453C54-BD79-48CB-9964-F8CFC6B1B4FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A453C54-BD79-48CB-9964-F8CFC6B1B4FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A453C54-BD79-48CB-9964-F8CFC6B1B4FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A453C54-BD79-48CB-9964-F8CFC6B1B4FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,81 @@
+﻿@using MTS.FetchData
+<MudContainer>
+
+  <MudCard>
+    @* buttons for every weekday *@
+
+    <MudCardContent>
+      <MudButton OnClick="() => SelectedDay = 1">Monday</MudButton>
+      <MudButton OnClick="() => SelectedDay = 2">Tuesday</MudButton>
+      <MudButton OnClick="() => SelectedDay = 3">Wednesday</MudButton>
+      <MudButton OnClick="() => SelectedDay = 4">Thursday</MudButton>
+      <MudButton OnClick="() => SelectedDay = 5">Friday</MudButton>
+
+    </MudCardContent>
+
+
+
+  </MudCard>
+
+  @if (Lists is not null)
+  {
+    foreach (var lunchListContainer in Lists.Where(x => x.DayNumber == SelectedDay).OrderBy(x => x.RestaurantManagement.nimi))
+    {
+      <MudCard Class="m-4">
+        <MudCardContent>
+          <MudTypography Typography="Typo.h2" Color="Color.Primary">@lunchListContainer.RestaurantManagement.nimi</MudTypography>
+          <br/>
+          @((MarkupString)lunchListContainer.DescriptionHtml)
+        </MudCardContent>
+      </MudCard>
+    }
+  }
+</MudContainer>
+
+@code {
+
+  [Inject]
+  HttpClient Http { get; set; }
+  public int SelectedDay { get; set; } = 1;
+
+  protected override Task OnParametersSetAsync()
+  {
+    if (Lists is null)
+    {
+      InitializeLists();
+    }
+    return base.OnParametersSetAsync();
+  }
+
+  private async Task InitializeLists()
+  {
+    Restaurants = await GetRestaurantsFromJson();
+
+    try
+    {
+      var lists = await LunchListFetcher.GetLunchListAsync(Restaurants);
+      Lists = lists;
+      await InvokeAsync(StateHasChanged);
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine(e);
+      throw;
+    }
+  }
+
+  public List<RestaurantManagement> Restaurants { get; set; }
+
+  private async Task<List<RestaurantManagement>> GetRestaurantsFromJson()
+  {
+  // return list from restaurants.json wwwroot with httpclient get request
+
+
+    var list = await Http.GetFromJsonAsync<List<RestaurantManagement>>("/restaurants.json");
+    return list;
+  }
+
+  public List<LunchListContainer>? Lists { get; set; }
+
+
+}
