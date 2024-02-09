@@ -10,20 +10,19 @@
       <MudButton OnClick="() => SelectedDay = 3">Wednesday</MudButton>
       <MudButton OnClick="() => SelectedDay = 4">Thursday</MudButton>
       <MudButton OnClick="() => SelectedDay = 5">Friday</MudButton>
-
     </MudCardContent>
-
-
-
   </MudCard>
 
   @if (Lists is not null)
   {
-    foreach (var lunchListContainer in Lists.Where(x => x.DayNumber == SelectedDay).OrderBy(x => x.RestaurantManagement.nimi))
+    var emojiCount = 1;
+    foreach (var lunchListContainer in Lists.Where(x => x.DayNumber == SelectedDay ||x.DayNumber == 999).OrderBy(x => x.RestaurantManagement.nimi))
     {
+
+      var emoji = lunchListContainer.RestaurantManagement.emoji ?? GetEmoji(emojiCount++);
       <MudCard Class="m-4">
         <MudCardContent>
-          <MudTypography Typography="Typo.h2" Color="Color.Primary">@lunchListContainer.RestaurantManagement.nimi</MudTypography>
+          <MudTypography Typography="Typo.h2" Color="Color.Primary">@emoji @lunchListContainer.RestaurantManagement.nimi</MudTypography>
           <br/>
           @((MarkupString)lunchListContainer.DescriptionHtml)
         </MudCardContent>
@@ -77,5 +76,12 @@
 
   public List<LunchListContainer>? Lists { get; set; }
 
+
+  private string GetEmoji(int i)
+  {
+    // list of 10 face emojis
+    var emojis = new List<string> { "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇" };
+    return emojis[i % 10];
+  }
 
 }

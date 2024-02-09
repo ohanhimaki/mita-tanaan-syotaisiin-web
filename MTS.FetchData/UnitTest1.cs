@@ -26,6 +26,7 @@ public class UnitTest1
 
 public class LunchListContainer
 {
+  private string? _descriptionHtml;
   public RestaurantManagement RestaurantManagement { get; set; }
   public LunchListContainer(RestaurantManagement restaurantManagement, int dayNumber, string dayTitle,
     string descriptionHtml)
@@ -36,11 +37,34 @@ public class LunchListContainer
     DescriptionHtml = descriptionHtml;
   }
 
+  public LunchListContainer(RestaurantManagement restaurantManagement)
+  {
+    RestaurantManagement = restaurantManagement;
+    DayNumber = 999;
+  }
+
   public int DayNumber { get; set; }
 
-  public string DescriptionHtml { get; set; }
+  public string DescriptionHtml
+  {
+    get
+    {
+      if (_descriptionHtml is not null)
+      {
+        return _descriptionHtml;
+      } else if ( RestaurantManagement.list is not null)
+      {
+        return RestaurantManagement.list;
+      }
+      else
+      {
+        return string.Empty;
+      }
+    }
+    set => _descriptionHtml = value;
+  }
 
-  public string DayTitle { get; set; }
+  public string? DayTitle { get; set; }
 }
 
 public class Root

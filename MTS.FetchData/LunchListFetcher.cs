@@ -10,6 +10,8 @@ public class RestaurantManagement
   public string nimi { get; set; }
   public int tassalista { get; set; }
   public string linkki { get; set; }
+  public string? list { get; set; }
+  public string? emoji { get; set; }
 }
 
 public static class LunchListFetcher
@@ -22,7 +24,11 @@ public static class LunchListFetcher
     {
       try
       {
-        if (restaurant.apiid == 0 || restaurant.apiid is null) continue;
+        if (restaurant.apiid == 0 || restaurant.apiid is null)
+        {
+            var lunchList = new LunchListContainer(restaurant);
+            lunchLists.Add(lunchList);
+        }
         var url = GetUrl((int)restaurant.apiid);
 
         // make get request
