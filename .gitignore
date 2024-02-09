@@ -119,3 +119,5 @@ ennuste/output.csv
 ennuste/MTS_ennuste.egg-info
 
 backup*json
+MTS.FetchData/bin/Debug
+MTS.FetchData/obj
