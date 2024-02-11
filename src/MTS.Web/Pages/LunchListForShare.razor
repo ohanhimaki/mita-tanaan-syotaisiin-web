@@ -5,11 +5,11 @@
     @* buttons for every weekday *@
 
     <MudCardContent>
-      <MudButton OnClick="() => SelectedDay = 1">Monday</MudButton>
-      <MudButton OnClick="() => SelectedDay = 2">Tuesday</MudButton>
-      <MudButton OnClick="() => SelectedDay = 3">Wednesday</MudButton>
-      <MudButton OnClick="() => SelectedDay = 4">Thursday</MudButton>
-      <MudButton OnClick="() => SelectedDay = 5">Friday</MudButton>
+      @for (var i = 1; i <= 5; i++)
+      {
+        var day = i;
+        <MudButton Variant="Variant.Filled" Color="SelectedDay == day ? Color.Primary : Color.Default" OnClick="() => SelectedDay = day">@GetDayOfWeekFi(day)</MudButton>
+      }
     </MudCardContent>
   </MudCard>
 
@@ -22,7 +22,8 @@
       var emoji = lunchListContainer.RestaurantManagement.emoji ?? GetEmoji(emojiCount++);
       <MudCard Class="m-4">
         <MudCardContent>
-          <MudTypography Typography="Typo.h2" Color="Color.Primary">@emoji @lunchListContainer.RestaurantManagement.nimi</MudTypography>
+
+          <MudText Typo="Typo.h2" Color="Color.Primary">@emoji @lunchListContainer.RestaurantManagement.nimi</MudText>
           <br/>
           @((MarkupString)lunchListContainer.DescriptionHtml)
         </MudCardContent>
@@ -36,6 +37,12 @@
   [Inject]
   HttpClient Http { get; set; }
   public int SelectedDay { get; set; } = 1;
+
+  protected override void OnInitialized()
+  {
+    SelectedDay = (int)DateTime.Now.DayOfWeek;
+    base.OnInitialized();
+  }
 
   protected override Task OnParametersSetAsync()
   {
@@ -82,6 +89,19 @@
     // list of 10 face emojis
     var emojis = new List<string> { "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇" };
     return emojis[i % 10];
+  }
+
+  private string GetDayOfWeekFi(int day)
+  {
+    return day switch
+    {
+      1 => "Ma",
+      2 => "Ti",
+      3 => "Ke",
+      4 => "To",
+      5 => "Pe",
+      _ => "??"
+    };
   }
 
 }
