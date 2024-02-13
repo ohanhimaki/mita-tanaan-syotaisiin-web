@@ -6,7 +6,7 @@ namespace MTS.FetchData;
 public class RestaurantManagement
 {
   public int ravintolaid { get; set; }
-  public int? apiid { get; set; }
+  public int? apiid { get; set; } = null;
   public string nimi { get; set; }
   public int tassalista { get; set; }
   public string linkki { get; set; }
@@ -28,7 +28,9 @@ public static class LunchListFetcher
         {
             var lunchList = new LunchListContainer(restaurant);
             lunchLists.Add(lunchList);
+            continue;
         }
+        Console.WriteLine(restaurant.apiid);
         var url = GetUrl((int)restaurant.apiid);
 
         // make get request
@@ -40,7 +42,8 @@ public static class LunchListFetcher
 
         // get divs from response with class "lunchHeader"
         var doc = new HtmlDocument();
-        doc.LoadHtml(parsed.ads[0].ad.body);
+        var body = parsed.ads[parsed.ads.Length-1].ad.body;
+        doc.LoadHtml(body);
         // var nodes = doc.DocumentNode.SelectNodes("//div[@class='lunchHeader']");
         var nodes = doc.DocumentNode.ChildNodes;
         for (int i = 0; i < nodes.Count; i++)
