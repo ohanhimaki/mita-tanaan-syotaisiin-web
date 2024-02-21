@@ -1,4 +1,5 @@
 ﻿@using MTS.FetchData
+@inject IJSRuntime JSRuntime
 <MudContainer>
 
   <MudCard>
@@ -10,25 +11,36 @@
         var day = i;
         <MudButton Variant="Variant.Filled" Color="SelectedDay == day ? Color.Primary : Color.Default" OnClick="() => SelectedDay = day">@GetDayOfWeekFi(day)</MudButton>
       }
+      <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="DownloadImages">Download images</MudButton>
     </MudCardContent>
   </MudCard>
+
+
+
 
   @if (Lists is not null)
   {
     var emojiCount = 1;
-    foreach (var lunchListContainer in Lists.Where(x => x.DayNumber == SelectedDay ||x.DayNumber == 999).OrderBy(x => x.RestaurantManagement.nimi))
+    <MudGrid Style="box-shadow: unset !important;">
+    @foreach (var lunchListContainer in Lists.Where(x => x.DayNumber == SelectedDay ||x.DayNumber == 999).OrderBy(x => x.RestaurantManagement.nimi))
     {
-
       var emoji = lunchListContainer.RestaurantManagement.emoji ?? GetEmoji(emojiCount++);
-      <MudCard Class="m-4">
-        <MudCardContent>
+      <MudItem xs="12" sm="6" md="4">
+        <div id="@lunchListContainer.RestaurantManagement.nimi">
 
-          <MudText Typo="Typo.h2" Color="Color.Primary">@emoji @lunchListContainer.RestaurantManagement.nimi</MudText>
-          <br/>
-          @((MarkupString)lunchListContainer.DescriptionHtml)
-        </MudCardContent>
-      </MudCard>
+        <MudCard Class="m-4 to-image">
+          <MudCardContent>
+
+
+            <MudText @onclick="() => DownloadImage(lunchListContainer.RestaurantManagement.nimi)" Class="file-name" Typo="Typo.h4" Color="Color.Primary">@emoji @lunchListContainer.RestaurantManagement.nimi</MudText>
+            <br/>
+            @((MarkupString)lunchListContainer.DescriptionHtml)
+          </MudCardContent>
+        </MudCard>
+        </div>
+      </MudItem>
     }
+    </MudGrid>
   }
 </MudContainer>
 
@@ -83,6 +95,11 @@
 
   public List<LunchListContainer>? Lists { get; set; }
 
+  private async Task DownloadImages()
+  {
+    await JSRuntime.InvokeVoidAsync("captureAndDownloadImages");
+  }
+
 
   private string GetEmoji(int i)
   {
@@ -102,6 +119,12 @@
       5 => "Pe",
       _ => "??"
     };
+  }
+
+  private async Task DownloadImage(string restaurantManagementNimi)
+  {
+    Console.WriteLine(restaurantManagementNimi);
+    await JSRuntime.InvokeVoidAsync("captureAndDownloadImage", restaurantManagementNimi);
   }
 
 }
