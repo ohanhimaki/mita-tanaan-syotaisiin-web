@@ -2,60 +2,10 @@
 
 ## Developing
 
-Projektin juuressa aja "netlify dev" komento, komento käynnistää funktiot ja sovelluksen hot reload moodissa.
+## Ideas
 
-
-4. Open app
-   Go to [http://localhost:8888]
-
-
-
-
-### Examples
-
-#### Faunadb get by daterange
-
-Tällä hetkellä toimii, tässä indeksi ja funktion koodi
+- Lets implement api for this project again! run from my local computer, let basic things work even if my pc is turned off. 
+- Change url for data? https://lounaspaikka.ilkkapohjalainen.fi/resources/lunch/pois?lat=62.7907&lon=22.8396&page=0&size=100&u=mhzvf7eh&uit=lounas-ilpo-prod&l=fi&ts=1763179200000&channel=collections_lounaspaikka&maxdist=50000
 
 
 
-```fql
-{
-  name: "lunchlists_refs_by_date",
-    serialized: true,
-    source: "LunchLists",
-    values: [
-    {
-      field: ["data", "date"]
-    },
-    {
-      field: ["ref"]
-    }
-  ]
-}
-```
-
-```fql
-{
-  name: "lunchListsByDateRange",
-  role: null,
-  body: Query(
-    Lambda(
-      ["start", "end"],
-      Map(
-        Select(
-          ["data"],
-          Paginate(
-            Range(
-              Match(Index("lunchlists_refs_by_date")),
-              Var("start"),
-              Var("end")
-            )
-          )
-        ),
-        Lambda(["date", "ref"], Get(Var("ref")))
-      )
-    )
-  )
-}
-```
