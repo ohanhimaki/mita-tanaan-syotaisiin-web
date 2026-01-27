@@ -1,4 +1,4 @@
-﻿using HtmlAgilityPack;
+using HtmlAgilityPack;
 using Newtonsoft.Json;
 
 namespace MTS.FetchData;
@@ -12,8 +12,17 @@ public class RestaurantManagement
   public string linkki { get; set; }
   public string? list { get; set; }
   public string? emoji { get; set; }
+  public WeekdayLists? lists { get; set; }
 }
 
+public class WeekdayLists
+{
+    public string? monday { get; set; }
+    public string? tuesday { get; set; }
+    public string? wednesday { get; set; }
+    public string? thursday { get; set; }
+    public string? friday { get; set; }
+}
 public static class LunchListFetcher
 {
   public static async Task<List<LunchListContainer>> GetLunchListAsync(List<RestaurantManagement> restaurants)
@@ -26,9 +35,42 @@ public static class LunchListFetcher
       {
         if (restaurant.apiid == 0 || restaurant.apiid is null)
         {
-            var lunchList = new LunchListContainer(restaurant);
-            lunchLists.Add(lunchList);
-            continue;
+            if(restaurant.list is not null)
+            {
+              var lunchList = new LunchListContainer(restaurant);
+              lunchLists.Add(lunchList);
+              continue;
+            }
+            if(restaurant.lists is not null)
+            {
+              var lists = restaurant.lists;
+              if(lists.monday is not null)
+              {
+                var lunchList = new LunchListContainer(restaurant, 1);
+                lunchLists.Add(lunchList);
+              }
+              if(lists.tuesday is not null)
+              {
+                var lunchList = new LunchListContainer(restaurant, 2);
+                lunchLists.Add(lunchList);
+              }
+              if(lists.wednesday is not null)
+              {
+                var lunchList = new LunchListContainer(restaurant, 3);
+                lunchLists.Add(lunchList);
+              }
+              if(lists.thursday is not null)
+              {
+                var lunchList = new LunchListContainer(restaurant, 4);
+                lunchLists.Add(lunchList);
+              }
+              if(lists.friday is not null)
+              {
+                var lunchList = new LunchListContainer(restaurant, 5);
+                lunchLists.Add(lunchList);
+              }
+              continue;
+            }
         }
         Console.WriteLine(restaurant.apiid);
         var url = GetUrl((int)restaurant.apiid);

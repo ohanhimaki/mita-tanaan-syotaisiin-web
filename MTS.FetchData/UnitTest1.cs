@@ -27,6 +27,8 @@ public class UnitTest1
 public class LunchListContainer
 {
   private string? _descriptionHtml;
+  private int v;
+
   public RestaurantManagement RestaurantManagement { get; set; }
   public LunchListContainer(RestaurantManagement restaurantManagement, int dayNumber, string dayTitle,
     string descriptionHtml)
@@ -41,6 +43,12 @@ public class LunchListContainer
   {
     RestaurantManagement = restaurantManagement;
     DayNumber = 999;
+  }
+
+  public LunchListContainer(RestaurantManagement restaurantManagement, int dayNumber)
+  {
+    RestaurantManagement = restaurantManagement;
+    DayNumber = dayNumber;
   }
 
   public void HighlightBestFoods(Dictionary<string, List<string>> bestFoods)
@@ -80,6 +88,26 @@ public class LunchListContainer
       else if (RestaurantManagement.list is not null)
       {
         return RestaurantManagement.list;
+      }
+      else if (RestaurantManagement.lists is not null)
+      {
+        switch(DayNumber){
+          case 1:
+            return RestaurantManagement.lists?.monday;
+          case 2:
+            // return "test";
+            return RestaurantManagement.lists?.tuesday;
+          case 3:
+            return RestaurantManagement.lists?.wednesday;
+          case 4:
+            return RestaurantManagement.lists?.thursday;
+          case 5:
+            return RestaurantManagement.lists?.friday;
+          default:
+            return string.Empty;
+        }
+
+
       }
       else
       {

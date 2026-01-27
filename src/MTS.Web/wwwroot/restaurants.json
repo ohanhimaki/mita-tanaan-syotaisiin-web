@@ -29,12 +29,11 @@
     "emoji": "🚾"
   },
   {
-    "ravintolaid": 41,
-    "apiid": 951579,
     "nimi": "Mangal",
-    "tassalista": 1,
-    "linkki": "https://tassa.fi/kohde/951579",
-    "emoji": "🍖"
+    "emoji": "🍖",
+    "lists": {
+      "tuesday": "Paraspäivä mangalissa, chickenkorma ja -curry!"
+    }
   },
   {
     "ravintolaid": 21,
