@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "ravintolaid": 38,
     "apiid": 955109,
@@ -57,6 +57,22 @@
     "emoji": "🍲"
   },
   {
+    "ravintolaid": 6,
+    "apiid": 2096555,
+    "nimi": "Olive lounge",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/2096555",
+    "emoji": "💩"
+  },
+  {
+    "ravintolaid": 6,
+    "apiid": 2128100,
+    "nimi": "Street 15",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/2128100",
+    "emoji": "🥕"
+  },
+  {
     "ravintolaid": 7,
     "apiid": 954718,
     "nimi": "Valkoinen Puu",
@@ -108,7 +124,7 @@
     "nimi": "Pizzeria piikki",
     "list": "Herkullista pizzaa ja kattava salaattipöytä",
     "emoji": "🍕"
-      },
+  },
   {
     "nimi": "WeGotBurgers",
     "apiid": 2062012,
