@@ -1,8 +1,9 @@
-﻿@using MTS.FetchData
+@using MTS.Application
+@using MTS.FetchData
 @inject IJSRuntime JSRuntime
-<MudContainer>
+<MudContainer Style="background-color: #f5f5f5; min-height: 100vh; padding-top: 20px; padding-bottom: 20px;">
 
-  <MudCard>
+  <MudCard Style="margin-bottom: 24px;">
     @* buttons for every weekday *@
 
     <MudCardContent>
@@ -15,18 +16,22 @@
     </MudCardContent>
   </MudCard>
 
-
-
-
   @if (Lists is not null)
   {
     var emojiCount = 1;
     <MudGrid Style="box-shadow: unset !important;">
-    @foreach (var lunchListContainer in Lists.Where(x => x.DayNumber == SelectedDay ||x.DayNumber == 999).OrderBy(x => x.RestaurantManagement.nimi))
+    @foreach (var lunchListContainer in Lists.Where(x => x.DayNumber == SelectedDay ||x.DayNumber == 999).OrderByDescending(x => x.BestFoodTitles.Count).ThenBy(x => x.RestaurantManagement.nimi))
     {
       var emoji = lunchListContainer.RestaurantManagement.emoji ?? GetEmoji(emojiCount++);
       <MudItem xs="12" sm="6" md="4">
         <div id="@lunchListContainer.RestaurantManagement.nimi">
+        @foreach( var titles in lunchListContainer.BestFoodTitles)
+        {
+          <MudAlert Severity="Severity.Success" Variant="Variant.Filled" Elevation="0" Class="m-4">
+            <MudText Typo="Typo.h6">⭐ @titles</MudText>
+          </MudAlert>
+        }
+
 
         <MudCard Class="m-4 to-image">
           <MudCardContent>
@@ -69,9 +74,18 @@
   {
     Restaurants = await GetRestaurantsFromJson();
 
+    var bestFoods = await Http.GetFromJsonAsync<List<BestFood>>("/best-foods.json");
+    bestFoods!.ForEach(bf => Console.WriteLine($"Best food: {bf.Name} - {string.Join(", ", bf.SearchTerms)}"));
+
+    var bestFoodsDict = bestFoods!.ToDictionary(g => g.Name, g => g.SearchTerms.ToList());
     try
     {
       var lists = await LunchListFetcher.GetLunchListAsync(Restaurants);
+      foreach (var list in lists){
+
+        list.HighlightBestFoods(bestFoodsDict);
+
+      }
       Lists = lists;
       await InvokeAsync(StateHasChanged);
     }
