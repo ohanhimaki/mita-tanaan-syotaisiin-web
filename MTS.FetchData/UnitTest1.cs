@@ -43,6 +43,30 @@ public class LunchListContainer
     DayNumber = 999;
   }
 
+  public void HighlightBestFoods(Dictionary<string, List<string>> bestFoods)
+  {
+    // check if descriptionhtml contains and of list and add key to bestfoodtitles
+    var bestFoodTitles = new List<string>();
+    foreach (var bestFood in bestFoods)
+    {
+      foreach (var keyword in bestFood.Value)
+      {
+        if (DescriptionHtml.ToLower().Contains(keyword.ToLower()))
+        {
+          Console.WriteLine("tuulee tänne" + keyword);
+          bestFoodTitles.Add(bestFood.Key);
+        }
+      }
+    }
+    if (bestFoodTitles.Count > 0)
+    {
+      BestFoodTitles = bestFoodTitles;
+    }
+
+  }
+
+  public List<string> BestFoodTitles { get; set; } = new();
+
   public int DayNumber { get; set; }
 
   public string DescriptionHtml
@@ -52,7 +76,8 @@ public class LunchListContainer
       if (_descriptionHtml is not null)
       {
         return _descriptionHtml;
-      } else if ( RestaurantManagement.list is not null)
+      }
+      else if (RestaurantManagement.list is not null)
       {
         return RestaurantManagement.list;
       }
