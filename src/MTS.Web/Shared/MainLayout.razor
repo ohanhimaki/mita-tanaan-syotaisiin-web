@@ -1,4 +1,4 @@
-﻿@using MudBlazor.Utilities
+@using MudBlazor.Utilities
 @inherits LayoutComponentBase
 
 <MudThemeProvider Theme="MyCustomTheme"/>
@@ -7,7 +7,7 @@
 
 
 
-<MudLayout>
+<MudLayout Style="background-color: #f5f5f5;">
   <MudAppBar Elevation="1">
     <MudImage
       Src="./android-chrome-192x192.png"
@@ -20,7 +20,7 @@
 
     @* https://github.com/ohanhimaki/mita-tanaan-syotaisiin-web *@
   </MudAppBar>
-    <MudMainContent>
+    <MudMainContent Style="background-color: #f5f5f5;">
         @Body
     </MudMainContent>
 </MudLayout>
@@ -33,7 +33,9 @@
     Palette = new Palette()
     {
       AppbarBackground = new MudColor("#e30059"),
-      Primary = new MudColor("#e30059")
+      Primary = new MudColor("#e30059"),
+      Background = new MudColor("#f5f5f5"),
+      Surface = new MudColor("#ffffff")
     }
   };
 
