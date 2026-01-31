@@ -1,13 +1,5 @@
 [
   {
-    "ravintolaid": 38,
-    "apiid": 955109,
-    "nimi": "Marttilan talli",
-    "tassalista": 1,
-    "linkki": "https://tassa.fi/kohde/955109",
-    "emoji": "🐴"
-  },
-  {
     "ravintolaid": 39,
     "apiid": 981380,
     "nimi": "Varicko",
@@ -19,14 +11,6 @@
     "nimi": "Shi Quan Shi mei",
     "emoji": "🍜",
     "list": "Citypihan kiinalainen."
-  },
-  {
-    "ravintolaid": 35,
-    "apiid": 1525495,
-    "nimi": "Wenla Cafe",
-    "tassalista": 1,
-    "linkki": "https://tassa.fi/kohde/1525495",
-    "emoji": "🚾"
   },
   {
     "nimi": "Mangal",
@@ -123,10 +107,5 @@
     "nimi": "Pizzeria piikki",
     "list": "Herkullista pizzaa ja kattava salaattipöytä",
     "emoji": "🍕"
-  },
-  {
-    "nimi": "WeGotBurgers",
-    "apiid": 2062012,
-    "emoji": "🍔"
   }
 ]

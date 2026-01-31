@@ -1,5 +1,5 @@
 @using MTS.Application
-@using MTS.FetchData
+@using MTS.Application.DataFetching
 @inject IJSRuntime JSRuntime
 <MudContainer Style="background-color: #f5f5f5; min-height: 100vh; padding-top: 20px; padding-bottom: 20px;">
 
@@ -19,33 +19,28 @@
   @if (Lists is not null)
   {
     var emojiCount = 1;
-    <MudGrid Style="box-shadow: unset !important;">
+    <div class="masonry-grid">
     @foreach (var lunchListContainer in Lists.Where(x => x.DayNumber == SelectedDay ||x.DayNumber == 999).OrderByDescending(x => x.BestFoodTitles.Count).ThenBy(x => x.RestaurantManagement.nimi))
     {
       var emoji = lunchListContainer.RestaurantManagement.emoji ?? GetEmoji(emojiCount++);
-      <MudItem xs="12" sm="6" md="4">
-        <div id="@lunchListContainer.RestaurantManagement.nimi">
+      <div class="masonry-item" id="@lunchListContainer.RestaurantManagement.nimi">
         @foreach( var titles in lunchListContainer.BestFoodTitles)
         {
-          <MudAlert Severity="Severity.Success" Variant="Variant.Filled" Elevation="0" Class="m-4">
+          <MudAlert Severity="Severity.Success" Variant="Variant.Filled" Elevation="0" Style="margin-bottom: 16px;">
             <MudText Typo="Typo.h6">⭐ @titles</MudText>
           </MudAlert>
         }
 
-
-        <MudCard Class="m-4 to-image">
+        <MudCard Class="to-image">
           <MudCardContent>
-
-
             <MudText @onclick="() => DownloadImage(lunchListContainer.RestaurantManagement.nimi)" Class="file-name" Typo="Typo.h4" Color="Color.Primary">@emoji @lunchListContainer.RestaurantManagement.nimi</MudText>
             <br/>
             @((MarkupString)lunchListContainer.DescriptionHtml)
           </MudCardContent>
         </MudCard>
-        </div>
-      </MudItem>
+      </div>
     }
-    </MudGrid>
+    </div>
   }
 </MudContainer>
 

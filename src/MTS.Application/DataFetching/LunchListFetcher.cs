@@ -1,33 +1,12 @@
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 
-namespace MTS.FetchData;
+namespace MTS.Application.DataFetching;
 
-public class RestaurantManagement
-{
-  public int ravintolaid { get; set; }
-  public int? apiid { get; set; } = null;
-  public string nimi { get; set; }
-  public int tassalista { get; set; }
-  public string linkki { get; set; }
-  public string? list { get; set; }
-  public string? emoji { get; set; }
-  public WeekdayLists? lists { get; set; }
-}
-
-public class WeekdayLists
-{
-    public string? monday { get; set; }
-    public string? tuesday { get; set; }
-    public string? wednesday { get; set; }
-    public string? thursday { get; set; }
-    public string? friday { get; set; }
-}
 public static class LunchListFetcher
 {
   public static async Task<List<LunchListContainer>> GetLunchListAsync(List<RestaurantManagement> restaurants)
   {
-    // get url
     var lunchLists = new List<LunchListContainer>();
     foreach (var restaurant in restaurants)
     {
@@ -72,36 +51,70 @@ public static class LunchListFetcher
               continue;
             }
         }
-        Console.WriteLine(restaurant.apiid);
+        Console.WriteLine($"Fetching data for: {restaurant.nimi} (API ID: {restaurant.apiid})");
         var url = GetUrl((int)restaurant.apiid);
 
-        // make get request
         var client = new HttpClient();
         var response = await client.GetAsync(url);
-        // get response not async
+        
+        if (!response.IsSuccessStatusCode)
+        {
+          Console.WriteLine($"❌ API error for {restaurant.nimi}: HTTP {response.StatusCode}");
+          // Lisää ravintola ilman listaa jos halutaan näyttää se silti
+          var emptyList = new LunchListContainer(restaurant);
+          lunchLists.Add(emptyList);
+          continue;
+        }
+        
         var content = await response.Content.ReadAsStringAsync();
-        var parsed = JsonConvert.DeserializeObject<Root>(content);
+        
+        // Tarkista onko vastaus JSON
+        if (string.IsNullOrWhiteSpace(content) || content.TrimStart().StartsWith("<"))
+        {
+          Console.WriteLine($"❌ Invalid response for {restaurant.nimi}: Response is not JSON (possibly HTML error page)");
+          // Lisää ravintola ilman listaa
+          var emptyList = new LunchListContainer(restaurant);
+          lunchLists.Add(emptyList);
+          continue;
+        }
+        
+        Root? parsed;
+        try
+        {
+          parsed = JsonConvert.DeserializeObject<Root>(content);
+        }
+        catch (JsonException jsonEx)
+        {
+          Console.WriteLine($"❌ JSON parse error for {restaurant.nimi}: {jsonEx.Message}");
+          // Lisää ravintola ilman listaa
+          var emptyList = new LunchListContainer(restaurant);
+          lunchLists.Add(emptyList);
+          continue;
+        }
+        
+        if (parsed?.ads == null || parsed.ads.Length == 0)
+        {
+          Console.WriteLine($"⚠️ No ads found for {restaurant.nimi}");
+          // Lisää ravintola ilman listaa
+          var emptyList = new LunchListContainer(restaurant);
+          lunchLists.Add(emptyList);
+          continue;
+        }
 
-        // get divs from response with class "lunchHeader"
         var doc = new HtmlDocument();
         var body = parsed.ads[parsed.ads.Length-1].ad.body;
         doc.LoadHtml(body);
-        // var nodes = doc.DocumentNode.SelectNodes("//div[@class='lunchHeader']");
         var nodes = doc.DocumentNode.ChildNodes;
         for (int i = 0; i < nodes.Count; i++)
         {
           var node = nodes[i];
-          // _testOutputHelper.WriteLine(node.InnerText);
-          // check if node class is "lunchHeader"
           if (node.Attributes["class"].Value.Contains("lunchHeader"))
           {
-            // check if class attribute contains dayX, where x is any number, save that number into variable
             var day = node.Attributes["class"].Value;
             var dayNumber = day.Substring(day.Length - 1);
 
             Int32.TryParse(dayNumber, out var result);
 
-            // _testOutputHelper.WriteLine(dayNumber);
             if (nodes[i + 1].Attributes["class"].Value.Contains("lunchDesc"))
             {
               var lunchList = new LunchListContainer(restaurant, result, nodes[i].InnerText, nodes[i + 1].InnerHtml);
@@ -109,16 +122,14 @@ public static class LunchListFetcher
             }
           }
         }
-
-        // _testOutputHelper.WriteLine(parsed.ads[0].ad.body);
-
-
-        // log response
-        // _testOutputHelper.WriteLine(content);
       }
       catch (Exception e)
       {
-        Console.WriteLine(e);
+        Console.WriteLine($"❌ Unexpected error for {restaurant.nimi}: {e.Message}");
+        Console.WriteLine(e.StackTrace);
+        // Lisää ravintola ilman listaa myös odottamattomien virheiden tapauksessa
+        var emptyList = new LunchListContainer(restaurant);
+        lunchLists.Add(emptyList);
         continue;
       }
     }

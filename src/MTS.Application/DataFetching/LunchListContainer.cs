@@ -1,35 +1,11 @@
-using HtmlAgilityPack;
-using Newtonsoft.Json;
-using Xunit.Abstractions;
-
-namespace MTS.FetchData;
-
-public class UnitTest1
-{
-  private readonly ITestOutputHelper _testOutputHelper;
-
-  public UnitTest1(ITestOutputHelper testOutputHelper)
-  {
-    _testOutputHelper = testOutputHelper;
-  }
-
-  [Fact]
-  public async void Test1()
-  {
-    // var lunchList = await LunchListFetcher.GetLunchListAsync(new List<int> { 1525495 });
-    //
-    // // check if lunchList is not empty
-    // Assert.NotEmpty(lunchList);
-  }
-
-}
+namespace MTS.Application.DataFetching;
 
 public class LunchListContainer
 {
   private string? _descriptionHtml;
-  private int v;
 
   public RestaurantManagement RestaurantManagement { get; set; }
+  
   public LunchListContainer(RestaurantManagement restaurantManagement, int dayNumber, string dayTitle,
     string descriptionHtml)
   {
@@ -43,6 +19,7 @@ public class LunchListContainer
   {
     RestaurantManagement = restaurantManagement;
     DayNumber = 999;
+    HasNoData = true; // Merkitään että dataa ei ole saatavilla
   }
 
   public LunchListContainer(RestaurantManagement restaurantManagement, int dayNumber)
@@ -50,10 +27,11 @@ public class LunchListContainer
     RestaurantManagement = restaurantManagement;
     DayNumber = dayNumber;
   }
+  
+  public bool HasNoData { get; set; } = false;
 
   public void HighlightBestFoods(Dictionary<string, List<string>> bestFoods)
   {
-    // check if descriptionhtml contains and of list and add key to bestfoodtitles
     var bestFoodTitles = new List<string>();
     foreach (var bestFood in bestFoods)
     {
@@ -70,7 +48,6 @@ public class LunchListContainer
     {
       BestFoodTitles = bestFoodTitles;
     }
-
   }
 
   public List<string> BestFoodTitles { get; set; } = new();
@@ -95,7 +72,6 @@ public class LunchListContainer
           case 1:
             return RestaurantManagement.lists?.monday;
           case 2:
-            // return "test";
             return RestaurantManagement.lists?.tuesday;
           case 3:
             return RestaurantManagement.lists?.wednesday;
@@ -106,8 +82,6 @@ public class LunchListContainer
           default:
             return string.Empty;
         }
-
-
       }
       else
       {
@@ -118,29 +92,4 @@ public class LunchListContainer
   }
 
   public string? DayTitle { get; set; }
-}
-
-public class Root
-{
-  public Ads[] ads { get; set; }
-}
-
-public class Ads
-{
-  public Ad ad { get; set; }
-}
-
-public class Ad
-{
-  public string header { get; set; }
-  public string body { get; set; }
-  public object imgurl { get; set; }
-  public object wwwurl { get; set; }
-  public string shopid { get; set; }
-  public string poiId { get; set; }
-  public string id { get; set; }
-  public string type { get; set; }
-  public int contentType { get; set; }
-  public string timestamp { get; set; }
-  public string weeklyLunch { get; set; }
 }

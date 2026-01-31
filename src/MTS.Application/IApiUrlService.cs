@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 
+namespace MTS.Application;
+
 public interface IApiUrlService
 {
     public string ApiUrl { get; set; }
@@ -11,7 +13,7 @@ public class ApiUrlService : IApiUrlService
     public ApiUrlService(IConfiguration configuration)
     {
         _configuration = configuration;
-        ApiUrl = _configuration["ApiUrl"];
+        ApiUrl = _configuration["ApiUrl"] ?? string.Empty;
     }
     public string ApiUrl { get; set; }
 }
