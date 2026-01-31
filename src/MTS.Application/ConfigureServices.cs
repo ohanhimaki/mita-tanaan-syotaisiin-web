@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using MediatR;
+﻿using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MTS.Application;
@@ -8,7 +7,8 @@ public static class ConfigureServices
 {
   public static IServiceCollection AddApplicationServices(this IServiceCollection services)
   {
-    services.AddMediatR(Assembly.GetExecutingAssembly());
+    services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ConfigureServices).Assembly));
+    services.AddScoped<IApiUrlService, ApiUrlService>();
     return services;
   }
 }

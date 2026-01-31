@@ -8,7 +8,7 @@
 
 <MudCardContent >
   @{
-    var style = LunchListRow.DateString != _currentDayString ? Theme.Palette.GrayLight : "";
+    var style = LunchListRow.DateString != _currentDayString ? Theme.PaletteLight.GrayLight : "";
   }
   <MudPaper
     Class="pa-4"
@@ -66,7 +66,7 @@
                 @if (UserVoteService.IsUserVoted(LunchListRow))
                 {
                   //Mudblazor checkmark icon
-                  <MudIcon Icon="@Icons.Filled.Check"/>
+                  <MudIcon Icon="@Icons.Material.Filled.Check"/>
                 }
                 else
                 {
@@ -74,7 +74,7 @@
                   {
                     <MudIcon
                       Style="cursor: pointer"
-                      Icon="@Icons.Filled.ThumbUp"
+                      Icon="@Icons.Material.Filled.ThumbUp"
                       @onclick="() => VoteUp(LunchListRow)"/>
                   }
                 }
