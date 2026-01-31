@@ -19,6 +19,7 @@ public class LunchListContainer
   {
     RestaurantManagement = restaurantManagement;
     DayNumber = 999;
+    HasNoData = true; // Merkitään että dataa ei ole saatavilla
   }
 
   public LunchListContainer(RestaurantManagement restaurantManagement, int dayNumber)
@@ -26,6 +27,8 @@ public class LunchListContainer
     RestaurantManagement = restaurantManagement;
     DayNumber = dayNumber;
   }
+  
+  public bool HasNoData { get; set; } = false;
 
   public void HighlightBestFoods(Dictionary<string, List<string>> bestFoods)
   {

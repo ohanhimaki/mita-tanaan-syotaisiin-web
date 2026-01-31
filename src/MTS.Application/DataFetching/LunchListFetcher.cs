@@ -51,13 +51,55 @@ public static class LunchListFetcher
               continue;
             }
         }
-        Console.WriteLine(restaurant.apiid);
+        Console.WriteLine($"Fetching data for: {restaurant.nimi} (API ID: {restaurant.apiid})");
         var url = GetUrl((int)restaurant.apiid);
 
         var client = new HttpClient();
         var response = await client.GetAsync(url);
+        
+        if (!response.IsSuccessStatusCode)
+        {
+          Console.WriteLine($"❌ API error for {restaurant.nimi}: HTTP {response.StatusCode}");
+          // Lisää ravintola ilman listaa jos halutaan näyttää se silti
+          var emptyList = new LunchListContainer(restaurant);
+          lunchLists.Add(emptyList);
+          continue;
+        }
+        
         var content = await response.Content.ReadAsStringAsync();
-        var parsed = JsonConvert.DeserializeObject<Root>(content);
+        
+        // Tarkista onko vastaus JSON
+        if (string.IsNullOrWhiteSpace(content) || content.TrimStart().StartsWith("<"))
+        {
+          Console.WriteLine($"❌ Invalid response for {restaurant.nimi}: Response is not JSON (possibly HTML error page)");
+          // Lisää ravintola ilman listaa
+          var emptyList = new LunchListContainer(restaurant);
+          lunchLists.Add(emptyList);
+          continue;
+        }
+        
+        Root? parsed;
+        try
+        {
+          parsed = JsonConvert.DeserializeObject<Root>(content);
+        }
+        catch (JsonException jsonEx)
+        {
+          Console.WriteLine($"❌ JSON parse error for {restaurant.nimi}: {jsonEx.Message}");
+          // Lisää ravintola ilman listaa
+          var emptyList = new LunchListContainer(restaurant);
+          lunchLists.Add(emptyList);
+          continue;
+        }
+        
+        if (parsed?.ads == null || parsed.ads.Length == 0)
+        {
+          Console.WriteLine($"⚠️ No ads found for {restaurant.nimi}");
+          // Lisää ravintola ilman listaa
+          var emptyList = new LunchListContainer(restaurant);
+          lunchLists.Add(emptyList);
+          continue;
+        }
 
         var doc = new HtmlDocument();
         var body = parsed.ads[parsed.ads.Length-1].ad.body;
@@ -83,7 +125,11 @@ public static class LunchListFetcher
       }
       catch (Exception e)
       {
-        Console.WriteLine(e);
+        Console.WriteLine($"❌ Unexpected error for {restaurant.nimi}: {e.Message}");
+        Console.WriteLine(e.StackTrace);
+        // Lisää ravintola ilman listaa myös odottamattomien virheiden tapauksessa
+        var emptyList = new LunchListContainer(restaurant);
+        lunchLists.Add(emptyList);
         continue;
       }
     }
