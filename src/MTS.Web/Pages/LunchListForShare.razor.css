@@ -1,0 +1,29 @@
+.masonry-grid {
+  column-count: 1;
+  column-gap: 16px;
+  padding: 0;
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 16px;
+}
+
+/* Responsive breakpoints */
+@media (min-width: 600px) {
+  .masonry-grid {
+    column-count: 2;
+  }
+}
+
+@media (min-width: 960px) {
+  .masonry-grid {
+    column-count: 3;
+  }
+}
+
+@media (min-width: 1280px) {
+  .masonry-grid {
+    column-count: 4;
+  }
+}
