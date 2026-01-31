@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "ravintolaid": 38,
     "apiid": 955109,
@@ -29,12 +29,11 @@
     "emoji": "🚾"
   },
   {
-    "ravintolaid": 41,
-    "apiid": 951579,
     "nimi": "Mangal",
-    "tassalista": 1,
-    "linkki": "https://tassa.fi/kohde/951579",
-    "emoji": "🍖"
+    "emoji": "🍖",
+    "lists": {
+      "tuesday": "Paraspäivä mangalissa, chickenkorma ja -curry!"
+    }
   },
   {
     "ravintolaid": 21,
@@ -55,6 +54,22 @@
     "tassalista": 1,
     "linkki": "https://tassa.fi/kohde/955112",
     "emoji": "🍲"
+  },
+  {
+    "ravintolaid": 6,
+    "apiid": 2096555,
+    "nimi": "Olive lounge",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/2096555",
+    "emoji": "💩"
+  },
+  {
+    "ravintolaid": 6,
+    "apiid": 2128100,
+    "nimi": "Street 15",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/2128100",
+    "emoji": "🥕"
   },
   {
     "ravintolaid": 7,
@@ -108,7 +123,7 @@
     "nimi": "Pizzeria piikki",
     "list": "Herkullista pizzaa ja kattava salaattipöytä",
     "emoji": "🍕"
-      },
+  },
   {
     "nimi": "WeGotBurgers",
     "apiid": 2062012,
