@@ -1,5 +1,7 @@
 [build]
-  functions-build = "functions"
+  command = "bash build.sh"
+  publish = "release/wwwroot"
+  functions = "functions"
 
 [[redirects]]
   from = "/*"
