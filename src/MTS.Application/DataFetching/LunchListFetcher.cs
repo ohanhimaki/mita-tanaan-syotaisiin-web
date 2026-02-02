@@ -56,7 +56,7 @@ public static class LunchListFetcher
 
         var client = new HttpClient();
         var response = await client.GetAsync(url);
-        
+
         if (!response.IsSuccessStatusCode)
         {
           Console.WriteLine($"❌ API error for {restaurant.nimi}: HTTP {response.StatusCode}");
@@ -65,9 +65,9 @@ public static class LunchListFetcher
           lunchLists.Add(emptyList);
           continue;
         }
-        
+
         var content = await response.Content.ReadAsStringAsync();
-        
+
         // Tarkista onko vastaus JSON
         if (string.IsNullOrWhiteSpace(content) || content.TrimStart().StartsWith("<"))
         {
@@ -77,7 +77,7 @@ public static class LunchListFetcher
           lunchLists.Add(emptyList);
           continue;
         }
-        
+
         Root? parsed;
         try
         {
@@ -91,7 +91,7 @@ public static class LunchListFetcher
           lunchLists.Add(emptyList);
           continue;
         }
-        
+
         if (parsed?.ads == null || parsed.ads.Length == 0)
         {
           Console.WriteLine($"⚠️ No ads found for {restaurant.nimi}");
@@ -102,7 +102,9 @@ public static class LunchListFetcher
         }
 
         var doc = new HtmlDocument();
-        var body = parsed.ads[parsed.ads.Length-1].ad.body;
+        var weeklyLunchAd = parsed.ads.FirstOrDefault(ad => ad.ad.weeklyLunch is not null);
+        // var body = parsed.ads[parsed.ads.Length-1].ad.body;
+        var body = weeklyLunchAd != null ? weeklyLunchAd.ad.body : parsed.ads[^1].ad.body;
         doc.LoadHtml(body);
         var nodes = doc.DocumentNode.ChildNodes;
         for (int i = 0; i < nodes.Count; i++)
