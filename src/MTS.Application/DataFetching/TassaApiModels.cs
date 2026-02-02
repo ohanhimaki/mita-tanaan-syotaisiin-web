@@ -22,5 +22,5 @@ public class Ad
   public string type { get; set; }
   public int contentType { get; set; }
   public string timestamp { get; set; }
-  public string weeklyLunch { get; set; }
+  public string? weeklyLunch { get; set; }
 }
