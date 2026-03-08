@@ -1,0 +1,62 @@
+@inject LunchDataService LunchData
+@inject IHostApplicationLifetime AppLifetime
+
+@{
+    var todayNumber = (int)DateTime.Now.DayOfWeek;
+    var todayFi = todayNumber switch {
+        1 => "Maanantai", 2 => "Tiistai", 3 => "Keskiviikko",
+        4 => "Torstai", 5 => "Perjantai", _ => "Viikonloppu"
+    };
+    var todayItems = LunchData.Lists
+        .Where(x => x.DayNumber == todayNumber || x.DayNumber == 999)
+        .OrderBy(x => x.RestaurantName)
+        .ToList();
+    var separator = "────────────────────────────────────────────";
+    var footerText = LunchData.LoadedFromCache
+        ? "📦 Välimuistista · mts --refresh päivittää"
+        : "✅ Haettu juuri nyt · tallennettu välimuistiin";
+}
+
+<Rows>
+    <Markup Content="🍽  Mitä tänään syötäisiin?" Decoration="@Spectre.Console.Decoration.Bold" Foreground="@Spectre.Console.Color.Cyan" />
+    <Markup Content="@todayFi" Decoration="@Spectre.Console.Decoration.Dim" />
+    <Markup Content="@separator" Decoration="@Spectre.Console.Decoration.Dim" />
+    <Newline />
+
+    @foreach (var item in todayItems)
+    {
+        var emoji = item.Emoji ?? "🍴";
+        var name = $"{emoji} {item.RestaurantName}";
+
+        if (item.HasNoData || string.IsNullOrWhiteSpace(item.DescriptionHtml))
+        {
+            <Columns>
+                <Markup Content="@name" Decoration="@Spectre.Console.Decoration.Bold" />
+                <Markup Content="(ei listaa tänään)" Decoration="@Spectre.Console.Decoration.Dim" Foreground="@Spectre.Console.Color.Red" />
+            </Columns>
+        }
+        else
+        {
+            <Markup Content="@name" Decoration="@Spectre.Console.Decoration.Bold" />
+            @foreach (var line in item.DescriptionHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            {
+                var indented = $"  {line}";
+                <Markup Content="@indented" Decoration="@Spectre.Console.Decoration.Dim" />
+            }
+        }
+        <Newline />
+    }
+
+    <Markup Content="@separator" Decoration="@Spectre.Console.Decoration.Dim" />
+    <Markup Content="@footerText" Decoration="@Spectre.Console.Decoration.Dim" />
+</Rows>
+
+@code {
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _ = Task.Delay(200).ContinueWith(_ => AppLifetime.StopApplication());
+        }
+    }
+}
