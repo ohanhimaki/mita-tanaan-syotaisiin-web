@@ -2,8 +2,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MTS.Cli.Components;
+using MTS.Cli.Models;
 using MTS.Cli.Services;
 using RazorConsole.Core;
+
+var options = CliOptions.Parse(args);
 
 // --refresh poistaa välimuistin ja hakee uudelleen
 if (args.Contains("--refresh"))
@@ -27,6 +30,7 @@ var builder = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
         services.AddSingleton(lunchData);
+        services.AddSingleton(options);
     })
     .ConfigureLogging(logging =>
     {

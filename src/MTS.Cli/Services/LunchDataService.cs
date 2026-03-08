@@ -76,9 +76,20 @@ public class LunchDataService
         if (string.IsNullOrWhiteSpace(html)) return "";
         var doc = new HtmlDocument();
         doc.LoadHtml(html);
-        return doc.DocumentNode.InnerText
-            .Replace("&amp;", "&")
-            .Replace("&nbsp;", " ")
-            .Trim();
+
+        // Korvataan block-elementtien sulkutägit rivinvaihdoilla ennen tekstin hakua
+        foreach (var node in doc.DocumentNode.DescendantsAndSelf())
+        {
+            if (node.NodeType != HtmlNodeType.Element) continue;
+            var tag = node.Name.ToLowerInvariant();
+            if (tag is "br" or "p" or "li" or "div" or "h1" or "h2" or "h3" or "tr")
+                node.InnerHtml = node.InnerHtml + "\n";
+        }
+
+        return System.Net.WebUtility.HtmlDecode(doc.DocumentNode.InnerText)
+            .Split('\n')
+            .Select(l => l.Trim())
+            .Where(l => l.Length > 0)
+            .Aggregate((a, b) => $"{a}\n{b}");
     }
 }
