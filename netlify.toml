@@ -1,7 +1,11 @@
 [build]
   command = "bash build.sh"
   publish = "release/wwwroot"
-  functions = "functions"
+
+[[redirects]]
+  from = "/curl"
+  to = "/.netlify/edge-functions/curl"
+  status = 200
 
 [[redirects]]
   from = "/*"

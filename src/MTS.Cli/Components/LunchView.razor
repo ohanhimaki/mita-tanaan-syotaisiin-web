@@ -1,0 +1,111 @@
+@inject LunchDataService LunchData
+@inject CliOptions Options
+@inject IHostApplicationLifetime AppLifetime
+
+@{
+    var items = LunchData.Lists
+        .Where(x => x.DayNumber == Options.SelectedDay || x.DayNumber == 999)
+        .OrderBy(x => x.RestaurantName)
+        .ToList();
+    var current = items.Count > 0 ? items[_index] : null;
+    var separator = "────────────────────────────────────────────";
+    var cacheText = LunchData.LoadedFromCache
+        ? "📦 Välimuistista · mts --refresh päivittää"
+        : "✅ Haettu juuri nyt · tallennettu välimuistiin";
+
+    var detailLines = (current is not null && !current.HasNoData && !string.IsNullOrWhiteSpace(current.DescriptionHtml))
+        ? current.DescriptionHtml.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList()
+        : new List<string>();
+
+    // Pad right column to match left column height so footer stays anchored
+    var rightUsed = 2 + detailLines.Count; // name + blank + lines (or "ei listaa")
+    var padding = Math.Max(0, items.Count - rightUsed);
+}
+
+<Rows>
+    <Markup Content="🍽  Mitä tänään syötäisiin?" Decoration="@Spectre.Console.Decoration.Bold" Foreground="@Spectre.Console.Color.Cyan" />
+    <Markup Content="@($"{Options.DayNameFi}  ·  {_index + 1}/{items.Count}  ·  j/↓ seuraava  k/↑ edellinen  q lopeta")" Decoration="@Spectre.Console.Decoration.Dim" />
+    <Markup Content="@separator" Decoration="@Spectre.Console.Decoration.Dim" />
+
+    <Columns>
+        <Rows>
+            @foreach (var (item, i) in items.Select((x, i) => (x, i)))
+            {
+                var label = $"{item.Emoji ?? "🍴"} {item.RestaurantName}";
+                label = i == _index ? $"▶ {label}" : $"  {label}";
+                var decoration = i == _index ? Spectre.Console.Decoration.Bold : Spectre.Console.Decoration.None;
+                var color = i == _index ? Spectre.Console.Color.Cyan : Spectre.Console.Color.Default;
+                <Markup Content="@($"{label}")" Decoration="@decoration" Foreground="@color" />
+            }
+
+        </Rows>
+        <Rows>
+            @if (current is not null)
+            {
+                var name = $"{current.Emoji ?? "🍴"} {current.RestaurantName}";
+                <Markup Content="@name" Decoration="@Spectre.Console.Decoration.Bold" />
+                <Newline />
+
+                @if (current.HasNoData || string.IsNullOrWhiteSpace(current.DescriptionHtml))
+                {
+                    <Markup Content="  (ei lounaslistaa tänään)" Decoration="@Spectre.Console.Decoration.Dim" Foreground="@Spectre.Console.Color.Red" />
+                }
+                else
+                {
+                    @foreach (var line in detailLines)
+                    {
+                        <Markup Content="@($"  {line}")" Decoration="@Spectre.Console.Decoration.Dim" />
+                    }
+                }
+
+                @for (var p = 0; p < padding; p++)
+                {
+                    <Newline />
+                }
+            }
+        </Rows>
+    </Columns>
+
+    <Markup Content="@separator" Decoration="@Spectre.Console.Decoration.Dim" />
+    <Markup Content="@cacheText" Decoration="@Spectre.Console.Decoration.Dim" />
+</Rows>
+
+@code {
+    private int _index = 0;
+    private List<CachedLunchList>? _items;
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _items = LunchData.Lists
+                .Where(x => x.DayNumber == Options.SelectedDay || x.DayNumber == 999)
+                .OrderBy(x => x.RestaurantName)
+                .ToList();
+            _ = Task.Run(ReadKeysAsync);
+        }
+    }
+
+    private async Task ReadKeysAsync()
+    {
+        var count = _items?.Count ?? 0;
+        while (true)
+        {
+            var key = await Task.Run(() => Console.ReadKey(intercept: true));
+            switch (key.Key)
+            {
+                case ConsoleKey.Q:
+                    AppLifetime.StopApplication();
+                    return;
+                case ConsoleKey.J:
+                case ConsoleKey.DownArrow:
+                    if (_index < count - 1) { _index++; await InvokeAsync(StateHasChanged); }
+                    break;
+                case ConsoleKey.K:
+                case ConsoleKey.UpArrow:
+                    if (_index > 0) { _index--; await InvokeAsync(StateHasChanged); }
+                    break;
+            }
+        }
+    }
+}
