@@ -32,16 +32,12 @@
             @foreach (var (item, i) in items.Select((x, i) => (x, i)))
             {
                 var label = $"{item.Emoji ?? "🍴"} {item.RestaurantName}";
-                if (i == _index)
-                {
-                    <Markup Content="@($"▶ {label}")" Decoration="@Spectre.Console.Decoration.Bold" Foreground="@Spectre.Console.Color.Cyan" />
-                }
-                else
-                {
-                    <Markup Content="@($"  {label}")" />
-                }
-                <Markup Content="@($"▶ {label}")" Decoration="@Spectre.Console.Decoration.Bold" Foreground="@Spectre.Console.Color.Cyan" />
+                label = i == _index ? $"▶ {label}" : $"  {label}";
+                var decoration = i == _index ? Spectre.Console.Decoration.Bold : Spectre.Console.Decoration.None;
+                var color = i == _index ? Spectre.Console.Color.Cyan : Spectre.Console.Color.Default;
+                <Markup Content="@($"{label}")" Decoration="@decoration" Foreground="@color" />
             }
+
         </Rows>
         <Rows>
             @if (current is not null)
