@@ -20,12 +20,6 @@
     }
   },
   {
-    "ravintolaid": 21,
-    "nimi": "Long Feng",
-    "emoji": "🍚",
-    "list": "Välikiinalainen"
-  },
-  {
     "ravintolaid": 24,
     "nimi": "Sofram",
     "list": "Turkkilaista ruokaa",
@@ -38,14 +32,6 @@
     "tassalista": 1,
     "linkki": "https://tassa.fi/kohde/955112",
     "emoji": "🍲"
-  },
-  {
-    "ravintolaid": 6,
-    "apiid": 2096555,
-    "nimi": "Olive lounge",
-    "tassalista": 1,
-    "linkki": "https://tassa.fi/kohde/2096555",
-    "emoji": "💩"
   },
   {
     "ravintolaid": 6,
@@ -107,5 +93,21 @@
     "nimi": "Pizzeria piikki",
     "list": "Herkullista pizzaa ja kattava salaattipöytä",
     "emoji": "🍕"
+  },
+  {
+    "ravintolaid": 520,
+    "apiid": 1342653,
+    "nimi": "Vinola",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/1342653",
+    "emoji": "🍷"
+  },
+  {
+    "ravintolaid": 521,
+    "apiid": 2133250,
+    "nimi": "Kabacka",
+    "tassalista": 1,
+    "linkki": "https://tassa.fi/kohde/2133250",
+    "emoji": "🍺"
   }
 ]
