@@ -1,5 +1,6 @@
 @using MTS.Application
 @using MTS.Application.DataFetching
+@using System.Text.Json
 @inject IJSRuntime JSRuntime
 <MudContainer Style="background-color: #f5f5f5; min-height: 100vh; padding-top: 20px; padding-bottom: 20px;">
 
@@ -50,44 +51,77 @@
   HttpClient Http { get; set; }
   public int SelectedDay { get; set; } = 1;
 
-  protected override void OnInitialized()
+  private string CacheKey
+  {
+    get
+    {
+      var week = System.Globalization.ISOWeek.GetWeekOfYear(DateTime.Now);
+      return $"lunchlists_v1_{DateTime.Now.Year}_{week}";
+    }
+  }
+
+  protected override async Task OnInitializedAsync()
   {
     SelectedDay = (int)DateTime.Now.DayOfWeek;
-    base.OnInitialized();
+    if (SelectedDay == 0) SelectedDay = 5;
+
+    Lists = await TryLoadFromCache();
+
+    // Refresh from API in background - don't await so cached data renders first
+    _ = RefreshListsFromApi();
+
+    await base.OnInitializedAsync();
   }
 
-  protected override Task OnParametersSetAsync()
+  private async Task<List<LunchListContainer>?> TryLoadFromCache()
   {
-    if (Lists is null)
+    try
     {
-      InitializeLists();
+      var json = await JSRuntime.InvokeAsync<string?>("localStorageHelper.getItem", CacheKey);
+      if (string.IsNullOrEmpty(json)) return null;
+      return JsonSerializer.Deserialize<List<LunchListContainer>>(json);
     }
-    return base.OnParametersSetAsync();
+    catch (Exception e)
+    {
+      Console.WriteLine($"Cache load error: {e.Message}");
+      return null;
+    }
   }
 
-  private async Task InitializeLists()
+  private async Task SaveToCache(List<LunchListContainer> lists)
+  {
+    try
+    {
+      var json = JsonSerializer.Serialize(lists);
+      await JSRuntime.InvokeVoidAsync("localStorageHelper.setItem", CacheKey, json);
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Cache save error: {e.Message}");
+    }
+  }
+
+  private async Task RefreshListsFromApi()
   {
     Restaurants = await GetRestaurantsFromJson();
-
     var bestFoods = await Http.GetFromJsonAsync<List<BestFood>>("/best-foods.json");
-    bestFoods!.ForEach(bf => Console.WriteLine($"Best food: {bf.Name} - {string.Join(", ", bf.SearchTerms)}"));
-
     var bestFoodsDict = bestFoods!.ToDictionary(g => g.Name, g => g.SearchTerms.ToList());
     try
     {
       var lists = await LunchListFetcher.GetLunchListAsync(Restaurants);
-      foreach (var list in lists){
-
-        list.HighlightBestFoods(bestFoodsDict);
-
+      foreach (var list in lists)
+      {
+        try { list.HighlightBestFoods(bestFoodsDict); }
+        catch (Exception ex) { Console.WriteLine($"HighlightBestFoods error for {list.RestaurantManagement?.nimi}: {ex.Message}"); }
       }
+
       Lists = lists;
+      await SaveToCache(lists);
       await InvokeAsync(StateHasChanged);
     }
     catch (Exception e)
     {
       Console.WriteLine(e);
-      throw;
     }
   }
 

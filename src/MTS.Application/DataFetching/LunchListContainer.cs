@@ -4,8 +4,10 @@ public class LunchListContainer
 {
   private string? _descriptionHtml;
 
-  public RestaurantManagement RestaurantManagement { get; set; }
-  
+  public RestaurantManagement RestaurantManagement { get; set; } = null!;
+
+  public LunchListContainer() { }
+
   public LunchListContainer(RestaurantManagement restaurantManagement, int dayNumber, string dayTitle,
     string descriptionHtml)
   {
@@ -70,15 +72,15 @@ public class LunchListContainer
       {
         switch(DayNumber){
           case 1:
-            return RestaurantManagement.lists?.monday;
+              return RestaurantManagement.lists?.monday ?? string.Empty;
           case 2:
-            return RestaurantManagement.lists?.tuesday;
+              return RestaurantManagement.lists?.tuesday ?? string.Empty;
           case 3:
-            return RestaurantManagement.lists?.wednesday;
+              return RestaurantManagement.lists?.wednesday ?? string.Empty;
           case 4:
-            return RestaurantManagement.lists?.thursday;
+              return RestaurantManagement.lists?.thursday ?? string.Empty;
           case 5:
-            return RestaurantManagement.lists?.friday;
+              return RestaurantManagement.lists?.friday ?? string.Empty;
           default:
             return string.Empty;
         }
