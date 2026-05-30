@@ -3,6 +3,7 @@ namespace MTS.Cli.Models;
 public class CliOptions
 {
     public int SelectedDay { get; init; }
+    public bool PromptMode { get; init; }
 
     public static CliOptions Parse(string[] args)
     {
@@ -15,15 +16,16 @@ public class CliOptions
             ["--pe"] = 5, ["-pe"] = 5,
         };
 
+        var promptMode = args.Contains("--prompt");
         foreach (var arg in args)
         {
             if (dayMap.TryGetValue(arg, out var day))
-                return new CliOptions { SelectedDay = day };
+                return new CliOptions { SelectedDay = day, PromptMode = promptMode };
         }
 
         // Oletuksena tänään (viikonlopulla näytetään perjantai)
         var today = (int)DateTime.Now.DayOfWeek;
-        return new CliOptions { SelectedDay = today is 0 or 6 ? 5 : today };
+        return new CliOptions { SelectedDay = today is 0 or 6 ? 5 : today, PromptMode = promptMode };
     }
 
     public string DayNameFi => SelectedDay switch
