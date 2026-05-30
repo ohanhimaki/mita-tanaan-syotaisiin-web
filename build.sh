@@ -12,6 +12,9 @@ chmod +x dotnet-install.sh
 export DOTNET_ROOT=$HOME/.dotnet
 export PATH=$DOTNET_ROOT:$DOTNET_ROOT/tools:$PATH
 
+# Install required workloads
+dotnet workload install wasm-tools
+
 # Verify installation
 dotnet --version
 
