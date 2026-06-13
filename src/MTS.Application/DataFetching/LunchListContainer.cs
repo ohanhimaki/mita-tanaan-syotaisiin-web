@@ -39,17 +39,14 @@ public class LunchListContainer
     {
       foreach (var keyword in bestFood.Value)
       {
-        if (DescriptionHtml.ToLower().Contains(keyword.ToLower()))
+        if (!string.IsNullOrWhiteSpace(keyword) && DescriptionHtml.ToLower().Contains(keyword.ToLower()))
         {
           Console.WriteLine("tuulee tänne" + keyword);
           bestFoodTitles.Add(bestFood.Key);
         }
       }
     }
-    if (bestFoodTitles.Count > 0)
-    {
-      BestFoodTitles = bestFoodTitles;
-    }
+    BestFoodTitles = bestFoodTitles.Distinct().ToList();
   }
 
   public List<string> BestFoodTitles { get; set; } = new();
