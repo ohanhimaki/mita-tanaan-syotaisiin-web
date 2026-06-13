@@ -2,30 +2,80 @@
 @using MTS.Application.DataFetching
 @using System.Text.Json
 @inject IJSRuntime JSRuntime
+
 <MudContainer Style="background-color: #f5f5f5; min-height: 100vh; padding-top: 20px; padding-bottom: 20px;">
 
   <MudCard Style="margin-bottom: 24px;">
-    @* buttons for every weekday *@
-
     <MudCardContent>
       @for (var i = 1; i <= 5; i++)
       {
         var day = i;
-        <MudButton Variant="Variant.Filled" Color="SelectedDay == day ? Color.Primary : Color.Default" OnClick="() => SelectedDay = day">@GetDayOfWeekFi(day)</MudButton>
+        <MudButton Variant="Variant.Filled" Color="SelectedDay == day ? Color.Primary : Color.Default" OnClick="() => SelectedDay = day" Style="margin-right: 8px;">@GetDayOfWeekFi(day)</MudButton>
       }
       <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="DownloadImages">Download images</MudButton>
     </MudCardContent>
   </MudCard>
 
+  <MudExpansionPanels Class="mb-6" Style="margin-bottom: 24px;">
+    <MudExpansionPanel>
+      <TitleContent>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <MudIcon Icon="@Icons.Material.Filled.Palette" Color="Color.Primary" />
+          <MudText Typo="Typo.subtitle1" Style="font-weight: bold;">Omat korostussäännöt</MudText>
+        </div>
+      </TitleContent>
+      <ChildContent>
+        <MudText Typo="Typo.body2" Class="mb-4" Color="Color.Secondary" Style="margin-bottom: 16px;">
+          Voit lisätä omia sanoja tai ruokia, joita etsitään lounaslistoilta. Jos jokin hakusanoista löytyy ravintolan listalta, se korostetaan vihreällä tähdellä.
+        </MudText>
+
+        @if (CustomHighlights != null && CustomHighlights.Any())
+        {
+          <MudText Typo="Typo.subtitle2" Style="margin-bottom: 6px; font-weight: bold; font-size: 0.9rem;">Aktiiviset omat korostukset:</MudText>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px;">
+            @foreach (var highlight in CustomHighlights)
+            {
+              <div style="display: inline-flex; align-items: center; background-color: #e30059; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                <strong style="margin-right: 4px;">@highlight.Name:</strong> @string.Join(", ", highlight.SearchTerms)
+                <button type="button" @onclick="() => RemoveCustomHighlight(highlight)" style="background: none; border: none; color: white; margin-left: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.95rem; line-height: 1;">
+                  &times;
+                </button>
+              </div>
+            }
+          </div>
+        }
+        else
+        {
+          <MudText Typo="Typo.body2" Style="font-style: italic; margin-bottom: 12px; font-size: 0.85rem;">Ei omia korostuksia vielä.</MudText>
+        }
+
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background-color: rgba(0,0,0,0.02); padding: 12px; border-radius: 8px;">
+          <div style="flex: 1; min-width: 180px;">
+            <MudTextField T="string" Label="Ruokalaji" Placeholder="esim. Maksalaatikko" @bind-Value="newFoodName" Variant="Variant.Outlined" Margin="Margin.Dense" Style="background-color: white;" />
+          </div>
+          <div style="flex: 2; min-width: 220px;">
+            <MudTextField T="string" Label="Hakusanat (pilkulla erotettuna)" Placeholder="esim. maksalaatikko, maksalaatikkoa" @bind-Value="newSearchTermsInput" Variant="Variant.Outlined" Margin="Margin.Dense" Style="background-color: white;" />
+          </div>
+          <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddCustomHighlight" StartIcon="@Icons.Material.Filled.Add" Style="height: 38px;">
+            Lisää
+          </MudButton>
+        </div>
+      </ChildContent>
+    </MudExpansionPanel>
+  </MudExpansionPanels>
+
   @if (Lists is not null)
   {
     var emojiCount = 1;
     <div class="masonry-grid">
-    @foreach (var lunchListContainer in Lists.Where(x => x.DayNumber == SelectedDay ||x.DayNumber == 999).OrderByDescending(x => x.BestFoodTitles.Count).ThenBy(x => x.RestaurantManagement.nimi))
+    @foreach (var lunchListContainer in Lists.Where(x => x.DayNumber == SelectedDay || x.DayNumber == 999)
+      .OrderByDescending(x => GetRestaurantWeight(x.RestaurantManagement.nimi))
+      .ThenByDescending(x => x.BestFoodTitles.Count)
+      .ThenBy(x => x.RestaurantManagement.nimi))
     {
       var emoji = lunchListContainer.RestaurantManagement.emoji ?? GetEmoji(emojiCount++);
       <div class="masonry-item" id="@lunchListContainer.RestaurantManagement.nimi">
-        @foreach( var titles in lunchListContainer.BestFoodTitles)
+        @foreach (var titles in lunchListContainer.BestFoodTitles)
         {
           <MudAlert Severity="Severity.Success" Variant="Variant.Filled" Elevation="0" Style="margin-bottom: 16px;">
             <MudText Typo="Typo.h6">⭐ @titles</MudText>
@@ -34,7 +84,19 @@
 
         <MudCard Class="to-image">
           <MudCardContent>
-            <MudText @onclick="() => DownloadImage(lunchListContainer.RestaurantManagement.nimi)" Class="file-name" Typo="Typo.h4" Color="Color.Primary">@emoji @lunchListContainer.RestaurantManagement.nimi</MudText>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+              <MudText @onclick="() => DownloadImage(lunchListContainer.RestaurantManagement.nimi)" Class="file-name" Typo="Typo.h5" Color="Color.Primary" Style="cursor: pointer; flex-grow: 1; margin: 0; font-weight: 500;">
+                @emoji @lunchListContainer.RestaurantManagement.nimi
+              </MudText>
+              
+              <div style="display: inline-flex; align-items: center; gap: 6px; background-color: rgba(0,0,0,0.04); border-radius: 12px; padding: 2px 4px; border: 1px solid rgba(0,0,0,0.06);">
+                <button type="button" @onclick="() => DecreaseWeight(lunchListContainer.RestaurantManagement.nimi)" style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; border: none; background-color: white; color: #e30059; cursor: pointer; transition: all 0.2s ease; font-weight: bold; font-size: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); line-height: 1;">&minus;</button>
+                <span style="font-weight: bold; min-width: 22px; text-align: center; font-size: 0.85rem; color: #333;">
+                  @GetWeightDisplay(lunchListContainer.RestaurantManagement.nimi)
+                </span>
+                <button type="button" @onclick="() => IncreaseWeight(lunchListContainer.RestaurantManagement.nimi)" style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; border: none; background-color: white; color: #43a047; cursor: pointer; transition: all 0.2s ease; font-weight: bold; font-size: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); line-height: 1;">+</button>
+              </div>
+            </div>
             <br/>
             @((MarkupString)lunchListContainer.DescriptionHtml)
           </MudCardContent>
@@ -60,12 +122,35 @@
     }
   }
 
+  private string newFoodName = "";
+  private string newSearchTermsInput = "";
+  private List<BestFood> CustomHighlights { get; set; } = new();
+  private List<BestFood> ServerBestFoods { get; set; } = new();
+  private Dictionary<string, int> RestaurantWeights { get; set; } = new();
+
   protected override async Task OnInitializedAsync()
   {
     SelectedDay = (int)DateTime.Now.DayOfWeek;
     if (SelectedDay == 0) SelectedDay = 5;
 
+    await LoadRestaurantWeights();
+    await LoadCustomHighlights();
+
+    try
+    {
+      var bestFoods = await Http.GetFromJsonAsync<List<BestFood>>("/best-foods.json");
+      ServerBestFoods = bestFoods ?? new();
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Error fetching best-foods.json: {e.Message}");
+    }
+
     Lists = await TryLoadFromCache();
+    if (Lists != null)
+    {
+      ApplyHighlights();
+    }
 
     // Refresh from API in background - don't await so cached data renders first
     _ = RefreshListsFromApi();
@@ -104,14 +189,24 @@
   private async Task RefreshListsFromApi()
   {
     Restaurants = await GetRestaurantsFromJson();
-    var bestFoods = await Http.GetFromJsonAsync<List<BestFood>>("/best-foods.json");
-    var bestFoodsDict = bestFoods!.ToDictionary(g => g.Name, g => g.SearchTerms.ToList());
+    try
+    {
+      var bestFoods = await Http.GetFromJsonAsync<List<BestFood>>("/best-foods.json");
+      ServerBestFoods = bestFoods ?? new();
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Error fetching best-foods.json: {e.Message}");
+    }
+
+    var mergedBestFoods = GetMergedBestFoods();
+
     try
     {
       var lists = await LunchListFetcher.GetLunchListAsync(Restaurants);
       foreach (var list in lists)
       {
-        try { list.HighlightBestFoods(bestFoodsDict); }
+        try { list.HighlightBestFoods(mergedBestFoods); }
         catch (Exception ex) { Console.WriteLine($"HighlightBestFoods error for {list.RestaurantManagement?.nimi}: {ex.Message}"); }
       }
 
@@ -125,13 +220,184 @@
     }
   }
 
+  private Dictionary<string, List<string>> GetMergedBestFoods()
+  {
+    var merged = new Dictionary<string, List<string>>();
+    if (ServerBestFoods != null)
+    {
+      foreach (var bf in ServerBestFoods)
+      {
+        if (!string.IsNullOrWhiteSpace(bf.Name))
+        {
+          merged[bf.Name] = bf.SearchTerms.ToList();
+        }
+      }
+    }
+    if (CustomHighlights != null)
+    {
+      foreach (var ch in CustomHighlights)
+      {
+        if (!string.IsNullOrWhiteSpace(ch.Name) && ch.SearchTerms != null)
+        {
+          if (merged.ContainsKey(ch.Name))
+          {
+            merged[ch.Name] = merged[ch.Name].Concat(ch.SearchTerms).Distinct().ToList();
+          }
+          else
+          {
+            merged[ch.Name] = ch.SearchTerms.ToList();
+          }
+        }
+      }
+    }
+    return merged;
+  }
+
+  private void ApplyHighlights()
+  {
+    if (Lists == null) return;
+    var merged = GetMergedBestFoods();
+    foreach (var list in Lists)
+    {
+      try { list.HighlightBestFoods(merged); }
+      catch (Exception ex) { Console.WriteLine($"Highlight error: {ex.Message}"); }
+    }
+  }
+
+  private async Task LoadCustomHighlights()
+  {
+    try
+    {
+      var json = await JSRuntime.InvokeAsync<string?>("localStorageHelper.getItem", "custom_highlights");
+      if (!string.IsNullOrEmpty(json))
+      {
+        CustomHighlights = JsonSerializer.Deserialize<List<BestFood>>(json) ?? new();
+      }
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Error loading custom highlights: {e.Message}");
+    }
+  }
+
+  private async Task SaveCustomHighlights()
+  {
+    try
+    {
+      var json = JsonSerializer.Serialize(CustomHighlights);
+      await JSRuntime.InvokeVoidAsync("localStorageHelper.setItem", "custom_highlights", json);
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Error saving custom highlights: {e.Message}");
+    }
+  }
+
+  private async Task AddCustomHighlight()
+  {
+    if (string.IsNullOrWhiteSpace(newFoodName) || string.IsNullOrWhiteSpace(newSearchTermsInput))
+      return;
+
+    var terms = newSearchTermsInput.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                   .Select(t => t.Trim())
+                                   .ToList();
+
+    if (terms.Any())
+    {
+      var existing = CustomHighlights.FirstOrDefault(x => x.Name.Equals(newFoodName, StringComparison.OrdinalIgnoreCase));
+      if (existing != null)
+      {
+        existing.SearchTerms = existing.SearchTerms.Concat(terms).Distinct().ToList();
+      }
+      else
+      {
+        CustomHighlights.Add(new BestFood
+        {
+          Name = newFoodName.Trim(),
+          SearchTerms = terms
+        });
+      }
+
+      newFoodName = "";
+      newSearchTermsInput = "";
+      await SaveCustomHighlights();
+      ApplyHighlights();
+      StateHasChanged();
+    }
+  }
+
+  private async Task RemoveCustomHighlight(BestFood item)
+  {
+    CustomHighlights.Remove(item);
+    await SaveCustomHighlights();
+    ApplyHighlights();
+    StateHasChanged();
+  }
+
+  private async Task LoadRestaurantWeights()
+  {
+    try
+    {
+      var json = await JSRuntime.InvokeAsync<string?>("localStorageHelper.getItem", "restaurant_weights");
+      if (!string.IsNullOrEmpty(json))
+      {
+        RestaurantWeights = JsonSerializer.Deserialize<Dictionary<string, int>>(json) ?? new();
+      }
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Error loading weights: {e.Message}");
+    }
+  }
+
+  private async Task SaveRestaurantWeights()
+  {
+    try
+    {
+      var json = JsonSerializer.Serialize(RestaurantWeights);
+      await JSRuntime.InvokeVoidAsync("localStorageHelper.setItem", "restaurant_weights", json);
+    }
+    catch (Exception e)
+    {
+      Console.WriteLine($"Error saving weights: {e.Message}");
+    }
+  }
+
+  private int GetRestaurantWeight(string restaurantName)
+  {
+    if (string.IsNullOrEmpty(restaurantName) || RestaurantWeights == null) return 0;
+    return RestaurantWeights.TryGetValue(restaurantName, out var weight) ? weight : 0;
+  }
+
+  private string GetWeightDisplay(string restaurantName)
+  {
+    var weight = GetRestaurantWeight(restaurantName);
+    if (weight > 0) return $"+{weight}";
+    return weight.ToString();
+  }
+
+  private async Task IncreaseWeight(string restaurantName)
+  {
+    if (string.IsNullOrEmpty(restaurantName)) return;
+    var current = GetRestaurantWeight(restaurantName);
+    RestaurantWeights[restaurantName] = current + 1;
+    await SaveRestaurantWeights();
+    StateHasChanged();
+  }
+
+  private async Task DecreaseWeight(string restaurantName)
+  {
+    if (string.IsNullOrEmpty(restaurantName)) return;
+    var current = GetRestaurantWeight(restaurantName);
+    RestaurantWeights[restaurantName] = current - 1;
+    await SaveRestaurantWeights();
+    StateHasChanged();
+  }
+
   public List<RestaurantManagement> Restaurants { get; set; }
 
   private async Task<List<RestaurantManagement>> GetRestaurantsFromJson()
   {
-  // return list from restaurants.json wwwroot with httpclient get request
-
-
     var list = await Http.GetFromJsonAsync<List<RestaurantManagement>>("/restaurants.json");
     return list;
   }
@@ -143,10 +409,8 @@
     await JSRuntime.InvokeVoidAsync("captureAndDownloadImages");
   }
 
-
   private string GetEmoji(int i)
   {
-    // list of 10 face emojis
     var emojis = new List<string> { "😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "😊", "😇" };
     return emojis[i % 10];
   }
@@ -169,5 +433,4 @@
     Console.WriteLine(restaurantManagementNimi);
     await JSRuntime.InvokeVoidAsync("captureAndDownloadImage", restaurantManagementNimi);
   }
-
 }

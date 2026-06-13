@@ -2,6 +2,12 @@
   command = "bash build.sh"
   publish = "release/wwwroot"
 
+[context.deploy-preview]
+  ignore = "exit 0"
+
+[context.branch-deploy]
+  ignore = "exit 0"
+
 [[redirects]]
   from = "/curl"
   to = "/.netlify/edge-functions/curl"
