@@ -69,8 +69,8 @@
     var emojiCount = 1;
     <div class="masonry-grid">
     @foreach (var lunchListContainer in Lists.Where(x => x.DayNumber == SelectedDay || x.DayNumber == 999)
-      .OrderByDescending(x => GetRestaurantWeight(x.RestaurantManagement.nimi))
-      .ThenByDescending(x => x.BestFoodTitles.Count)
+        .OrderByDescending(x => x.BestFoodTitles.Count)
+      .ThenByDescending(x => GetRestaurantWeight(x.RestaurantManagement.nimi))
       .ThenBy(x => x.RestaurantManagement.nimi))
     {
       var emoji = lunchListContainer.RestaurantManagement.emoji ?? GetEmoji(emojiCount++);
@@ -88,7 +88,7 @@
               <MudText @onclick="() => DownloadImage(lunchListContainer.RestaurantManagement.nimi)" Class="file-name" Typo="Typo.h5" Color="Color.Primary" Style="cursor: pointer; flex-grow: 1; margin: 0; font-weight: 500;">
                 @emoji @lunchListContainer.RestaurantManagement.nimi
               </MudText>
-              
+
               <div style="display: inline-flex; align-items: center; gap: 6px; background-color: rgba(0,0,0,0.04); border-radius: 12px; padding: 2px 4px; border: 1px solid rgba(0,0,0,0.06);">
                 <button type="button" @onclick="() => DecreaseWeight(lunchListContainer.RestaurantManagement.nimi)" style="display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; border: none; background-color: white; color: #e30059; cursor: pointer; transition: all 0.2s ease; font-weight: bold; font-size: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); line-height: 1;">&minus;</button>
                 <span style="font-weight: bold; min-width: 22px; text-align: center; font-size: 0.85rem; color: #333;">
