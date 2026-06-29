@@ -14,42 +14,42 @@ public static class LunchListFetcher
       {
         if (restaurant.apiid == 0 || restaurant.apiid is null)
         {
-            if(restaurant.list is not null)
+          if (restaurant.list is not null)
+          {
+            var lunchList = new LunchListContainer(restaurant);
+            lunchLists.Add(lunchList);
+            continue;
+          }
+          if (restaurant.lists is not null)
+          {
+            var lists = restaurant.lists;
+            if (lists.monday is not null)
             {
-              var lunchList = new LunchListContainer(restaurant);
+              var lunchList = new LunchListContainer(restaurant, 1);
               lunchLists.Add(lunchList);
-              continue;
             }
-            if(restaurant.lists is not null)
+            if (lists.tuesday is not null)
             {
-              var lists = restaurant.lists;
-              if(lists.monday is not null)
-              {
-                var lunchList = new LunchListContainer(restaurant, 1);
-                lunchLists.Add(lunchList);
-              }
-              if(lists.tuesday is not null)
-              {
-                var lunchList = new LunchListContainer(restaurant, 2);
-                lunchLists.Add(lunchList);
-              }
-              if(lists.wednesday is not null)
-              {
-                var lunchList = new LunchListContainer(restaurant, 3);
-                lunchLists.Add(lunchList);
-              }
-              if(lists.thursday is not null)
-              {
-                var lunchList = new LunchListContainer(restaurant, 4);
-                lunchLists.Add(lunchList);
-              }
-              if(lists.friday is not null)
-              {
-                var lunchList = new LunchListContainer(restaurant, 5);
-                lunchLists.Add(lunchList);
-              }
-              continue;
+              var lunchList = new LunchListContainer(restaurant, 2);
+              lunchLists.Add(lunchList);
             }
+            if (lists.wednesday is not null)
+            {
+              var lunchList = new LunchListContainer(restaurant, 3);
+              lunchLists.Add(lunchList);
+            }
+            if (lists.thursday is not null)
+            {
+              var lunchList = new LunchListContainer(restaurant, 4);
+              lunchLists.Add(lunchList);
+            }
+            if (lists.friday is not null)
+            {
+              var lunchList = new LunchListContainer(restaurant, 5);
+              lunchLists.Add(lunchList);
+            }
+            continue;
+          }
         }
         Console.WriteLine($"Fetching data for: {restaurant.nimi} (API ID: {restaurant.apiid})");
         var url = GetUrl((int)restaurant.apiid);
@@ -141,7 +141,7 @@ public static class LunchListFetcher
 
   public static string GetUrl(int id)
   {
-    return "https://tassa.fi/resources/shop/" +
+    return "https://lounaspaikka.ilkkapohjalainen.fi/resources/shop/" +
            id.ToString() +
            "/allads?l=fi&im=true&page=0&limit=18&city=Sein%C3%A4joki&u=jlfktwr6&uit=mobi-web-prod";
   }

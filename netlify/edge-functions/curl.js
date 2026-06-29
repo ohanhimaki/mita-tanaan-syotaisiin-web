@@ -59,7 +59,7 @@ export default async (request, context) => {
 
     // Tassa.fi API
     try {
-      const url = `https://tassa.fi/resources/shop/${restaurant.apiid}/allads?l=fi&im=true&page=0&limit=18&city=Sein%C3%A4joki&u=jlfktwr6&uit=mobi-web-prod`;
+      const url = `https://lounaspaikka.ilkkapohjalainen.fi/resources/shop/${restaurant.apiid}/allads?l=fi&im=true&page=0&limit=18&city=Sein%C3%A4joki&u=jlfktwr6&uit=mobi-web-prod`;
       const res = await fetch(url);
       if (!res.ok) {
         output += `${BOLD}${emoji} ${name}${RESET}  ${RED}(ei listaa)${RESET}\n\n`;
